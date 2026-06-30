@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-geist-sans), Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+  
+  --color-brand-accent: #10b981; /* Emerald green accent */
+  --color-brand-accent-hover: #059669;
+  
+  --color-dark-bg: #0a0a0a;
+  --color-dark-surface: #111111;
+  --color-dark-border: #1a1a1a;
+  
+  --color-light-bg: #ffffff;
+  --color-light-surface: #fafafa;
+  --color-light-border: #ededed;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --border: #ededed;
+  --surface: #fafafa;
+  --card-bg: #ffffff;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --border: #1a1a1a;
+  --surface: #111111;
+  --card-bg: #0d0d0d;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  font-family: var(--font-geist-sans);
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1aa;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+/* Noise overlay */
+.noise-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "";
+  opacity: 0.02;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  z-index: 1;
+}
+
+.dark .noise-bg {
+  opacity: 0.035;
+}
+
+/* Custom styles for luxury editorial feel */
+.text-reveal-wrapper {
+  overflow: hidden;
+  display: inline-block;
+}
+
+/* Selection colors */
+::selection {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.dark ::selection {
+  background-color: #10b981;
+  color: #000000;
+}
