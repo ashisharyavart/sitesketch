@@ -12,15 +12,38 @@ export default function Contact() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.name && formData.email && formData.message) {
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
+    if (!formData.name || !formData.email || !formData.message) return;
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch("https://formspree.io/f/mykqddlj", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
         setFormData({ name: "", email: "", company: "", service: "Design", message: "" });
-      }, 5000);
+        setTimeout(() => setSubmitted(false), 5000);
+      } else {
+        const data = await response.json();
+        setError(data.errors?.[0]?.message || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -211,10 +234,12 @@ export default function Contact() {
 
               <button
                 type="submit"
-                disabled={submitted}
+                disabled={submitting || submitted}
                 className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-semibold text-sm transition-all duration-300 hover:shadow-[0_4px_20px_rgba(16,185,129,0.15)] disabled:bg-emerald-500 disabled:text-white disabled:shadow-none focus:outline-none"
               >
-                {submitted ? (
+                {submitting ? (
+                  "Sending Inquiry..."
+                ) : submitted ? (
                   <>
                     <Check className="h-4 w-4" /> Message Sent Successfully
                   </>
@@ -225,8 +250,14 @@ export default function Contact() {
                 )}
               </button>
 
+              {error && (
+                <span className="text-xs text-red-500 font-semibold block text-center mt-2 animate-fade-in">
+                  {error}
+                </span>
+              )}
+
               {submitted && (
-                <span className="text-xs text-brand-accent font-semibold block text-center animate-fade-in">
+                <span className="text-xs text-brand-accent font-semibold block text-center mt-2 animate-fade-in">
                   Thank you! Our engineering team will review and reply within 24 hours.
                 </span>
               )}
