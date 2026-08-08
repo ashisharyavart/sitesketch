@@ -22,7 +22,7 @@ export default function Footer() {
           
           {/* Logo & Pitch */}
           <div className="lg:col-span-5 flex flex-col space-y-6">
-            <a href="#home" className="flex items-center gap-2 focus:outline-none">
+            <a href="/" className="flex items-center gap-2 focus:outline-none">
               <span className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white flex items-center gap-1.5">
                 sitesketch
                 <span className="h-2.5 w-2.5 rounded-full bg-brand-accent" />
@@ -42,10 +42,10 @@ export default function Footer() {
             <div className="flex flex-col space-y-4">
               <h4 className="text-xs font-mono uppercase tracking-wider text-zinc-400 dark:text-zinc-600">Links</h4>
               <ul className="space-y-2.5">
-                {["Home", "Work", "Services", "Process", "About", "FAQ"].map((item) => (
+                {["Home", "Services", "Process", "About", "FAQ"].map((item) => (
                   <li key={item}>
                     <a
-                      href={`#${item.toLowerCase()}`}
+                      href={item === "Home" ? "/" : `/#${item.toLowerCase()}`}
                       className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-brand-accent dark:hover:text-brand-accent transition-colors"
                     >
                       {item}
@@ -122,13 +122,13 @@ export default function Footer() {
           </p>
           <div className="flex space-x-6">
             <a
-              href="#privacy"
+              href="/privacy"
               className="text-xs text-zinc-400 dark:text-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-400"
             >
               Privacy Policy
             </a>
             <a
-              href="#terms"
+              href="/terms"
               className="text-xs text-zinc-400 dark:text-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-400"
             >
               Terms of Service

@@ -6,14 +6,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Sun, Moon } from "lucide-react";
 
 const NAV_LINKS = [
-  { label: "Home", href: "#home" },
-  { label: "Work", href: "#work" },
-  { label: "Services", href: "#services" },
-  { label: "Process", href: "#process" },
-  { label: "About", href: "#about" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/#home" },
+  { label: "Services", href: "/#services" },
+  { label: "Process", href: "/#process" },
+  { label: "About", href: "/#about" },
+  { label: "Testimonials", href: "/#testimonials" },
+  { label: "FAQ", href: "/#faq" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export default function Navbar() {
@@ -49,7 +48,7 @@ export default function Navbar() {
         <div className="mx-auto max-w-7xl px-6 h-20 flex items-center justify-between">
           {/* Logo */}
           <a
-            href="#home"
+            href="/"
             className="flex items-center gap-2 group focus:outline-none"
             aria-label="Sitesketch.ai Home"
           >

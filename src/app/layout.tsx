@@ -31,25 +31,47 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Sitesketch.online | Premium Web Design, AI Automation & SEO Agency",
-    template: "%s | Sitesketch.online"
+    default: "SiteSketch | Best Website Development Company & Portfolio Website Developer",
+    template: "%s | SiteSketch"
   },
-  description: "Sitesketch.online builds high-end websites, automated workflows, custom AI chatbots, and robust SEO systems engineered to earn trust, generate leads and scale businesses.",
+  description: "SiteSketch is the best website development company delivering premium website development services, real state website developer solutions, local business website developer platforms, and bespoke portfolio websites (interior designer, photographer, etc.).",
+  keywords: [
+    "website development",
+    "website development services",
+    "real state website developer",
+    "local business website developer",
+    "interior design website development",
+    "best website development company",
+    "photographer portfolio website",
+    "interior designer portfolio website",
+    "portfolio website"
+  ],
   metadataBase: new URL("https://sitesketch.online"),
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: [
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
-    title: "Sitesketch.online | Premium Web Design, AI Automation & SEO Agency",
-    description: "Bespoke digital design and intelligence systems handcrafted for modern enterprises. We engineer websites to earn trust and scale businesses.",
+    title: "SiteSketch | Best Website Development Company & Portfolio Website Developer",
+    description: "Looking for website development services? SiteSketch is a leading website developer building custom portfolio websites (for interior designers, photographers), real estate, and local business growth engines.",
     url: "https://sitesketch.online",
-    siteName: "Sitesketch.online",
+    siteName: "SiteSketch",
     images: [
       {
         url: "https://sitesketch.online/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Sitesketch.online - Creative Digital Studio",
+        alt: "SiteSketch - Creative Digital Studio",
       },
     ],
     locale: "en_US",
@@ -57,8 +79,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sitesketch.online | Premium Web Design, AI Automation & SEO Agency",
-    description: "Bespoke digital design and intelligence systems handcrafted for modern enterprises.",
+    title: "SiteSketch | Best Website Development Company & Portfolio Website Developer",
+    description: "Looking for website development services? SiteSketch is a leading website developer building custom portfolio websites (for interior designers, photographers), real estate, and local business growth engines.",
     images: ["https://sitesketch.online/og-image.jpg"],
     creator: "@sitesketch",
   },

@@ -1,7 +1,6 @@
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import FeaturedWork from "@/components/FeaturedWork";
 import Services from "@/components/Services";
 import Process from "@/components/Process";
 import Statistics from "@/components/Statistics";
@@ -9,6 +8,7 @@ import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
 import About from "@/components/About";
 import Contact from "@/components/Contact";
+import SEOContent from "@/components/SEOContent";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -31,8 +31,9 @@ export default function Home() {
       {
         "@type": "ProfessionalService",
         "@id": "https://sitesketch.online/#localbusiness",
-        "name": "Sitesketch.online",
+        "name": "SiteSketch",
         "image": "https://sitesketch.online/og-image.jpg",
+        "description": "Best website development company providing premium website development services, real state website developer platforms, local business website developer solutions, and bespoke portfolio websites (for photographers, interior designers, etc.).",
         "url": "https://sitesketch.online",
         "telephone": "+1-415-555-0199",
         "priceRange": "$$$",
@@ -118,13 +119,13 @@ export default function Home() {
       {/* Main Page Elements */}
       <Navbar />
       <Hero />
-      <FeaturedWork />
       <Services />
       <Process />
       <Statistics />
       <Testimonials />
       <FAQ />
       <About />
+      <SEOContent />
       <Contact />
       <Footer />
     </>
