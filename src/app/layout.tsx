@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { Providers } from "./providers";
+import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -109,6 +110,19 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-light-bg text-foreground dark:bg-dark-bg transition-colors duration-300">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-MV6KTJNX06"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-MV6KTJNX06');
+          `}
+        </Script>
         <Providers>
           <div className="relative min-h-screen flex flex-col">
             <div className="noise-bg" />
