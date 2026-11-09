@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import Script from "next/script";
 import "./globals.css";
@@ -14,38 +14,31 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-});
-
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-  ],
+  themeColor: "#0B0F17",
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
 };
 
 export const metadata: Metadata = {
   title: {
-    default: "SiteSketch | Best Website Development Company & Portfolio Website Developer",
-    template: "%s | SiteSketch"
+    default: "SiteSketch | Generative Architectural Engine & Automated BOM",
+    template: "%s | SiteSketch",
   },
-  description: "SiteSketch is the best website development company delivering premium website development services, real state website developer solutions, local business website developer platforms, and bespoke portfolio websites (interior designer, photographer, etc.).",
+  description:
+    "SiteSketch transforms hand-drawn pencil schematics, CAD layouts, and raw job-site shells into immersive 3D interior renders, material schedules, and automated cost estimates.",
   keywords: [
-    "website development",
-    "website development services",
-    "real state website developer",
-    "local business website developer",
-    "interior design website development",
-    "best website development company",
-    "photographer portfolio website",
-    "interior designer portfolio website",
-    "portfolio website"
+    "generative architectural software",
+    "hand drawn sketch to 3D",
+    "BIM automation",
+    "automated bill of materials",
+    "architectural visualization",
+    "interior design renders",
+    "photorealistic spatial rendering",
+    "architectural takeoffs",
+    "Revit CAD integration",
+    "SiteSketch"
   ],
   metadataBase: new URL("https://sitesketch.online"),
   alternates: {
@@ -63,8 +56,9 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    title: "SiteSketch | Best Website Development Company & Portfolio Website Developer",
-    description: "Looking for website development services? SiteSketch is a leading website developer building custom portfolio websites (for interior designers, photographers), real estate, and local business growth engines.",
+    title: "SiteSketch | From Hand-Drawn Sketch to Photorealistic Spatial Reality",
+    description:
+      "A cloud-based generative architectural, interior visualization, and automated Bill-of-Materials (BOM) platform built for architects, interior design studios, and general contractors.",
     url: "https://sitesketch.online",
     siteName: "SiteSketch",
     images: [
@@ -72,7 +66,7 @@ export const metadata: Metadata = {
         url: "https://sitesketch.online/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "SiteSketch - Creative Digital Studio",
+        alt: "SiteSketch Spatial Engine",
       },
     ],
     locale: "en_US",
@@ -80,8 +74,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "SiteSketch | Best Website Development Company & Portfolio Website Developer",
-    description: "Looking for website development services? SiteSketch is a leading website developer building custom portfolio websites (for interior designers, photographers), real estate, and local business growth engines.",
+    title: "SiteSketch | Generative Architectural Visualization SaaS",
+    description:
+      "Transform rough pencil sketches into 4K photorealistic architectural spaces, material schedules, and automated cost estimates.",
     images: ["https://sitesketch.online/og-image.jpg"],
     creator: "@sitesketch",
   },
@@ -106,10 +101,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-light-bg text-foreground dark:bg-dark-bg transition-colors duration-300">
+      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-300">
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-MV6KTJNX06"
           strategy="afterInteractive"
@@ -125,7 +120,6 @@ export default function RootLayout({
         </Script>
         <Providers>
           <div className="relative min-h-screen flex flex-col">
-            <div className="noise-bg" />
             <main className="flex-grow relative z-10">{children}</main>
           </div>
         </Providers>

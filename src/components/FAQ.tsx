@@ -1,122 +1,112 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
+import { ChevronDown, HelpCircle, Sparkles } from "lucide-react";
 
-interface FAQItem {
-  question: string;
-  answer: string;
+interface FAQProps {
+  onOpenTrial: () => void;
 }
 
-const FAQS: FAQItem[] = [
-  {
-    question: "How long does a custom website take to build?",
-    answer: "Typically, a custom high-end marketing website takes 4 to 8 weeks from discovery to launch. This timeline varies based on requirements like complex animations, extensive page structures, custom API configurations, or custom AI agent database setups. We establish strict deadlines during stage two of our strategic process.",
-  },
-  {
-    question: "How much does a custom website cost?",
-    answer: "Our projects start at $5,000 for bespoke landing pages and $10,000 for full marketing portals. Because we build custom Next.js configurations that perform under 1s load speeds, with customized copywriting and SEO structures, each quote is custom-tailored to the business's goals, features, and scale.",
-  },
-  {
-    question: "Do you provide search engine optimization (SEO)?",
-    answer: "Yes, complete on-page and technical SEO are integrated into all our Next.js builds. We optimize heading structures, configure JSON-LD schemas (Local Business, Organization, FAQ, Product schemas), build custom robots.txt and sitemap.xml files, and structure copy specifically to index on modern search engines (Google, Bing) and AI search engines (ChatGPT, Gemini, Perplexity).",
-  },
-  {
-    question: "Can you redesign existing websites?",
-    answer: "Yes. We audit your existing website, map current page rankings to prevent loss of backlink equity, and design a modern, fast Next.js replacement. We ensure path redirects (301) are correctly set up so your organic keyword ranking transitions smoothly without interruption.",
-  },
-  {
-    question: "Do you build custom AI automations and database integrations?",
-    answer: "Yes, AI agent workflows are one of our core specialties. We design custom AI chatbots trained on your internal product files, voice agents for scheduling calls, and automate complex workflows to sync your web lead captures directly with your CRM, slack, or billing platforms.",
-  },
-  {
-    question: "Will my website be mobile friendly and responsive?",
-    answer: "Absolutely. Every interface we build is designed mobile-first. We rigorously test responsiveness on various device viewports (smartphones, tablets, notebooks, and large 4K displays) to guarantee perfect visual spacing, touch targets, and typography layouts.",
-  },
-  {
-    question: "Do you offer website maintenance and support?",
-    answer: "Yes, we offer ongoing maintenance SLA plans that cover secure hosting configuration, regular database backups, uptime monitoring, security patching, and standard layout content edits so you never have to worry about downtime or bugs.",
-  },
-  {
-    question: "Can I update the content myself after launch?",
-    answer: "Yes. Depending on your preference, we can integrate a headless content management system (such as Sanity, Contentful, or Strapi) that allows your marketing team to edit blogs, projects, and text fields without editing source code.",
-  },
-  {
-    question: "Do you work with international clients?",
-    answer: "Yes, we work with enterprise and startup clients globally. Our primary offices are located in the US and India, but our operations and asynchronous tools allow us to seamlessly collaborate across any timezone.",
-  },
-  {
-    question: "How do we get started with Sitesketch.ai?",
-    answer: "You can get started by clicking the 'Book a Discovery Call' button to schedule a 15-minute call. On the call, we will align on your project scope, target timeline, and budget. Within 48 hours, we'll provide a customized project proposal and timeline blueprint.",
-  },
-];
+export default function FAQ({ onOpenTrial }: FAQProps) {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
-export default function FAQ() {
-  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const faqs = [
+    {
+      q: "Can SiteSketch interpret rough pencil drawings and site measurements?",
+      a: "Yes. The vision engine parses hand-drawn floor plans, elevation sketches, and dimensional handwritten notations into clean geometry. Our spatial OCR model recognizes door swings, load-bearing double walls, and window openings from phone snapshots of tracing paper, napkins, or job-site sketches."
+    },
+    {
+      q: "How does the Bill of Materials (BOM) get calculated?",
+      a: "When a render is produced, SiteSketch segments spatial planes and furniture models, cross-referencing floor areas and fixture volumes against industry standard dimensional guidelines. It calculates square footages for flooring, wall coverage for millwork or paint, linear dimensions for baseboards, and generates an itemized, exportable CSV/PDF schedule."
+    },
+    {
+      q: "Can I export my project to AutoCAD or Revit?",
+      a: "Pro and Enterprise tiers include direct spatial schema exports compatible with DXF/DWG formats and common 3D packages. You can download clean 2D vector CAD drawings, IFC 4.3 BIM parametric models, and glTF 2.0 PBR asset packages ready for AutoCAD, Revit, SketchUp, and Blender."
+    },
+    {
+      q: "Is my proprietary design data secure?",
+      a: "Yes. Projects are encrypted at rest with AES-256 and processed in isolated cloud containers. Your designs and proprietary architectural files are never used to train public models. Enterprise workspaces also support dedicated AWS S3 bucket synchronization with customer-managed keys."
+    },
+    {
+      q: "What is the typical render generation speed?",
+      a: "On our dedicated GPU cloud queue, 4K raytraced renders are synthesized in under 1.5 seconds. Multi-Kelvin lighting swaps and material preview adjustments update nearly instantaneously within the interactive Studio Canvas."
+    },
+    {
+      q: "Can I invite team members and clients to view designs?",
+      a: "Yes. Pro plans include interactive 360° client panoramic viewer links that open in any mobile or desktop browser without software downloads or logins. Clients can leave digital feedback pins and approve material finishes directly on the canvas."
+    }
+  ];
 
-  const toggleFAQ = (idx: number) => {
-    setOpenIdx(openIdx === idx ? null : idx);
+  const toggle = (idx: number) => {
+    setOpenIndex(openIndex === idx ? null : idx);
   };
 
   return (
-    <section
-      id="faq"
-      className="py-24 md:py-32 px-6 border-b border-zinc-100 dark:border-zinc-900 bg-white dark:bg-[#0a0a0a]"
-    >
-      <div className="max-w-4xl mx-auto">
-        {/* Section Header */}
-        <div className="mb-16 text-center space-y-4">
-          <span className="text-xs font-mono tracking-widest uppercase text-brand-accent">
-            Got Questions?
+    <section className="py-20 sm:py-28 relative bg-slate-950/60 border-t border-slate-800/80">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/40 text-cyan-400 tracking-wider uppercase font-semibold">
+            FREQUENTLY ASKED QUESTIONS
           </span>
-          <h2 className="text-4xl md:text-5xl font-serif font-normal text-zinc-900 dark:text-white tracking-tight">
-            Frequently Asked Questions
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-100 tracking-tight">
+            Architectural &amp; Software Answers
           </h2>
-          <p className="max-w-md mx-auto text-sm text-zinc-500 dark:text-zinc-400">
-            Clear, transparent answers about our design systems, pricing details, SEO integration, and timeline protocols.
+          <p className="text-sm text-slate-400">
+            Everything you need to know about spatial accuracy, BIM interoperability, and platform security.
           </p>
         </div>
 
-        {/* Accordions Container */}
-        <div className="space-y-4">
-          {FAQS.map((faq, idx) => {
-            const isOpen = openIdx === idx;
+        {/* Accordion List */}
+        <div className="space-y-3">
+          {faqs.map((faq, idx) => {
+            const isOpen = openIndex === idx;
             return (
               <div
-                key={faq.question}
-                className="border border-zinc-100 dark:border-zinc-900 bg-zinc-50/50 dark:bg-zinc-900/10 rounded-2xl overflow-hidden transition-all duration-300"
+                key={idx}
+                className="rounded-xl border border-slate-800 bg-slate-900/70 overflow-hidden transition-colors"
               >
                 <button
-                  onClick={() => toggleFAQ(idx)}
-                  className="w-full flex items-center justify-between p-6 text-left focus:outline-none focus-visible:bg-zinc-100 dark:focus-visible:bg-zinc-900/30"
-                  aria-expanded={isOpen}
+                  onClick={() => toggle(idx)}
+                  className="w-full p-5 text-left flex items-center justify-between gap-4 text-slate-200 hover:text-white transition-colors cursor-pointer"
                 >
-                  <span className="text-base md:text-lg font-medium text-zinc-900 dark:text-white pr-4">
-                    {faq.question}
+                  <span className="font-semibold text-sm sm:text-base leading-snug">
+                    {faq.q}
                   </span>
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400">
-                    {isOpen ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-cyan-400 shrink-0 transition-transform duration-200 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
 
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                    >
-                      <div className="px-6 pb-6 text-sm md:text-base text-zinc-500 dark:text-zinc-400 leading-relaxed border-t border-zinc-100/50 dark:border-zinc-900/50 pt-4">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {isOpen && (
+                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/50">
+                    <p>{faq.a}</p>
+                  </div>
+                )}
               </div>
             );
           })}
+        </div>
+
+        {/* Bottom Contact CTA */}
+        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-3">
+          <h4 className="text-base font-bold text-slate-100">
+            Ready to test your first napkin sketch?
+          </h4>
+          <p className="text-xs text-slate-400 font-mono">
+            Get instant access to the Spatial Engine v2.4 Beta with 5 free high-resolution renders.
+          </p>
+          <div className="pt-1">
+            <button
+              onClick={onOpenTrial}
+              className="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs inline-flex items-center gap-2 transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Launch SiteSketch Studio</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>

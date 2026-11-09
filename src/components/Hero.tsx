@@ -1,122 +1,129 @@
 "use client";
 
-import React from "react";
-import { motion, Variants } from "framer-motion";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import React, { useState } from "react";
+import StudioCanvas from "./StudioCanvas";
+import { StudioPartnerLogos } from "./ArchitecturalSVGs";
+import {
+  Sparkles,
+  Play,
+  ArrowRight,
+  ShieldCheck,
+  CheckCircle2,
+  Zap,
+  Layers,
+  Compass
+} from "lucide-react";
 
-export default function Hero() {
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1,
-      },
-    },
+interface HeroProps {
+  onOpenTrial: (tier?: string, email?: string) => void;
+  onOpenWalkthrough: () => void;
+}
+
+export default function Hero({ onOpenTrial, onOpenWalkthrough }: HeroProps) {
+  const [emailInput, setEmailInput] = useState("");
+
+  const handleSubmitEmail = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (emailInput) {
+      onOpenTrial("trial", emailInput);
+    } else {
+      onOpenTrial("trial");
+    }
   };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 75,
-        damping: 15,
-      },
-    },
-  };
-
-  const capabilities = [
-    "Premium Websites",
-    "AI Automations",
-    "SEO Systems",
-    "Performance Optimization",
-  ];
 
   return (
     <section
-      id="home"
-      className="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-20 px-6 bg-white dark:bg-[#0a0a0a]"
+      id="spatial-engine"
+      className="relative pt-28 pb-16 sm:pt-36 sm:pb-24 overflow-hidden"
     >
-      {/* Editorial Grid Gridlines - Subtle lines for premium architectural aesthetics */}
-      <div className="absolute inset-0 grid grid-cols-4 pointer-events-none opacity-20 dark:opacity-30">
-        <div className="border-r border-zinc-200 dark:border-zinc-900 h-full" />
-        <div className="border-r border-zinc-200 dark:border-zinc-900 h-full" />
-        <div className="border-r border-zinc-200 dark:border-zinc-900 h-full" />
-        <div className="h-full" />
-      </div>
+      {/* Background Architectural Blueprint Grid & Radial Glows */}
+      <div className="absolute inset-0 blueprint-grid opacity-35 pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-cyan-500/10 blur-[130px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/3 right-10 w-[400px] h-[300px] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-10"
-        >
-          {/* Subtle Accent pill */}
-          <motion.div variants={itemVariants} className="inline-flex items-center">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-50 border border-zinc-200/80 text-zinc-600 dark:bg-zinc-900/50 dark:border-zinc-800 text-xs font-mono tracking-wider uppercase dark:text-zinc-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse" />
-              Intelligence Meets Design
-            </span>
-          </motion.div>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+        {/* Top Text & CTA Container */}
+        <div className="text-center max-w-4xl mx-auto space-y-6">
+          {/* Pre-header Pill Tag */}
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-cyan-500/40 text-cyan-300 text-xs sm:text-sm font-mono shadow-[0_0_20px_rgba(6,182,212,0.15)] animate-pulse">
+            <span>⚡ Spatial Engine v2.4 Beta Live — Generative BIM &amp; Photoreal Renders</span>
+          </div>
 
-          {/* Premium editorial headline */}
-          <motion.h1
-            variants={itemVariants}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-normal text-zinc-900 dark:text-white leading-[1.05] tracking-tight max-w-4xl"
-          >
-            Websites engineered to{" "}
-            <span className="italic font-light text-zinc-400 dark:text-zinc-500">earn trust</span>
-            , generate leads and{" "}
-            <span className="relative inline-block text-zinc-900 dark:text-white">
-              scale businesses
-            </span>
-            .
-          </motion.h1>
+          {/* Main Headline (H1) */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-[1.12]">
+            Turn Rough Floor Sketches into{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-amber-300">
+              Photorealistic Spaces
+            </span>{" "}
+            in Seconds.
+          </h1>
 
-          {/* Subtext capabilities list */}
-          <motion.div
-            variants={itemVariants}
-            className="max-w-2xl mx-auto flex flex-wrap justify-center items-center gap-y-3 gap-x-6 text-sm md:text-base text-zinc-500 dark:text-zinc-400 font-medium"
-          >
-            {capabilities.map((cap) => (
-              <span key={cap} className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-brand-accent flex-shrink-0" />
-                {cap}
+          {/* Subheadline */}
+          <p className="text-base sm:text-lg lg:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-normal">
+            SiteSketch transforms hand-drawn pencil schematics, CAD layouts, and raw job-site shells into immersive 3D interior renders, material schedules, and automated cost estimates.
+          </p>
+
+          {/* Action Bar (Email Input + Primary CTA + Walkthrough) */}
+          <div className="pt-2 max-w-xl mx-auto">
+            <form
+              onSubmit={handleSubmitEmail}
+              className="flex flex-col sm:flex-row items-center gap-2.5 p-2 rounded-2xl bg-slate-900/80 border border-slate-700/80 shadow-[0_0_30px_-5px_rgba(6,182,212,0.25)] backdrop-blur-md"
+            >
+              <div className="flex-grow w-full">
+                <input
+                  type="email"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  placeholder="Enter your studio work email..."
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-slate-100 text-sm placeholder:text-slate-500 focus:outline-none focus:border-cyan-400 transition-colors font-sans"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm whitespace-nowrap flex items-center justify-center space-x-2 transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Get 5 Free Studio Renders</span>
+              </button>
+            </form>
+
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-slate-400">
+              <button
+                type="button"
+                onClick={onOpenWalkthrough}
+                className="flex items-center space-x-2 text-cyan-400 hover:text-cyan-300 font-semibold hover:underline cursor-pointer group"
+              >
+                <div className="w-5 h-5 rounded-full bg-cyan-950 border border-cyan-500/60 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Play className="w-2.5 h-2.5 text-cyan-400 fill-cyan-400 ml-0.5" />
+                </div>
+                <span>Watch 60s Platform Walkthrough</span>
+              </button>
+              <span className="text-slate-600 hidden sm:inline">•</span>
+              <span className="flex items-center gap-1 text-slate-400">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                No credit card required
               </span>
-            ))}
-          </motion.div>
+              <span className="text-slate-600 hidden sm:inline">•</span>
+              <span className="text-slate-400">Direct DWG / Revit export</span>
+            </div>
+          </div>
+        </div>
 
-          {/* Action CTAs */}
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
-          >
-            <a
-              href="#contact"
-              className="group relative inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 font-semibold text-sm transition-all duration-300 hover:shadow-[0_4px_20px_rgba(16,185,129,0.15)] focus:outline-none"
-            >
-              Book a Discovery Call
-              <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
-            </a>
+        {/* Hero Visual Asset: High-Fidelity UI Frame (Studio Canvas) */}
+        <div className="pt-2">
+          <StudioCanvas onOpenTrial={onOpenTrial} />
+        </div>
 
-            <a
-              href="#work"
-              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 rounded-full border border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900 text-zinc-900 dark:text-white font-semibold text-sm transition-all focus:outline-none"
-            >
-              View Projects
-            </a>
-          </motion.div>
+        {/* Social Proof Strip */}
+        <div className="pt-8 border-t border-slate-800/80 space-y-6 text-center">
+          <p className="text-xs sm:text-sm font-mono text-slate-400 uppercase tracking-widest">
+            Trusted by 1,400+ interior designers, BIM modelers, and residential developers worldwide
+          </p>
 
-        </motion.div>
+          <StudioPartnerLogos />
+        </div>
       </div>
-
-      {/* Decorative premium radial shadows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-accent/5 rounded-full blur-[120px] pointer-events-none" />
     </section>
   );
 }

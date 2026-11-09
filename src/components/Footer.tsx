@@ -1,138 +1,167 @@
 "use client";
 
-import React, { useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import React from "react";
+import Link from "next/link";
+import { SiteSketchLogo } from "./ArchitecturalSVGs";
+import { Sparkles, Terminal, ShieldCheck, CheckCircle2 } from "lucide-react";
 
-export default function Footer() {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
+interface FooterProps {
+  onOpenTrial?: (tier?: string) => void;
+  onOpenChangelog?: () => void;
+}
 
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
-      setEmail("");
-    }
-  };
-
+export default function Footer({ onOpenTrial, onOpenChangelog }: FooterProps) {
   return (
-    <footer className="border-t border-zinc-100 dark:border-zinc-900 bg-white dark:bg-[#080808] transition-colors duration-500">
-      <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
-          
-          {/* Logo & Pitch */}
-          <div className="lg:col-span-5 flex flex-col space-y-6">
-            <a href="/" className="flex items-center gap-2 focus:outline-none">
-              <span className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white flex items-center gap-1.5">
-                sitesketch
-                <span className="h-2.5 w-2.5 rounded-full bg-brand-accent" />
-                <span className="text-xs font-mono font-normal opacity-50">.ai</span>
+    <footer className="border-t border-slate-800/80 bg-slate-950 pt-16 pb-12 relative overflow-hidden">
+      {/* Background blueprint subtle grid */}
+      <div className="absolute inset-0 blueprint-dots opacity-20 pointer-events-none" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        {/* Main 4-Column Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
+          {/* Column 1: Brand & Tagline (col-span-2 on lg) */}
+          <div className="lg:col-span-2 space-y-4">
+            <Link href="/" className="flex items-center space-x-3 group">
+              <SiteSketchLogo className="w-8 h-8" />
+              <span className="text-xl font-bold tracking-tight text-slate-100 group-hover:text-cyan-400 transition-colors">
+                SiteSketch
               </span>
-            </a>
-            <p className="max-w-md text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-              We design and engineer bespoke web interfaces, automated intelligence pipelines, and organic growth architectures that transform brands into market authorities.
+              <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-cyan-400 border border-slate-700">
+                SaaS v2.4
+              </span>
+            </Link>
+
+            <p className="text-xs sm:text-sm text-slate-400 max-w-sm leading-relaxed">
+              The generative spatial engine turning rough concepts into photorealistic environments and accurate project takeoffs.
             </p>
-            <div className="text-xs font-mono text-zinc-400 dark:text-zinc-600">
-              CRAFTED WITH PRECISION • 2026 SITESKETCH
+
+            <div className="pt-2 flex items-center space-x-3 text-xs font-mono text-slate-400">
+              <span className="flex items-center gap-1.5 text-emerald-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                SYSTEM CLOUD OPERATIONAL
+              </span>
+              <span>•</span>
+              <span>AES-256 ENCRYPTED</span>
             </div>
           </div>
 
-          {/* Quick links & Contact details */}
-          <div className="lg:col-span-3 grid grid-cols-2 gap-8">
-            <div className="flex flex-col space-y-4">
-              <h4 className="text-xs font-mono uppercase tracking-wider text-zinc-400 dark:text-zinc-600">Links</h4>
-              <ul className="space-y-2.5">
-                {["Home", "Services", "Process", "About", "FAQ"].map((item) => (
-                  <li key={item}>
-                    <a
-                      href={item === "Home" ? "/" : `/#${item.toLowerCase()}`}
-                      className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-brand-accent dark:hover:text-brand-accent transition-colors"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className="flex flex-col space-y-4">
-              <h4 className="text-xs font-mono uppercase tracking-wider text-zinc-400 dark:text-zinc-600">Connect</h4>
-              <ul className="space-y-2.5">
-                {[
-                  { label: "LinkedIn", href: "https://linkedin.com" },
-                  { label: "GitHub", href: "https://github.com" },
-                  { label: "X / Twitter", href: "https://x.com" },
-                  { label: "Instagram", href: "https://instagram.com" },
-                ].map((item) => (
-                  <li key={item.label}>
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center text-sm text-zinc-600 dark:text-zinc-400 hover:text-brand-accent dark:hover:text-brand-accent transition-colors group"
-                    >
-                      {item.label}
-                      <ArrowUpRight className="ml-1 h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Newsletter Subscribe */}
-          <div className="lg:col-span-4 flex flex-col space-y-4">
-            <h4 className="text-xs font-mono uppercase tracking-wider text-zinc-400 dark:text-zinc-600">
-              Receive Design & Tech Insights
+          {/* Column 2: Product */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
+              Product
             </h4>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
-              Subscribe to get modern UI inspiration, AI growth case studies, and web design tips directly in your inbox. No spam, ever.
-            </p>
-            
-            <form onSubmit={handleSubscribe} className="relative mt-2">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="hello@example.com"
-                className="w-full bg-zinc-50 border border-zinc-200 dark:bg-zinc-900/50 dark:border-zinc-800 rounded-full px-5 py-3 text-sm focus:outline-none focus:border-brand-accent dark:focus:border-brand-accent text-zinc-900 dark:text-white transition-all pr-24"
-              />
-              <button
-                type="submit"
-                className="absolute right-1.5 top-1.5 bottom-1.5 px-4 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 text-xs font-medium hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-all"
-              >
-                Subscribe
-              </button>
-            </form>
-            
-            {subscribed && (
-              <span className="text-xs text-brand-accent font-medium mt-1 animate-fade-in">
-                Thank you for subscribing! Keep an eye on your inbox.
-              </span>
-            )}
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <a href="#spatial-engine" className="hover:text-cyan-400 transition-colors">
+                  Spatial Engine
+                </a>
+              </li>
+              <li>
+                <a href="#features" className="hover:text-cyan-400 transition-colors">
+                  Framing Staging
+                </a>
+              </li>
+              <li>
+                <a href="#features" className="hover:text-cyan-400 transition-colors">
+                  BOM Generator
+                </a>
+              </li>
+              <li>
+                <button
+                  onClick={() => onOpenTrial && onOpenTrial("enterprise")}
+                  className="hover:text-cyan-400 transition-colors text-left cursor-pointer"
+                >
+                  API Documentation
+                </button>
+              </li>
+              <li>
+                <span className="flex items-center gap-1.5 text-slate-400">
+                  <span>System Status</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                </span>
+              </li>
+            </ul>
           </div>
 
+          {/* Column 3: Resources */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
+              Resources
+            </h4>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <a href="#workflow" className="hover:text-cyan-400 transition-colors">
+                  Documentation
+                </a>
+              </li>
+              <li>
+                <a href="#workflow" className="hover:text-cyan-400 transition-colors">
+                  Design Token Library
+                </a>
+              </li>
+              <li>
+                <a href="#features" className="hover:text-cyan-400 transition-colors">
+                  Community Showcase
+                </a>
+              </li>
+              <li>
+                <button
+                  onClick={onOpenChangelog}
+                  className="hover:text-amber-400 transition-colors flex items-center gap-1.5 cursor-pointer text-left"
+                >
+                  <span>Changelog</span>
+                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-950 text-amber-400 border border-amber-800">
+                    v2.4
+                  </span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Legal & Company */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
+              Legal &amp; Company
+            </h4>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <a href="#spatial-engine" className="hover:text-cyan-400 transition-colors">
+                  About SiteSketch
+                </a>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-cyan-400 transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-cyan-400 transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <a href="#integrations" className="hover:text-cyan-400 transition-colors">
+                  Security Architecture
+                </a>
+              </li>
+              <li>
+                <span className="hover:text-cyan-400 transition-colors cursor-pointer">
+                  Cookie Settings
+                </span>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        {/* Bottom Panel */}
-        <div className="border-t border-zinc-100 dark:border-zinc-900 mt-16 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-zinc-400 dark:text-zinc-600">
-            &copy; {new Date().getFullYear()} Sitesketch.ai. All rights reserved. Registered agency.
-          </p>
-          <div className="flex space-x-6">
-            <a
-              href="/privacy"
-              className="text-xs text-zinc-400 dark:text-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-400"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="/terms"
-              className="text-xs text-zinc-400 dark:text-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-400"
-            >
-              Terms of Service
-            </a>
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-500 gap-4">
+          <p>© 2026 SiteSketch Technologies, Inc. All rights reserved.</p>
+          <div className="flex items-center space-x-4 text-[11px]">
+            <span>Cloud Spatial Architecture</span>
+            <span>•</span>
+            <span>Autonomous BOM Intelligence</span>
+            <span>•</span>
+            <span className="text-cyan-400">sitesketch.online</span>
           </div>
         </div>
       </div>
