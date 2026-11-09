@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Caveat } from "next/font/google";
 import { Providers } from "./providers";
 import Script from "next/script";
 import "./globals.css";
@@ -14,9 +14,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
 export const viewport: Viewport = {
-  themeColor: "#0B0F17",
-  colorScheme: "dark",
+  themeColor: "#FAFAFA",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
 };
@@ -101,10 +107,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-300">
+      <body className="min-h-full flex flex-col bg-[#FAFAFA] text-slate-900 font-sans selection:bg-slate-200 selection:text-slate-900">
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-MV6KTJNX06"
           strategy="afterInteractive"
