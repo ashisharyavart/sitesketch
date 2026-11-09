@@ -6,12 +6,7 @@ import { StudioPartnerLogos } from "./ArchitecturalSVGs";
 import {
   Sparkles,
   Play,
-  ArrowRight,
-  ShieldCheck,
-  CheckCircle2,
-  Zap,
-  Layers,
-  Compass
+  ShieldCheck
 } from "lucide-react";
 
 interface HeroProps {

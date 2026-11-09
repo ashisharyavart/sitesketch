@@ -2,7 +2,7 @@
 
 import React from "react";
 import { SiteSketchLogo } from "./ArchitecturalSVGs";
-import { X, GitCommit, Sparkles, Zap, Shield, Layers } from "lucide-react";
+import { X } from "lucide-react";
 
 interface ChangelogModalProps {
   isOpen: boolean;

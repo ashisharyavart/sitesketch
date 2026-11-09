@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { SiteSketchLogo } from "./ArchitecturalSVGs";
-import { Sparkles, Terminal, ShieldCheck, CheckCircle2 } from "lucide-react";
 
 interface FooterProps {
   onOpenTrial?: (tier?: string) => void;

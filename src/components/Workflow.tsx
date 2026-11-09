@@ -6,20 +6,19 @@ import {
   Cpu,
   Palette,
   FileCheck2,
-  ArrowRight,
-  Sparkles,
-  Layers,
-  Check
+  Sparkles
 } from "lucide-react";
 
 interface WorkflowProps {
   onOpenTrial: () => void;
 }
 
-export default function Workflow({ onOpenTrial }: WorkflowProps) {
-  const [activeStyle, setActiveStyle] = useState<"minimalist" | "japandi" | "industrial" | "coastal">("minimalist");
+type StyleType = "minimalist" | "japandi" | "industrial" | "coastal";
 
-  const styles = [
+export default function Workflow({ onOpenTrial }: WorkflowProps) {
+  const [activeStyle, setActiveStyle] = useState<StyleType>("minimalist");
+
+  const styles: { id: StyleType; label: string; palette: string; desc: string }[] = [
     {
       id: "minimalist",
       label: "Minimalist",
@@ -103,7 +102,7 @@ export default function Workflow({ onOpenTrial }: WorkflowProps) {
 
         {/* 4 Steps Production Pipeline Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-          {steps.map((st, idx) => {
+          {steps.map((st) => {
             const Icon = st.icon;
             return (
               <div
@@ -172,7 +171,7 @@ export default function Workflow({ onOpenTrial }: WorkflowProps) {
             {styles.map((style) => (
               <button
                 key={style.id}
-                onClick={() => setActiveStyle(style.id as any)}
+                onClick={() => setActiveStyle(style.id)}
                 className={`p-4 rounded-xl border text-left transition-all cursor-pointer space-y-2 ${
                   activeStyle === style.id
                     ? "bg-slate-800/90 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]"

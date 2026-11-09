@@ -2,7 +2,7 @@
 
 import React from "react";
 import { IntegrationLogos } from "./ArchitecturalSVGs";
-import { Plug, ArrowRight, ShieldCheck, CheckCircle2, Code2, Sparkles } from "lucide-react";
+import { ArrowRight, ShieldCheck, Code2, Sparkles } from "lucide-react";
 
 interface IntegrationsProps {
   onOpenTrial: () => void;

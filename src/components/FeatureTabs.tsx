@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import {
   BlueprintSketchSVG,
-  PhotorealLivingRoomSVG,
-  FramingStagingSVG
+  PhotorealLivingRoomSVG
 } from "./ArchitecturalSVGs";
 import {
   PenTool,
@@ -12,31 +11,24 @@ import {
   FileSpreadsheet,
   Palette,
   RotateCw,
-  Sparkles,
-  Sliders,
   CheckCircle2,
-  Copy,
-  Layers,
-  ArrowRight,
-  Maximize2,
-  Compass
+  Copy
 } from "lucide-react";
 
 interface FeatureTabsProps {
   onOpenTrial?: () => void;
 }
 
+type TabType = "vectorizer" | "lighting" | "bom" | "materials" | "viewer";
+
 export default function FeatureTabs({ onOpenTrial }: FeatureTabsProps) {
-  const [activeTab, setActiveTab] = useState<
-    "vectorizer" | "lighting" | "bom" | "materials" | "viewer"
-  >("lighting");
+  const [activeTab, setActiveTab] = useState<TabType>("lighting");
 
   // Tab 1 state: Vectorizer
   const [vectorLayer, setVectorLayer] = useState<"all" | "walls" | "dims">("all");
 
   // Tab 2 state: Multi-Kelvin Lighting
   const [kelvin, setKelvin] = useState<number>(4000);
-  const [sunAngle, setSunAngle] = useState<"morning" | "noon" | "sunset">("noon");
 
   // Tab 3 state: Live BOM
   const [selectedRoom, setSelectedRoom] = useState<"living" | "kitchen" | "master">("living");
@@ -60,23 +52,25 @@ export default function FeatureTabs({ onOpenTrial }: FeatureTabsProps) {
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
+  const tabs: { id: TabType; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+    { id: "vectorizer", label: "Pencil & CAD Vectorizer", icon: PenTool },
+    { id: "lighting", label: "Multi-Kelvin Lighting", icon: Sun },
+    { id: "bom", label: "Live BOM & Takeoffs", icon: FileSpreadsheet },
+    { id: "materials", label: "Finish Swapping Sandbox", icon: Palette },
+    { id: "viewer", label: "360° Client Web Viewer", icon: RotateCw },
+  ];
+
   return (
     <div className="w-full rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl overflow-hidden">
       {/* Top Tab Bar Navigation */}
       <div className="flex border-b border-slate-800 overflow-x-auto bg-slate-950/80 p-2 gap-1.5 scrollbar-none">
-        {[
-          { id: "vectorizer", label: "Pencil & CAD Vectorizer", icon: PenTool },
-          { id: "lighting", label: "Multi-Kelvin Lighting", icon: Sun },
-          { id: "bom", label: "Live BOM & Takeoffs", icon: FileSpreadsheet },
-          { id: "materials", label: "Finish Swapping Sandbox", icon: Palette },
-          { id: "viewer", label: "360° Client Web Viewer", icon: RotateCw },
-        ].map((tab) => {
+        {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`flex items-center space-x-2 px-3.5 py-2.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                 isActive
                   ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { SiteSketchLogo, BlueprintSketchSVG, PhotorealLivingRoomSVG, FramingStagingSVG } from "./ArchitecturalSVGs";
-import { X, Play, Pause, RotateCcw, Check, Sparkles, Layers, Cpu, Eye, FileSpreadsheet } from "lucide-react";
+import { X, Play, Pause, Sparkles } from "lucide-react";
 
 interface WalkthroughModalProps {
   isOpen: boolean;
@@ -82,7 +82,7 @@ export default function WalkthroughModal({
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors text-xs flex items-center gap-1 font-mono"
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors text-xs flex items-center gap-1 font-mono cursor-pointer"
             >
               {isPlaying ? <Pause className="w-4 h-4 text-amber-400" /> : <Play className="w-4 h-4 text-cyan-400" />}
               <span className="hidden sm:inline">{isPlaying ? "Pause" : "Play"}</span>

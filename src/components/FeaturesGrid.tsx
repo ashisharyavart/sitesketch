@@ -15,8 +15,6 @@ import {
   HardHat,
   MonitorPlay,
   ArrowRight,
-  Sparkles,
-  CheckCircle2,
   Cpu
 } from "lucide-react";
 

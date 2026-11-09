@@ -14,7 +14,6 @@ interface TrialModalProps {
 export default function TrialModal({
   isOpen,
   onClose,
-  defaultTier = "pro",
   defaultEmail = ""
 }: TrialModalProps) {
   const [email, setEmail] = useState(defaultEmail);
@@ -24,13 +23,7 @@ export default function TrialModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState<"form" | "provisioning" | "success">("form");
   const [provisionProgress, setProvisionProgress] = useState(0);
-
-  // Sync if defaultEmail changes
-  React.useEffect(() => {
-    if (defaultEmail) {
-      setEmail(defaultEmail);
-    }
-  }, [defaultEmail]);
+  const [apiKey] = useState("sk_live_992f8a4e_arch_7b82x4");
 
   if (!isOpen) return null;
 
@@ -41,7 +34,6 @@ export default function TrialModal({
     setIsSubmitting(true);
     setStep("provisioning");
 
-    // Simulate realistic GPU workspace provisioning
     let p = 10;
     const interval = setInterval(() => {
       p += 25;
@@ -231,7 +223,7 @@ export default function TrialModal({
               </h3>
               <p className="text-xs text-slate-300 max-w-sm mx-auto font-mono">
                 We&apos;ve dispatched your workspace authentication token to{" "}
-                <span className="text-cyan-400 font-semibold">{email}</span>.
+                <span className="text-cyan-400 font-semibold">{email || "your studio email"}</span>.
               </p>
             </div>
 
@@ -245,7 +237,7 @@ export default function TrialModal({
                 <span className="text-emerald-400 font-semibold">ACTIVE</span>
               </div>
               <div className="font-mono text-xs text-slate-200 bg-slate-900 p-2 rounded border border-slate-800 select-all overflow-x-auto">
-                sk_live_992f8a4e_arch_{Math.random().toString(36).substring(2, 10)}
+                {apiKey}
               </div>
             </div>
 

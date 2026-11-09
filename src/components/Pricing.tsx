@@ -216,3 +216,4 @@ export default function Pricing({ onOpenTrial }: PricingProps) {
     </section>
   );
 }
+

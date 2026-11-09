@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { BlueprintSketchSVG, PhotorealLivingRoomSVG } from "./ArchitecturalSVGs";
 import { Sparkles, Compass, Eye, Sun, Sunset, Cloud } from "lucide-react";
 
@@ -16,7 +16,19 @@ export default function ComparisonSlider({
   const [sliderPosition, setSliderPosition] = useState<number>(50);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [activeLighting, setActiveLighting] = useState<"daylight" | "sunset" | "overcast">("daylight");
+  const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.clientWidth);
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   const handleMove = useCallback(
     (clientX: number) => {
@@ -127,13 +139,10 @@ export default function ComparisonSlider({
           style={{ width: `${sliderPosition}%` }}
         >
           <div className="absolute inset-0 w-full h-full min-w-[300px]">
-            {/* The SVG inside must have fixed aspect to align with the background */}
             <div
               className="absolute inset-0"
               style={{
-                width: containerRef.current?.clientWidth
-                  ? `${containerRef.current.clientWidth}px`
-                  : "100%",
+                width: containerWidth > 0 ? `${containerWidth}px` : "100%",
                 height: "100%"
               }}
             >

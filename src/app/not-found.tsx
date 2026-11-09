@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Home, Sparkles, Compass } from "lucide-react";
+import { ArrowLeft, Home, Compass } from "lucide-react";
 
 export default function NotFound() {
   return (
