@@ -1,1438 +1,778 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
-  Sparkles,
   ArrowRight,
-  ShieldCheck,
   Check,
   Menu,
   X,
   FileSpreadsheet,
   Sun,
   PenTool,
-  Palette,
   HardHat,
-  MonitorPlay,
-  Download,
-  Share2,
-  ChevronDown,
-  Cpu,
-  Loader2,
   CheckCircle2,
-  UploadCloud,
-  FileCheck2
+  ChevronRight
 } from "lucide-react";
 
 export default function Home() {
-  // Navigation & Mobile Drawer
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Modals
-  const [trialModalOpen, setTrialModalOpen] = useState(false);
-  const [selectedTier, setSelectedTier] = useState("pro");
-  const [workEmail, setWorkEmail] = useState("");
-  const [modalStep, setModalStep] = useState<"form" | "provisioning" | "success">("form");
-  const [provisionProgress, setProvisionProgress] = useState(0);
-
-  // Pricing Toggle
   const [isAnnual, setIsAnnual] = useState(true);
+  const [activeStage, setActiveStage] = useState<0 | 1 | 2 | 3>(0);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState("Pro Firm");
+  const [emailInput, setEmailInput] = useState("");
+  const [modalSuccess, setModalSuccess] = useState(false);
 
-  // Interactive Before/After Hero Slider
-  const [sliderPosition, setSliderPosition] = useState(50);
-  const [isDragging, setIsDragging] = useState(false);
-  const [activeLighting, setActiveLighting] = useState<"daylight" | "sunset" | "overcast">("daylight");
-  const containerRef = useRef<HTMLDivElement>(null);
+  const showcaseStages = [
+    {
+      id: 0,
+      title: "2D Pencil Line-Art",
+      subtitle: "Pencil elevation & floorplan sketch",
+      badge: "Stage 01 · Input",
+      details: "Raw scan of tracing paper schematic. Dimensions extracted: 28'-6\" x 16'-8\" with 10'-6\" ceiling height.",
+      stats: "6 Walls · 2 Door Arcs · 1 Window",
+      graphic: (
+        <div className="h-44 sm:h-52 rounded-lg bg-[#070B12] border border-slate-800 p-4 font-mono text-[11px] flex flex-col justify-between select-none">
+          <div className="flex justify-between items-center text-slate-500 text-[10px]">
+            <span>SCAN_INPUT_402.JPG</span>
+            <span className="text-cyan-400">OCR ACCURACY: 99.4%</span>
+          </div>
+          <div className="border border-dashed border-slate-700/80 p-3 rounded bg-slate-900/40 space-y-1">
+            <div className="flex justify-between text-slate-200 font-semibold">
+              <span>[LIVING_AREA_312_SQFT]</span>
+              <span className="text-amber-400">HERRINGBONE_OAK</span>
+            </div>
+            <p className="text-[10px] text-slate-400">Outer boundaries recognized. 90° inward door swing detected.</p>
+          </div>
+          <div className="flex justify-between text-slate-400 text-[10px]">
+            <span>Wall Thickness: 6&quot; Exterior</span>
+            <span className="text-emerald-400">Status: Vectorized</span>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 1,
+      title: "AI Geometry Extrusion",
+      subtitle: "Auto-detected walls & door swings",
+      badge: "Stage 02 · Analysis",
+      details: "Boundary extrusion algorithm converts 2D lines into watertight 3D volumes ready for Revit/AutoCAD export.",
+      stats: "312 sq ft volume · 14.5 lin ft glazing",
+      graphic: (
+        <div className="h-44 sm:h-52 rounded-lg bg-[#070B12] border border-slate-800 p-4 font-mono text-[11px] flex flex-col justify-between select-none">
+          <div className="flex justify-between items-center text-slate-500 text-[10px]">
+            <span>EXTRUSION_ENGINE_V2</span>
+            <span className="text-cyan-400">LATENCY: 0.8s</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 text-[10px]">
+            <div className="p-2.5 rounded bg-slate-900 border border-slate-800 space-y-1">
+              <span className="text-slate-400 block">Structural Assembly</span>
+              <span className="text-slate-200 font-bold">6 Double Walls</span>
+            </div>
+            <div className="p-2.5 rounded bg-slate-900 border border-slate-800 space-y-1">
+              <span className="text-slate-400 block">Clear Ceiling Span</span>
+              <span className="text-slate-200 font-bold">10&apos;-6&quot; Aff.</span>
+            </div>
+          </div>
+          <div className="flex justify-between text-slate-400 text-[10px]">
+            <span>IFC 4.3 BIM Parameter Schema</span>
+            <span className="text-cyan-400">Mapped</span>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 2,
+      title: "4K Photoreal Interior",
+      subtitle: "Oak herringbone, natural 5000K daylight",
+      badge: "Stage 03 · Synthesis",
+      details: "Physical multi-bounce raytracing calibrates accurate sun angles, diffuse window falloff, and realistic PBR material sheen.",
+      stats: "5000K Daylight · PBR European Oak",
+      graphic: (
+        <div className="h-44 sm:h-52 rounded-lg bg-gradient-to-br from-[#121A29] via-[#0E1522] to-[#080D16] border border-slate-800 p-4 flex flex-col justify-between select-none">
+          <div className="flex justify-between items-center text-[10px] font-mono">
+            <span className="text-slate-400">RAYTRACED 4K UHD</span>
+            <span className="text-amber-400 font-bold">5000K NATURAL DAYLIGHT</span>
+          </div>
+          <div className="p-3 rounded-lg bg-slate-950/70 border border-slate-800 space-y-1 backdrop-blur-sm">
+            <div className="text-xs font-bold text-white">Scandinavian Minimalist Suite</div>
+            <p className="text-[10px] text-slate-400 font-mono">Bouclé curved sectional, fluted oak millwork, honed Carrara marble plinth.</p>
+          </div>
+          <div className="flex justify-between text-[10px] font-mono text-slate-400">
+            <span>Diffuse Shadows: Physically Modeled</span>
+            <span className="text-emerald-400">128 SPP</span>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 3,
+      title: "Auto BOM Takeoff",
+      subtitle: "Flooring: 420 sq ft | Paint: 850 sq ft | 6 Fixtures",
+      badge: "Stage 04 · Spec Handoff",
+      details: "Instant trade-ready schedule detailing material square footages, linear trims, and verified procurement estimates.",
+      stats: "Total Project Takeoff: $12,606.00",
+      graphic: (
+        <div className="h-44 sm:h-52 rounded-lg bg-[#070B12] border border-slate-800 p-3.5 font-mono text-[10px] flex flex-col justify-between select-none">
+          <div className="flex justify-between text-slate-400 pb-1 border-b border-slate-800">
+            <span>SCHEDULE LINE ITEM</span>
+            <span>QTY</span>
+            <span>EST. COST</span>
+          </div>
+          <div className="space-y-1 text-slate-300">
+            <div className="flex justify-between">
+              <span className="truncate pr-2">01. European White Oak Hardwood</span>
+              <span className="text-slate-400">420 sq ft</span>
+              <span className="text-amber-400">$6,090</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="truncate pr-2">02. Fluted Wall Acoustic Paneling</span>
+              <span className="text-slate-400">180 sq ft</span>
+              <span className="text-amber-400">$2,952</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="truncate pr-2">03. Monolithic Marble Plinth Table</span>
+              <span className="text-slate-400">1 Unit</span>
+              <span className="text-amber-400">$1,280</span>
+            </div>
+          </div>
+          <div className="pt-1.5 border-t border-slate-800 flex justify-between font-bold text-cyan-400">
+            <span>Total Estimated Materials:</span>
+            <span>$10,322.00</span>
+          </div>
+        </div>
+      )
+    }
+  ];
 
-  // Interactive Live Feature Demo Tab Switcher
-  const [activeFeatureTab, setActiveFeatureTab] = useState<"vectorizer" | "lighting" | "bom" | "materials" | "viewer">("lighting");
-  const [kelvin, setKelvin] = useState(4000);
-  const [selectedFloor, setSelectedFloor] = useState<"oak" | "concrete" | "walnut">("oak");
-  const [selectedRoom, setSelectedRoom] = useState<"living" | "kitchen" | "master">("living");
-  const [copiedBom, setCopiedBom] = useState(false);
-
-  // FAQ Accordion
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-
-  // Before/After Drag Handlers
-  const handleMove = useCallback((clientX: number) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const percentage = Math.max(5, Math.min(95, (x / rect.width) * 100));
-    setSliderPosition(percentage);
-  }, []);
-
-  const handleOpenTrial = (tier: string = "pro", email: string = "") => {
-    setSelectedTier(tier);
-    if (email) setWorkEmail(email);
-    setModalStep("form");
-    setProvisionProgress(0);
-    setTrialModalOpen(true);
+  const handleOpenModal = (plan = "Pro Firm") => {
+    setSelectedPlan(plan);
+    setModalSuccess(false);
+    setModalOpen(true);
   };
 
   const handleModalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!workEmail) return;
-    setModalStep("provisioning");
-    let p = 10;
-    const interval = setInterval(() => {
-      p += 25;
-      setProvisionProgress(p);
-      if (p >= 100) {
-        clearInterval(interval);
-        setTimeout(() => {
-          setModalStep("success");
-        }, 400);
-      }
-    }, 450);
-  };
-
-  const handleCopyBom = () => {
-    setCopiedBom(true);
-    setTimeout(() => setCopiedBom(false), 2000);
+    if (emailInput) {
+      setModalSuccess(true);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F17] text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-300 relative overflow-x-hidden">
-      {/* Background Architectural Blueprint Grid Pattern */}
-      <div
-        className="fixed inset-0 pointer-events-none opacity-25"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px)
-          `,
-          backgroundSize: "36px 36px"
-        }}
-      />
-      <div className="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-cyan-500/10 blur-[140px] rounded-full pointer-events-none" />
-      <div className="fixed top-1/3 right-10 w-[500px] h-[350px] bg-amber-500/5 blur-[130px] rounded-full pointer-events-none" />
-
-      {/* ========================================================= */}
-      {/* 1. NAVBAR                                                 */}
-      {/* ========================================================= */}
-      <header className="sticky top-0 z-40 bg-[#0B0F17]/90 backdrop-blur-xl border-b border-slate-800/80 transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
-          {/* Brand Logo & Name */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative flex items-center justify-center">
-              <div className="absolute inset-0 bg-cyan-500/25 blur-md rounded-xl group-hover:bg-cyan-500/40 transition-all" />
-              <svg
-                viewBox="0 0 40 40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-8 h-8 relative z-10 transition-transform group-hover:scale-105"
-              >
-                <polygon
-                  points="20,2 36,11 36,29 20,38 4,29 4,11"
-                  stroke="#06B6D4"
-                  strokeWidth="2"
-                  strokeDasharray="2 1.5"
-                  fill="#111827"
-                />
-                <path
-                  d="M12 28L20 8L28 28"
-                  stroke="#38BDF8"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <line x1="15" y1="21" x2="25" y2="21" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
-                <circle cx="20" cy="8" r="2.2" fill="#06B6D4" />
-                <polygon points="20,33 17,27 23,27" fill="#F59E0B" />
-                <circle cx="20" cy="21" r="1.5" fill="#38BDF8" />
-              </svg>
+    <div className="min-h-screen bg-[#090D14] text-slate-200 antialiased font-sans selection:bg-cyan-500/25 selection:text-cyan-300">
+      {/* 1. MINIMAL HEADER / NAVIGATION */}
+      <header className="sticky top-0 z-40 bg-[#090D14]/90 backdrop-blur-md border-b border-slate-800/80">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2.5">
+            <div className="w-6 h-6 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-cyan-400 font-mono text-xs font-bold">
+              S
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors">
-                SiteSketch
-              </span>
-              <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-cyan-400 border border-slate-700 hidden sm:inline">
-                SaaS v2.4
-              </span>
-            </div>
+            <span className="text-base font-bold text-white tracking-tight">SiteSketch</span>
           </Link>
 
-          {/* Nav Links */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2 p-1 rounded-full bg-slate-900/80 border border-slate-800 backdrop-blur-md">
-            <a href="#features" className="px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800 transition-all">
-              Features
-            </a>
-            <a href="#spatial-engine" className="px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800 transition-all">
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center space-x-7 text-xs font-medium text-slate-400">
+            <a href="#spatial-engine" className="hover:text-white transition-colors">
               Spatial Engine
             </a>
-            <a href="#pricing" className="px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800 transition-all">
-              Pricing
+            <a href="#bom" className="hover:text-white transition-colors">
+              BOM &amp; Takeoffs
             </a>
-            <a href="#faq" className="px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300 hover:text-cyan-400 hover:bg-slate-800 transition-all">
-              FAQ
+            <a href="#workflow" className="hover:text-white transition-colors">
+              Workflow
+            </a>
+            <a href="#pricing" className="hover:text-white transition-colors">
+              Pricing
             </a>
           </nav>
 
           {/* Right Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <button
-              onClick={() => handleOpenTrial("starter")}
-              className="text-xs font-medium text-slate-300 hover:text-cyan-400 transition-colors cursor-pointer"
+              onClick={() => handleOpenModal("Starter")}
+              className="text-xs text-slate-400 hover:text-white transition-colors cursor-pointer"
             >
               Sign In
             </button>
             <button
-              onClick={() => handleOpenTrial("pro")}
-              className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center space-x-1.5 shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all cursor-pointer"
+              onClick={() => handleOpenModal("Pro Firm")}
+              className="px-3.5 py-1.5 rounded-full bg-white text-slate-950 font-semibold text-xs hover:bg-slate-200 transition-colors shadow-sm cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Start Free Trial</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              Start Free Studio Beta
             </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <div className="md:hidden flex items-center space-x-2">
-            <button
-              onClick={() => handleOpenTrial("pro")}
-              className="px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-bold text-xs"
-            >
-              Free Trial
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
+          {/* Mobile Toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-1.5 text-slate-400 hover:text-white"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
 
-        {/* Mobile Dropdown */}
+        {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden px-4 pt-2 pb-6 bg-[#0B0F17] border-b border-slate-800 space-y-3">
-            <a
-              href="#features"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-900"
-            >
-              Features
-            </a>
+          <div className="md:hidden px-4 py-4 bg-[#090D14] border-b border-slate-800 space-y-3 text-xs">
             <a
               href="#spatial-engine"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-900"
+              className="block py-1 text-slate-300 hover:text-white"
             >
               Spatial Engine
             </a>
             <a
+              href="#bom"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-1 text-slate-300 hover:text-white"
+            >
+              BOM &amp; Takeoffs
+            </a>
+            <a
+              href="#workflow"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-1 text-slate-300 hover:text-white"
+            >
+              Workflow
+            </a>
+            <a
               href="#pricing"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-900"
+              className="block py-1 text-slate-300 hover:text-white"
             >
               Pricing
             </a>
-            <a
-              href="#faq"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-900"
-            >
-              FAQ
-            </a>
-            <div className="pt-2 border-t border-slate-800">
+            <div className="pt-2 border-t border-slate-800 flex flex-col gap-2">
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  handleOpenTrial("pro");
+                  handleOpenModal("Starter");
                 }}
-                className="w-full py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs text-center"
+                className="py-2 text-center text-slate-300 border border-slate-800 rounded-lg"
               >
-                Start Free Trial
+                Sign In
+              </button>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleOpenModal("Pro Firm");
+                }}
+                className="py-2 text-center bg-white text-slate-950 font-semibold rounded-lg"
+              >
+                Start Free Studio Beta
               </button>
             </div>
           </div>
         )}
       </header>
 
-      {/* ========================================================= */}
-      {/* 2. HERO SECTION & STUDIO CANVAS                           */}
-      {/* ========================================================= */}
-      <section id="spatial-engine" className="relative pt-12 sm:pt-20 pb-16 sm:pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          {/* Main Title & Action Bar */}
-          <div className="text-center max-w-4xl mx-auto space-y-6">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-cyan-500/40 text-cyan-300 text-xs font-mono shadow-[0_0_20px_rgba(6,182,212,0.2)]">
-              <span>⚡ Spatial Engine v2.4 Beta Live — Generative BIM &amp; Photoreal Renders</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.12]">
-              Turn Rough Floor Sketches into{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-amber-300">
-                Photorealistic Spaces
-              </span>{" "}
-              in Seconds.
-            </h1>
-
-            <p className="text-base sm:text-lg lg:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-              SiteSketch transforms hand-drawn pencil schematics, CAD layouts, and raw job-site shells into immersive 3D interior renders, material schedules, and automated cost estimates.
-            </p>
-
-            {/* Action Bar */}
-            <div className="pt-2 max-w-xl mx-auto">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleOpenTrial("pro", workEmail);
-                }}
-                className="flex flex-col sm:flex-row items-center gap-2 p-2 rounded-2xl bg-slate-900/90 border border-slate-700/80 shadow-[0_0_30px_-5px_rgba(6,182,212,0.25)]"
-              >
-                <input
-                  type="email"
-                  value={workEmail}
-                  onChange={(e) => setWorkEmail(e.target.value)}
-                  placeholder="Enter your studio work email..."
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm focus:outline-none focus:border-cyan-400 transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm whitespace-nowrap flex items-center justify-center space-x-2 transition-all shadow-md cursor-pointer"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>Get 5 Free Studio Renders</span>
-                </button>
-              </form>
-
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-slate-400">
-                <span className="flex items-center gap-1.5 text-cyan-400">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  No credit card required
-                </span>
-                <span>•</span>
-                <span>Direct DWG / IFC BIM export</span>
-                <span>•</span>
-                <span>0.8s GPU Raytracing</span>
-              </div>
-            </div>
+      {/* 2. HERO SECTION */}
+      <section id="spatial-engine" className="pt-16 sm:pt-24 pb-16 sm:pb-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6">
+          {/* Pill Badge */}
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-300 text-xs font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            <span>SiteSketch Spatial Engine v2.0 Beta</span>
           </div>
 
-          {/* High-Fidelity Hero Visual Asset: SiteSketch Studio Canvas Frame */}
-          <div className="relative rounded-2xl border border-slate-700/60 bg-slate-950 shadow-[0_0_50px_-10px_rgba(6,182,212,0.25)] overflow-hidden">
-            {/* Studio Header Bar */}
-            <div className="flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800 text-xs">
-              <div className="flex items-center space-x-3">
-                <div className="flex space-x-1.5">
-                  <span className="w-3 h-3 rounded-full bg-red-500/80" />
-                  <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                  <span className="w-3 h-3 rounded-full bg-green-500/80" />
-                </div>
-                <div className="h-4 w-px bg-slate-800" />
-                <span className="font-mono text-cyan-400 font-bold text-[11px]">
-                  SiteSketch Studio
-                </span>
-                <span className="text-slate-500 hidden sm:inline">/</span>
-                <span className="font-mono text-slate-300 text-[11px] hidden sm:inline">
-                  Res_Nordic_Living_Room_4K.skx
-                </span>
-              </div>
+          {/* Headline (H1) */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.12]">
+            Sketch your space before you build it.
+          </h1>
 
-              <div className="flex items-center space-x-3 font-mono text-[10px]">
-                <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded bg-slate-800 text-slate-200">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-                  <span>GPU ENGINE v2.4 ONLINE</span>
-                </div>
-                <button
-                  onClick={() => handleOpenTrial("pro")}
-                  className="px-3 py-1.5 rounded-lg bg-cyan-500 text-slate-950 font-bold hover:bg-cyan-400 transition-colors cursor-pointer"
-                >
-                  Launch Canvas
-                </button>
-              </div>
-            </div>
+          {/* Subheading */}
+          <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            SiteSketch transforms hand-drawn pencil floorplans and raw site photos into photorealistic 3D interior renders, material takeoffs, and automated spec sheets.
+          </p>
 
-            {/* 3-Pane Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-800 min-h-[480px]">
-              {/* Left Pane: 2D Hand-drawn blueprint floor plan with annotations (col-span-3) */}
-              <div className="hidden xl:flex xl:col-span-3 flex-col bg-slate-950 p-4 space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <span className="font-mono text-xs font-semibold text-slate-200 uppercase tracking-wider">
-                    2D Raw Pencil Schematic
-                  </span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">
-                    INPUT
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Tracing paper scan uploaded from job site. Spatial OCR parsed structural double walls, 14&apos;-6&quot; window opening, and 312 sq ft living perimeter.
-                </p>
-
-                {/* Hand drawn sketch vector preview */}
-                <div className="relative rounded-lg overflow-hidden border border-slate-800 aspect-[4/3] bg-[#0D1524] p-3 flex flex-col justify-between font-mono text-[10px]">
-                  <div className="flex justify-between text-cyan-400">
-                    <span>SPAN: 28&apos;-6&quot;</span>
-                    <span>OCR: 99.4%</span>
-                  </div>
-                  <div className="border border-dashed border-cyan-500/40 p-4 rounded text-center space-y-1">
-                    <div className="text-slate-200 font-bold">LIVING SUITE</div>
-                    <div className="text-amber-400 text-[9px]">312 SQ. FT. // HERRINGBONE OAK</div>
-                    <div className="text-slate-500 text-[9px]">DOOR SWING: 90° ARCH DETECTED</div>
-                  </div>
-                  <div className="text-slate-400 text-[9px] flex justify-between">
-                    <span>WALLS: 6 LOAD-BEARING</span>
-                    <span className="text-emerald-400">VECTORIZED</span>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5 pt-2 text-[11px] font-mono">
-                  <div className="flex justify-between py-1 border-b border-slate-800 text-slate-400">
-                    <span>Finished Ceiling:</span>
-                    <span className="text-slate-200">10&apos;-6&quot; Aff.</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-slate-800 text-slate-400">
-                    <span>Glazed Mullion:</span>
-                    <span className="text-slate-200">Slim Steel Low-E</span>
-                  </div>
-                  <div className="flex justify-between py-1 text-slate-400">
-                    <span>Design Token:</span>
-                    <span className="text-amber-400 font-semibold">Scandinavian Modern</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Middle Pane: Interactive Before/After Split Comparison Slider (col-span-6) */}
-              <div className="col-span-1 lg:col-span-8 xl:col-span-6 flex flex-col bg-slate-950 p-4 sm:p-5">
-                <div className="flex items-center justify-between pb-3 text-xs">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                    <span className="font-mono font-semibold text-slate-200 uppercase tracking-wider">
-                      Interactive Before / After Viewport
-                    </span>
-                  </div>
-
-                  {/* Mode Selector */}
-                  <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-[11px]">
-                    <button
-                      onClick={() => setActiveLighting("daylight")}
-                      className={`px-2 py-0.5 rounded transition-all cursor-pointer ${
-                        activeLighting === "daylight"
-                          ? "bg-cyan-500/20 text-cyan-300 font-semibold"
-                          : "text-slate-400"
-                      }`}
-                    >
-                      Daylight 4000K
-                    </button>
-                    <button
-                      onClick={() => setActiveLighting("sunset")}
-                      className={`px-2 py-0.5 rounded transition-all cursor-pointer ${
-                        activeLighting === "sunset"
-                          ? "bg-amber-500/20 text-amber-300 font-semibold"
-                          : "text-slate-400"
-                      }`}
-                    >
-                      Golden 2700K
-                    </button>
-                  </div>
-                </div>
-
-                {/* Draggable Comparison Canvas */}
-                <div
-                  ref={containerRef}
-                  onMouseMove={(e) => isDragging && handleMove(e.clientX)}
-                  onMouseDown={() => setIsDragging(true)}
-                  onMouseUp={() => setIsDragging(false)}
-                  onTouchMove={(e) => e.touches.length > 0 && handleMove(e.touches[0].clientX)}
-                  className="relative w-full aspect-[16/10] rounded-xl overflow-hidden cursor-ew-resize select-none border border-slate-800 shadow-2xl bg-slate-950"
-                >
-                  {/* Right Background: 4K Photoreal Scandinavian Living Room */}
-                  <div className="absolute inset-0 w-full h-full bg-[#161E2E] flex flex-col justify-between p-6">
-                    <div className="flex justify-end">
-                      <span className="px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-amber-500/50 text-amber-400 font-mono text-[10px] font-bold">
-                        OUTPUT: 4K PHOTOREAL SCANDINAVIAN
-                      </span>
-                    </div>
-
-                    {/* Architectural scene representation */}
-                    <div className="space-y-4">
-                      <div className="h-28 rounded-lg bg-gradient-to-r from-slate-800/80 via-slate-700/50 to-amber-900/20 border border-slate-700/60 p-4 flex flex-col justify-end">
-                        <span className="text-xs font-bold text-white">Curved Bouclé Sectional &amp; Fluted Wall</span>
-                        <span className="text-[10px] font-mono text-cyan-300">
-                          Raytraced Bounces: 128 SPP • {activeLighting === "sunset" ? "2700K Warm Sunset" : "4000K Natural Daylight"}
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3 text-[10px] font-mono">
-                        <div className="p-2 rounded bg-slate-900/80 border border-slate-800 text-slate-300">
-                          Floor: Select European White Oak
-                        </div>
-                        <div className="p-2 rounded bg-slate-900/80 border border-slate-800 text-slate-300">
-                          Plinth: Honed Carrara Marble
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Left Foreground: 2D Hand-drawn Napkin Blueprint */}
-                  <div
-                    className="absolute inset-0 h-full overflow-hidden bg-[#0D1524] border-r-2 border-cyan-400"
-                    style={{ width: `${sliderPosition}%` }}
-                  >
-                    <div className="p-6 h-full flex flex-col justify-between min-w-[320px]">
-                      <div>
-                        <span className="px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/50 text-cyan-400 font-mono text-[10px] font-bold">
-                          INPUT: NAPKIN BLUEPRINT SCHEMATIC
-                        </span>
-                      </div>
-                      <div className="space-y-3 font-mono text-xs text-slate-300">
-                        <div className="border border-dashed border-cyan-400/60 p-3 rounded bg-slate-900/60">
-                          <div className="text-cyan-400 font-bold">PENCIL SCHEMATIC LAYER</div>
-                          <div className="text-[10px] text-slate-400 mt-1">
-                            Outer perimeter 28&apos;-6&quot; × 16&apos;-8&quot; • 90° Door Swing • Glazed Wall
-                          </div>
-                        </div>
-                        <div className="text-[10px] text-amber-400">
-                          OCR Vector Extrusion: Active
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Drag Handle Icon */}
-                  <div
-                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-slate-900 border-2 border-cyan-400 flex items-center justify-center text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.8)] pointer-events-none"
-                    style={{ left: `${sliderPosition}%` }}
-                  >
-                    <span className="text-[10px] font-bold">⟷</span>
-                  </div>
-
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-slate-950/80 border border-slate-800 text-[10px] font-mono text-slate-400 pointer-events-none">
-                    Drag slider left/right to inspect transition
-                  </div>
-                </div>
-
-                <div className="mt-3 pt-3 border-t border-slate-800 flex justify-between items-center text-xs font-mono text-slate-400">
-                  <span>Preset: Scandinavian Daylight 4K</span>
-                  <span className="text-emerald-400 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> BIM Parametric Synced
-                  </span>
-                </div>
-              </div>
-
-              {/* Right Pane: Auto-generated Bill of Materials (BOM) card (col-span-3) */}
-              <div className="col-span-1 lg:col-span-4 xl:col-span-3 flex flex-col bg-slate-900/60 p-4 space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <div className="flex items-center space-x-2">
-                    <FileSpreadsheet className="w-4 h-4 text-amber-400" />
-                    <span className="font-mono text-xs font-semibold text-slate-200 uppercase tracking-wider">
-                      Auto Bill of Materials (BOM)
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800">
-                    LIVE
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Surface takeoffs calculated instantaneously from detected room boundaries and architectural finishes.
-                </p>
-
-                {/* Itemized Line Items */}
-                <div className="space-y-2 text-xs font-mono">
-                  <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
-                    <div className="flex justify-between text-slate-200">
-                      <span className="truncate pr-1">01. Herringbone White Oak</span>
-                      <span className="text-amber-400 font-bold">$4,524</span>
-                    </div>
-                    <div className="flex justify-between text-[10px] text-slate-400">
-                      <span>312 sq. ft.</span>
-                      <span>$14.50 / sq. ft.</span>
-                    </div>
-                  </div>
-
-                  <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
-                    <div className="flex justify-between text-slate-200">
-                      <span className="truncate pr-1">02. Bouclé Curved Sectional</span>
-                      <span className="text-amber-400 font-bold">$3,850</span>
-                    </div>
-                    <div className="flex justify-between text-[10px] text-slate-400">
-                      <span>1 Unit (Custom Radius)</span>
-                      <span>Specified</span>
-                    </div>
-                  </div>
-
-                  <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
-                    <div className="flex justify-between text-slate-200">
-                      <span className="truncate pr-1">03. Fluted Acoustic Millwork</span>
-                      <span className="text-amber-400 font-bold">$2,952</span>
-                    </div>
-                    <div className="flex justify-between text-[10px] text-slate-400">
-                      <span>180 sq. ft. wall span</span>
-                      <span>$16.40 / sq. ft.</span>
-                    </div>
-                  </div>
-
-                  <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 space-y-1">
-                    <div className="flex justify-between text-slate-200">
-                      <span className="truncate pr-1">04. Carrara Marble Plinth</span>
-                      <span className="text-amber-400 font-bold">$1,280</span>
-                    </div>
-                    <div className="flex justify-between text-[10px] text-slate-400">
-                      <span>Honed waterfall edge</span>
-                      <span>1 Unit</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Subtotal & Action buttons */}
-                <div className="pt-2 border-t border-slate-800 space-y-2">
-                  <div className="flex justify-between text-xs font-mono text-cyan-400 font-bold">
-                    <span>Total Project Takeoff:</span>
-                    <span>$12,606.00</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
-                    <button
-                      onClick={handleCopyBom}
-                      className="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                    >
-                      <Download className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>{copiedBom ? "Exported!" : "Export CSV"}</span>
-                    </button>
-                    <button
-                      onClick={() => handleOpenTrial("pro")}
-                      className="py-1.5 px-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 flex items-center justify-center gap-1 transition-colors cursor-pointer"
-                    >
-                      <Share2 className="w-3.5 h-3.5" />
-                      <span>Push to Revit</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Social Proof Strip */}
-          <div className="pt-8 border-t border-slate-800 space-y-4 text-center">
-            <p className="text-xs font-mono text-slate-400 uppercase tracking-widest">
-              Trusted by 1,400+ interior designers, BIM modelers, and residential developers worldwide
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 opacity-60 text-slate-300 font-mono text-xs uppercase font-semibold">
-              <span className="hover:text-cyan-400 transition-colors">STUDIO FORMA</span>
-              <span className="hover:text-amber-400 transition-colors">APEX LIVING</span>
-              <span className="hover:text-cyan-400 transition-colors">STRUCTURA DESIGN</span>
-              <span className="hover:text-amber-400 transition-colors">VERTEX BUILD</span>
-              <span className="hover:text-cyan-400 transition-colors">ARCHETYPE LABS</span>
-            </div>
+          {/* CTAs */}
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              onClick={() => handleOpenModal("Pro Firm")}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm flex items-center justify-center space-x-1.5 transition-colors cursor-pointer"
+            >
+              <span>Start your plan</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <a
+              href="#showcase"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 font-medium text-xs sm:text-sm flex items-center justify-center space-x-1.5 transition-colors"
+            >
+              <span>See the spatial builder</span>
+            </a>
           </div>
         </div>
-      </section>
 
-      {/* ========================================================= */}
-      {/* 3. LIVE FEATURE GRID (6 CORE SAAS CAPABILITIES)          */}
-      {/* ========================================================= */}
-      <section id="features" className="py-20 sm:py-28 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/40 text-cyan-400 tracking-wider uppercase font-semibold">
-              CORE PRODUCT CAPABILITIES
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-              B2B Spatial Architecture Engine
-            </h2>
-            <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-              Bridging hand-drawn concepts and 4K photorealistic spatial reality with millimeter BIM accuracy.
-            </p>
-          </div>
-
-          {/* Interactive Feature Demo Tabs */}
-          <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-6 space-y-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4 overflow-x-auto gap-2">
-              <span className="text-xs font-mono text-cyan-400 flex items-center gap-1.5 shrink-0">
-                <Cpu className="w-4 h-4" /> TEST LIVE CAPABILITIES:
+        {/* Interactive / Visual Showcase Card */}
+        <div id="showcase" className="max-w-4xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16">
+          <div className="rounded-xl border border-slate-800 bg-[#0C111C] p-5 sm:p-7 shadow-xl space-y-6">
+            {/* Top Tag Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800/80 gap-2">
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                <span className="text-xs font-mono font-medium text-slate-300">
+                  Blueprint · Scandinavian Suite Renovation
+                </span>
+              </div>
+              <span className="text-[11px] font-mono text-slate-500">
+                Studio Spec ID #402-N
               </span>
-              <div className="flex gap-2 text-xs font-mono shrink-0">
+            </div>
+
+            {/* Split View / Step Tab Switcher */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {showcaseStages.map((stage) => (
                 <button
-                  onClick={() => setActiveFeatureTab("lighting")}
-                  className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
-                    activeFeatureTab === "lighting"
-                      ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold"
-                      : "bg-slate-950 border-slate-800 text-slate-400"
+                  key={stage.id}
+                  onClick={() => setActiveStage(stage.id as 0 | 1 | 2 | 3)}
+                  className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
+                    activeStage === stage.id
+                      ? "bg-slate-800 border-cyan-500/60 text-white shadow-sm"
+                      : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-300 hover:border-slate-700"
                   }`}
                 >
-                  Multi-Kelvin Lighting
+                  <div className="text-[10px] font-mono text-cyan-400">{stage.badge}</div>
+                  <div className="text-xs font-semibold truncate mt-0.5">{stage.title}</div>
                 </button>
-                <button
-                  onClick={() => setActiveFeatureTab("materials")}
-                  className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
-                    activeFeatureTab === "materials"
-                      ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold"
-                      : "bg-slate-950 border-slate-800 text-slate-400"
-                  }`}
-                >
-                  Finish Swapping
-                </button>
-                <button
-                  onClick={() => setActiveFeatureTab("bom")}
-                  className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
-                    activeFeatureTab === "bom"
-                      ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold"
-                      : "bg-slate-950 border-slate-800 text-slate-400"
-                  }`}
-                >
-                  Live Takeoffs
-                </button>
+              ))}
+            </div>
+
+            {/* Active Stage Viewport */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center pt-1">
+              <div className="md:col-span-5 space-y-3">
+                <div className="text-xs font-mono text-cyan-400 uppercase tracking-wide">
+                  {showcaseStages[activeStage].badge}
+                </div>
+                <h3 className="text-lg font-bold text-white">
+                  {showcaseStages[activeStage].title}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  {showcaseStages[activeStage].details}
+                </p>
+                <div className="pt-2 text-[11px] font-mono text-slate-300 border-t border-slate-800">
+                  Key Metric: <span className="text-amber-400">{showcaseStages[activeStage].stats}</span>
+                </div>
+              </div>
+
+              <div className="md:col-span-7">
+                {showcaseStages[activeStage].graphic}
               </div>
             </div>
 
-            {/* Interactive Demo Content */}
-            {activeFeatureTab === "lighting" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-white">Photorealistic Multi-Environment Lighting</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Adjust the Kelvin slider to observe real-time photon bounce calculations from warm 2700K dusk to 6500K overcast noon.
-                  </p>
-                  <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-                    <div className="flex justify-between text-xs font-mono text-cyan-400 font-bold">
-                      <span>CORRELATED TEMPERATURE:</span>
-                      <span>{kelvin} KELVIN</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="2200"
-                      max="6500"
-                      step="100"
-                      value={kelvin}
-                      onChange={(e) => setKelvin(Number(e.target.value))}
-                      className="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded"
-                    />
-                    <div className="flex justify-between text-[10px] font-mono text-slate-500">
-                      <span>2200K Golden Sunset</span>
-                      <span>4000K Daylight</span>
-                      <span>6500K Overcast</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-xl border border-slate-800 bg-[#161E2E] p-6 text-center space-y-3">
-                  <div className="text-xs font-mono text-amber-400">
-                    CALIBRATED LIGHTING PROFILE: {kelvin < 3200 ? "GOLDEN HOUR RAYTRACE" : "NATURAL DAYLIGHT 4K"}
-                  </div>
-                  <div className="h-28 rounded-lg border border-slate-700 bg-gradient-to-r from-slate-800 via-slate-700 to-amber-900/30 flex items-center justify-center text-xs font-mono text-slate-300">
-                    Solar Azimuth Angle: 38° • Soft Ambient Diffuse
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeFeatureTab === "materials" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-white">Material &amp; Finish Swapping Sandbox</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Toggle PBR materials with single clicks while keeping volumetric shadows intact.
-                  </p>
-                  <div className="space-y-2 text-xs font-mono">
-                    <span className="text-slate-400 block">FLOOR FINISH:</span>
-                    <div className="grid grid-cols-3 gap-2">
-                      {(["oak", "concrete", "walnut"] as const).map((mat) => (
-                        <button
-                          key={mat}
-                          onClick={() => setSelectedFloor(mat)}
-                          className={`py-2 px-2 rounded-lg border capitalize transition-all cursor-pointer ${
-                            selectedFloor === mat
-                              ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold"
-                              : "bg-slate-950 border-slate-800 text-slate-400"
-                          }`}
-                        >
-                          {mat}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-xl border border-slate-800 bg-slate-950 p-6 space-y-3 font-mono text-xs">
-                  <div className="text-cyan-400 font-bold">ACTIVE PBR SHADER GRAPH:</div>
-                  <div className="p-3 rounded bg-slate-900 border border-slate-800 space-y-1">
-                    <div className="text-slate-200">Floor: {selectedFloor.toUpperCase()} FINISH</div>
-                    <div className="text-slate-400 text-[10px]">Roughness: 0.28 • Normal Map: 4K Tangent</div>
-                    <div className="text-emerald-400 text-[10px]">✓ Real-time Diffuse Reflections Calculated</div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeFeatureTab === "bom" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-white">Automated Bill of Materials (BOM) Takeoffs</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Select a zone to inspect auto-calculated takeoffs and unit cost schedules.
-                  </p>
-                  <div className="flex gap-2 text-xs font-mono">
-                    {(["living", "kitchen", "master"] as const).map((r) => (
-                      <button
-                        key={r}
-                        onClick={() => setSelectedRoom(r)}
-                        className={`flex-1 py-2 rounded-lg border capitalize transition-all cursor-pointer ${
-                          selectedRoom === r
-                            ? "bg-amber-500/20 border-amber-400 text-amber-300 font-bold"
-                            : "bg-slate-950 border-slate-800 text-slate-400"
-                        }`}
-                      >
-                        {r} Suite
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 font-mono text-xs space-y-2">
-                  <div className="flex justify-between border-b border-slate-800 pb-2 text-amber-400 font-bold">
-                    <span>ZONE: {selectedRoom.toUpperCase()}</span>
-                    <span>IFC 4.3 VERIFIED</span>
-                  </div>
-                  <div className="flex justify-between py-1 text-slate-300">
-                    <span>Hardwood / Flooring Takeoff</span>
-                    <span>{selectedRoom === "living" ? "$4,524.00" : "$3,600.00"}</span>
-                  </div>
-                  <div className="flex justify-between py-1 text-slate-300">
-                    <span>Custom Millwork &amp; Paneling</span>
-                    <span>{selectedRoom === "living" ? "$2,952.00" : "$2,450.00"}</span>
-                  </div>
-                  <div className="pt-2 border-t border-slate-800 flex justify-between font-bold text-cyan-400">
-                    <span>Zone Total:</span>
-                    <span>{selectedRoom === "living" ? "$12,606.00" : "$6,050.00"}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* 6 Core Product Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Feature 1 */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 p-6 flex flex-col justify-between space-y-4 transition-all group">
-              <div className="space-y-3">
-                <div className="p-3 rounded-xl bg-slate-800 text-cyan-400 w-fit group-hover:scale-105 transition-transform">
-                  <PenTool className="w-5 h-5" />
-                </div>
-                <div className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-cyan-400 border border-slate-800 w-fit">
-                  SPATIAL OCR 2.4
-                </div>
-                <h3 className="text-lg font-bold text-white">2D Pencil &amp; CAD Vectorization</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Upload phone photos of tracing paper, napkin sketches, or raw DWG/PDF files. Our spatial neural net automatically recognizes load-bearing walls, door swings, and window rough openings.
-                </p>
-              </div>
-              <div className="pt-3 border-t border-slate-800 flex justify-between items-center text-xs font-mono text-cyan-400">
-                <span>Vector Extraction</span>
-                <span>AutoCAD / Revit</span>
-              </div>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 p-6 flex flex-col justify-between space-y-4 transition-all group">
-              <div className="space-y-3">
-                <div className="p-3 rounded-xl bg-slate-800 text-amber-400 w-fit group-hover:scale-105 transition-transform">
-                  <Sun className="w-5 h-5" />
-                </div>
-                <div className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-amber-400 border border-slate-800 w-fit">
-                  KELVIN SCHEDULER
-                </div>
-                <h3 className="text-lg font-bold text-white">Photorealistic Multi-Environment Lighting</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Instantly toggle daylight orientation, golden-hour exterior radiance, or interior ambient spot-lighting schemes calibrated to real Kelvin temperatures.
-                </p>
-              </div>
-              <div className="pt-3 border-t border-slate-800 flex justify-between items-center text-xs font-mono text-amber-400">
-                <span>2700K - 6500K</span>
-                <span>Physical Raytracing</span>
-              </div>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 p-6 flex flex-col justify-between space-y-4 transition-all group">
-              <div className="space-y-3">
-                <div className="p-3 rounded-xl bg-slate-800 text-cyan-400 w-fit group-hover:scale-105 transition-transform">
-                  <FileSpreadsheet className="w-5 h-5" />
-                </div>
-                <div className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-cyan-400 border border-slate-800 w-fit">
-                  AUTOMATED ESTIMATING
-                </div>
-                <h3 className="text-lg font-bold text-white">Automated Bill of Materials (BOM) Takeoffs</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Stop manual spatial calculations. SiteSketch parses the design and outputs an itemized spreadsheet of flooring square footage, paint coverage, and fixture counts.
-                </p>
-              </div>
-              <div className="pt-3 border-t border-slate-800 flex justify-between items-center text-xs font-mono text-cyan-400">
-                <span>CSV / PDF / IFC</span>
-                <span>Manufacturer Catalogs</span>
-              </div>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 p-6 flex flex-col justify-between space-y-4 transition-all group">
-              <div className="space-y-3">
-                <div className="p-3 rounded-xl bg-slate-800 text-amber-400 w-fit group-hover:scale-105 transition-transform">
-                  <Palette className="w-5 h-5" />
-                </div>
-                <div className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-amber-400 border border-slate-800 w-fit">
-                  PBR SANDBOX
-                </div>
-                <h3 className="text-lg font-bold text-white">Material &amp; Finish Swapping Sandbox</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Test herringbone oak versus polished concrete flooring, or carrara marble versus matte quartz countertops with one click, preserving natural room shadows and reflections.
-                </p>
-              </div>
-              <div className="pt-3 border-t border-slate-800 flex justify-between items-center text-xs font-mono text-amber-400">
-                <span>Real-Time PBR</span>
-                <span>Normal &amp; Roughness</span>
-              </div>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 p-6 flex flex-col justify-between space-y-4 transition-all group">
-              <div className="space-y-3">
-                <div className="p-3 rounded-xl bg-slate-800 text-cyan-400 w-fit group-hover:scale-105 transition-transform">
-                  <HardHat className="w-5 h-5" />
-                </div>
-                <div className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-cyan-400 border border-slate-800 w-fit">
-                  SITE STAGING
-                </div>
-                <h3 className="text-lg font-bold text-white">Raw Framing-to-Finish Site Staging</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Snap a photo of an unfinished concrete shell or wooden stud framing on-site. SiteSketch aligns 3D design finishes precisely over the physical site geometry for client walk-ins.
-                </p>
-              </div>
-              <div className="pt-3 border-t border-slate-800 flex justify-between items-center text-xs font-mono text-cyan-400">
-                <span>Laser Level Sync</span>
-                <span>Job-Site AR Ready</span>
-              </div>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/50 p-6 flex flex-col justify-between space-y-4 transition-all group">
-              <div className="space-y-3">
-                <div className="p-3 rounded-xl bg-slate-800 text-amber-400 w-fit group-hover:scale-105 transition-transform">
-                  <MonitorPlay className="w-5 h-5" />
-                </div>
-                <div className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-amber-400 border border-slate-800 w-fit">
-                  CLIENT PANORAMA
-                </div>
-                <h3 className="text-lg font-bold text-white">360° Interactive Client Web Viewers</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Share secure, browser-based 360° panoramic viewer links with homeowners and stakeholders. Enable digital markup, annotations, and instant design finish approvals without downloads.
-                </p>
-              </div>
-              <div className="pt-3 border-t border-slate-800 flex justify-between items-center text-xs font-mono text-amber-400">
-                <span>Zero Client Installs</span>
-                <span>Markup &amp; Approvals</span>
-              </div>
+            {/* Bottom Planner Link */}
+            <div className="pt-3 border-t border-slate-800/80 flex justify-between items-center text-xs">
+              <span className="text-slate-500">
+                picked from your room type &amp; architectural style
+              </span>
+              <button
+                onClick={() => handleOpenModal("Pro Firm")}
+                className="text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center gap-1 cursor-pointer"
+              >
+                <span>Try the planner</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 4. STEP-BY-STEP PRODUCTION FLOW                           */}
-      {/* ========================================================= */}
-      <section className="py-20 sm:py-28 relative bg-slate-950/60 border-y border-slate-800/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/40 text-cyan-400 tracking-wider uppercase font-semibold">
-              STEP-BY-STEP FLOW
+      {/* 3. HOW IT WORKS (CLEAN 4-STEP LINEAR FLOW) */}
+      <section id="workflow" className="py-20 sm:py-24 border-t border-slate-800/80 bg-[#070B11]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+          <div className="max-w-2xl space-y-2">
+            <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">
+              Production Workflow
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-              From Concept to Construction Spec
+            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              From draft to spec in four steps.
             </h2>
-            <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-              Upload Blueprint ➔ Spatial Analysis ➔ Material Tuning ➔ Export Renders &amp; BOM.
+            <p className="text-xs sm:text-sm text-slate-400">
+              A frictionless linear pipeline built for architectural practices.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Step 1 */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 space-y-4 relative group hover:border-cyan-500/50 transition-all">
-              <div className="flex justify-between items-center">
-                <div className="w-10 h-10 rounded-xl bg-slate-800 text-cyan-400 flex items-center justify-center font-bold">
-                  <UploadCloud className="w-5 h-5" />
-                </div>
-                <span className="font-mono text-2xl font-black text-slate-700">01</span>
+            <div className="p-5 rounded-xl border border-slate-800 bg-[#0C111C] space-y-3">
+              <div className="w-8 h-8 rounded bg-slate-800 text-cyan-400 flex items-center justify-center font-mono font-bold text-xs">
+                01
               </div>
-              <div className="space-y-1">
-                <span className="text-xs font-mono text-cyan-400 font-semibold">STEP 01</span>
-                <h3 className="text-base font-bold text-white">Upload Blueprint</h3>
-              </div>
+              <h3 className="text-sm font-bold text-white">01. Sketch</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Drag and drop 2D tracing paper sketches, architectural napkin doodles, PDF construction sets, or raw on-site photos.
+                Snap and upload any hand-drawn pencil plan, blueprint, or empty room photo.
               </p>
-              <div className="pt-2 text-[10px] font-mono text-slate-500">
-                Supports: JPG, PNG, PDF, DXF
-              </div>
             </div>
 
             {/* Step 2 */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 space-y-4 relative group hover:border-cyan-500/50 transition-all">
-              <div className="flex justify-between items-center">
-                <div className="w-10 h-10 rounded-xl bg-slate-800 text-cyan-400 flex items-center justify-center font-bold">
-                  <Cpu className="w-5 h-5" />
-                </div>
-                <span className="font-mono text-2xl font-black text-slate-700">02</span>
+            <div className="p-5 rounded-xl border border-slate-800 bg-[#0C111C] space-y-3">
+              <div className="w-8 h-8 rounded bg-slate-800 text-cyan-400 flex items-center justify-center font-mono font-bold text-xs">
+                02
               </div>
-              <div className="space-y-1">
-                <span className="text-xs font-mono text-cyan-400 font-semibold">STEP 02</span>
-                <h3 className="text-base font-bold text-white">Spatial Analysis</h3>
-              </div>
+              <h3 className="text-sm font-bold text-white">02. Extrude</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Neural vision engine recognizes wall thickness, extrudes ceiling heights, tags room perimeters, and isolates fenestration openings.
+                Neural spatial detection automatically aligns walls, ceiling heights, and door rough openings.
               </p>
-              <div className="pt-2 text-[10px] font-mono text-slate-500">
-                Execution: &lt;1.2s on Cloud GPU
-              </div>
             </div>
 
             {/* Step 3 */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 space-y-4 relative group hover:border-cyan-500/50 transition-all">
-              <div className="flex justify-between items-center">
-                <div className="w-10 h-10 rounded-xl bg-slate-800 text-amber-400 flex items-center justify-center font-bold">
-                  <Palette className="w-5 h-5" />
-                </div>
-                <span className="font-mono text-2xl font-black text-slate-700">03</span>
+            <div className="p-5 rounded-xl border border-slate-800 bg-[#0C111C] space-y-3">
+              <div className="w-8 h-8 rounded bg-slate-800 text-amber-400 flex items-center justify-center font-mono font-bold text-xs">
+                03
               </div>
-              <div className="space-y-1">
-                <span className="text-xs font-mono text-amber-400 font-semibold">STEP 03</span>
-                <h3 className="text-base font-bold text-white">Material Tuning</h3>
-              </div>
+              <h3 className="text-sm font-bold text-white">03. Materialize</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Pick an architectural mood preset (Minimalist, Japandi, Industrial, Coastal) or inject custom vendor material finishes and lighting schemes.
+                Swap real materials (walnut vs. oak, quartz vs. granite) and adjust natural sun lighting.
               </p>
-              <div className="pt-2 text-[10px] font-mono text-slate-500">
-                Custom PBR Texture Tokens
-              </div>
             </div>
 
             {/* Step 4 */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 space-y-4 relative group hover:border-cyan-500/50 transition-all">
-              <div className="flex justify-between items-center">
-                <div className="w-10 h-10 rounded-xl bg-slate-800 text-emerald-400 flex items-center justify-center font-bold">
-                  <FileCheck2 className="w-5 h-5" />
-                </div>
-                <span className="font-mono text-2xl font-black text-slate-700">04</span>
+            <div className="p-5 rounded-xl border border-slate-800 bg-[#0C111C] space-y-3">
+              <div className="w-8 h-8 rounded bg-slate-800 text-emerald-400 flex items-center justify-center font-mono font-bold text-xs">
+                04
               </div>
-              <div className="space-y-1">
-                <span className="text-xs font-mono text-emerald-400 font-semibold">STEP 04</span>
-                <h3 className="text-base font-bold text-white">Export Renders &amp; BOM</h3>
-              </div>
+              <h3 className="text-sm font-bold text-white">04. Export</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Download 4K Ultra-HD renders, dispatch interactive 360° client web viewer links, and export synchronized material spreadsheets.
+                Instantly download 4K spatial walkthroughs, client web links, and itemized Bill-of-Materials (BOM).
               </p>
-              <div className="pt-2 text-[10px] font-mono text-slate-500">
-                Direct Sync: Revit, AutoCAD, CSV
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 5. PRICING CARDS (STARTER, PRO, ENTERPRISE)               */}
-      {/* ========================================================= */}
-      <section id="pricing" className="py-20 sm:py-28 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/40 text-cyan-400 tracking-wider uppercase font-semibold">
-              TRANSPARENT SAAS LICENSING
+      {/* 4. FOCUSED CORE FEATURES (4 HIGH-SIGNAL CARDS) */}
+      <section id="bom" className="py-20 sm:py-24 border-t border-slate-800/80">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+          <div className="max-w-2xl space-y-2">
+            <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">
+              Platform Features
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-              Self-Serve Software Plans
+            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              Everything you need — nothing you don&apos;t.
             </h2>
-            <p className="text-sm sm:text-base text-slate-400">
-              14-day full platform access. No setup fees or local hardware required.
+            <p className="text-xs sm:text-sm text-slate-400">
+              High-signal tools replacing repetitive manual drafting cycles.
             </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Card 1 */}
+            <div className="p-6 rounded-xl border border-slate-800 bg-[#0C111C] space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="p-2 rounded bg-slate-800 text-cyan-400">
+                  <PenTool className="w-4 h-4" />
+                </span>
+                <span className="text-[10px] font-mono text-slate-500">VECTOR CAD</span>
+              </div>
+              <h3 className="text-base font-bold text-white">Pencil-to-CAD Vectorizer</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Converts hand-drawn sketches into scaled, editable vector layouts compatible with AutoCAD (.dwg) and Revit (.rvt).
+              </p>
+            </div>
+
+            {/* Card 2 */}
+            <div className="p-6 rounded-xl border border-slate-800 bg-[#0C111C] space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="p-2 rounded bg-slate-800 text-amber-400">
+                  <Sun className="w-4 h-4" />
+                </span>
+                <span className="text-[10px] font-mono text-slate-500">RAYTRACING</span>
+              </div>
+              <h3 className="text-base font-bold text-white">Photoreal Daylighting Simulator</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Accurately projects daylight orientation and ambient interior lighting calibrated to physical Kelvin temperatures.
+              </p>
+            </div>
+
+            {/* Card 3 */}
+            <div className="p-6 rounded-xl border border-slate-800 bg-[#0C111C] space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="p-2 rounded bg-slate-800 text-cyan-400">
+                  <FileSpreadsheet className="w-4 h-4" />
+                </span>
+                <span className="text-[10px] font-mono text-slate-500">TAKEOFFS</span>
+              </div>
+              <h3 className="text-base font-bold text-white">Instant Bill-of-Materials (BOM)</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Generates itemized square-footage takeoffs and trade-ready fixture lists with one-click export to CSV and PDF schedules.
+              </p>
+            </div>
+
+            {/* Card 4 */}
+            <div className="p-6 rounded-xl border border-slate-800 bg-[#0C111C] space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="p-2 rounded bg-slate-800 text-emerald-400">
+                  <HardHat className="w-4 h-4" />
+                </span>
+                <span className="text-[10px] font-mono text-slate-500">JOB SITE</span>
+              </div>
+              <h3 className="text-base font-bold text-white">Framing-to-Finish Site Staging</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Overlay finished 3D interior designs directly over photos of raw studs and drywall for client on-site approvals.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. SELF-SERVE SAAS PRICING BRACKET (CLEAN & COMPACT) */}
+      <section id="pricing" className="py-20 sm:py-24 border-t border-slate-800/80 bg-[#070B11]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="max-w-xl space-y-2">
+              <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">
+                Pricing
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                Simple, transparent subscriptions.
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-400">
+                14-day free trial on all plans. Cancel anytime.
+              </p>
+            </div>
 
             {/* Monthly / Annual Toggle */}
-            <div className="pt-4 flex items-center justify-center">
-              <div className="flex items-center p-1 rounded-full bg-slate-900 border border-slate-800">
-                <button
-                  onClick={() => setIsAnnual(false)}
-                  className={`px-4 py-2 rounded-full text-xs font-mono font-semibold transition-all cursor-pointer ${
-                    !isAnnual ? "bg-slate-800 text-white" : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  Monthly Billing
-                </button>
-                <button
-                  onClick={() => setIsAnnual(true)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-mono font-semibold transition-all cursor-pointer ${
-                    isAnnual
-                      ? "bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.4)]"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  <span>Annual Billing</span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                    isAnnual ? "bg-slate-950 text-cyan-400" : "bg-cyan-950 text-cyan-300"
-                  }`}>
-                    Save 20%
-                  </span>
-                </button>
-              </div>
+            <div className="flex items-center p-1 rounded-lg bg-slate-900 border border-slate-800 self-start sm:self-auto text-xs">
+              <button
+                onClick={() => setIsAnnual(false)}
+                className={`px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                  !isAnnual ? "bg-slate-800 text-white" : "text-slate-400 hover:text-white"
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setIsAnnual(true)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded font-medium transition-colors cursor-pointer ${
+                  isAnnual ? "bg-slate-800 text-white" : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <span>Annual</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-950 text-cyan-300 font-mono">
+                  -20%
+                </span>
+              </button>
             </div>
           </div>
 
-          {/* Pricing Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-            {/* Starter Plan */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 sm:p-8 flex flex-col justify-between space-y-6">
+          {/* Pricing Tiers */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Starter */}
+            <div className="p-6 rounded-xl border border-slate-800 bg-[#0C111C] flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-xl font-bold text-white">Starter</h3>
-                  <p className="text-xs text-slate-400 mt-1">For solo interior designers and freelance draftsmen.</p>
+                  <h3 className="text-base font-bold text-white">Starter</h3>
+                  <p className="text-xs text-slate-400 mt-1">Solo draftsmen &amp; designers.</p>
                 </div>
                 <div className="flex items-baseline space-x-1 font-mono">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-white">
-                    ${isAnnual ? 24 : 29}
-                  </span>
-                  <span className="text-xs text-slate-400">/ month</span>
+                  <span className="text-3xl font-bold text-white">${isAnnual ? 24 : 29}</span>
+                  <span className="text-xs text-slate-500">/mo</span>
                 </div>
-                <ul className="space-y-2.5 pt-4 border-t border-slate-800 text-xs text-slate-300">
+                <ul className="space-y-2 text-xs text-slate-300 pt-3 border-t border-slate-800">
                   <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>25 High-Resolution Renders / month</span>
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>25 Spatial Renders / month</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>2D Sketch &amp; CAD Vectorization</span>
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>2D Vectorization</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                     <span>Standard 1080p Export</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>3 Active Project Workspaces</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Community Support &amp; Cloud Storage</span>
-                  </li>
                 </ul>
               </div>
 
-              <div className="pt-4">
-                <button
-                  onClick={() => handleOpenTrial("starter")}
-                  className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                >
-                  <span>Start Free 14-Day Trial</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+              <button
+                onClick={() => handleOpenModal("Starter")}
+                className="w-full py-2.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-colors cursor-pointer"
+              >
+                Start Free Plan
+              </button>
             </div>
 
-            {/* Pro Studio Plan (Highlighted) */}
-            <div className="rounded-2xl bg-slate-900 border-2 border-cyan-400 p-6 sm:p-8 flex flex-col justify-between space-y-6 shadow-[0_0_50px_-10px_rgba(6,182,212,0.35)] relative lg:-translate-y-2">
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-cyan-500 text-slate-950 font-mono text-[10px] font-black uppercase tracking-wider">
-                MOST POPULAR
-              </div>
-
+            {/* Pro Firm (Highlighted) */}
+            <div className="p-6 rounded-xl border-2 border-cyan-400/80 bg-[#0E1524] flex flex-col justify-between space-y-6 relative shadow-lg">
               <div className="space-y-4">
-                <div>
-                  <h3 className="text-xl font-bold text-white">Pro Studio</h3>
-                  <p className="text-xs text-slate-400 mt-1">For growing design practices, boutique architecture studios, and contractors.</p>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-base font-bold text-white">Pro Firm</h3>
+                    <p className="text-xs text-slate-400 mt-1">Boutique studios &amp; remodelers.</p>
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
+                    POPULAR
+                  </span>
                 </div>
                 <div className="flex items-baseline space-x-1 font-mono">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-white">
-                    ${isAnnual ? 64 : 79}
-                  </span>
-                  <span className="text-xs text-slate-400">/ month</span>
+                  <span className="text-3xl font-bold text-white">${isAnnual ? 64 : 79}</span>
+                  <span className="text-xs text-slate-500">/mo</span>
                 </div>
-                <ul className="space-y-2.5 pt-4 border-t border-slate-800 text-xs text-slate-300">
+                <ul className="space-y-2 text-xs text-slate-200 pt-3 border-t border-slate-800">
                   <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span className="font-semibold text-white">150 Ultra-HD 4K Renders / month</span>
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span className="font-semibold text-white">150 4K Ultra-HD Renders</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Automated Bill of Materials (BOM) &amp; Takeoffs</span>
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>Automated BOM Exports</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Raw Framing-to-Finish Site Staging</span>
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>Framing Overlay</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Unlimited Project Workspaces</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Interactive 360° Client Viewer Links</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Priority GPU Cloud Rendering Queue</span>
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>Client Web Links</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="pt-4">
-                <button
-                  onClick={() => handleOpenTrial("pro")}
-                  className="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-[0_0_20px_rgba(6,182,212,0.5)] transition-all cursor-pointer"
-                >
-                  <span>Claim 14-Day Pro Trial</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+              <button
+                onClick={() => handleOpenModal("Pro Firm")}
+                className="w-full py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-colors cursor-pointer"
+              >
+                Try the Canvas
+              </button>
             </div>
 
-            {/* Enterprise Plan */}
-            <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 sm:p-8 flex flex-col justify-between space-y-6">
+            {/* Enterprise */}
+            <div className="p-6 rounded-xl border border-slate-800 bg-[#0C111C] flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-xl font-bold text-white">Enterprise</h3>
-                  <p className="text-xs text-slate-400 mt-1">For commercial architectural firms and multi-site developers.</p>
+                  <h3 className="text-base font-bold text-white">Enterprise</h3>
+                  <p className="text-xs text-slate-400 mt-1">Architectural practices.</p>
                 </div>
                 <div className="flex items-baseline space-x-1 font-mono">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-white">
-                    ${isAnnual ? 159 : 199}
-                  </span>
-                  <span className="text-xs text-slate-400">/ month</span>
+                  <span className="text-3xl font-bold text-white">${isAnnual ? 159 : 199}</span>
+                  <span className="text-xs text-slate-500">/mo</span>
                 </div>
-                <ul className="space-y-2.5 pt-4 border-t border-slate-800 text-xs text-slate-300">
+                <ul className="space-y-2 text-xs text-slate-300 pt-3 border-t border-slate-800">
                   <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Unlimited 4K &amp; 8K Spatial Renders</span>
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>Unlimited Renders</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Multi-Seat Team Seats (Up to 10 included)</span>
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>Custom Materials Library</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Dedicated High-Throughput API &amp; Webhook Access</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Custom Material &amp; Vendor Catalog Integration</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-cyan-400 shrink-0" />
-                    <span>Enterprise SSO, Role-Based Controls &amp; SLA</span>
+                    <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>Webhooks &amp; API Pipeline</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="pt-4">
-                <button
-                  onClick={() => handleOpenTrial("enterprise")}
-                  className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                >
-                  <span>Deploy Enterprise Workspace</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+              <button
+                onClick={() => handleOpenModal("Enterprise")}
+                className="w-full py-2.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-colors cursor-pointer"
+              >
+                View Spec Sheet
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 6. FAQ & FOOTER                                           */}
-      {/* ========================================================= */}
-      <section id="faq" className="py-20 sm:py-28 relative bg-slate-950/60 border-t border-slate-800/80">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-4">
-            <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-900 border border-cyan-500/40 text-cyan-400 tracking-wider uppercase font-semibold">
-              FREQUENTLY ASKED QUESTIONS
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Architectural &amp; Software Details
-            </h2>
-          </div>
+      {/* 6. MINIMAL FOOTER */}
+      <footer className="border-t border-slate-800/80 bg-[#090D14] py-12 text-xs text-slate-500">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center space-x-2 text-white font-bold">
+              <div className="w-5 h-5 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-cyan-400 font-mono text-[10px]">
+                S
+              </div>
+              <span>SiteSketch</span>
+            </div>
 
-          <div className="space-y-3">
-            {[
-              {
-                q: "Can SiteSketch interpret rough pencil drawings and site measurements?",
-                a: "Yes. The vision engine parses hand-drawn floor plans, elevation sketches, and dimensional handwritten notations into clean geometry. Our spatial OCR model recognizes door swings, load-bearing walls, and window openings from phone snapshots of tracing paper, napkins, or job-site sketches."
-              },
-              {
-                q: "How does the Bill of Materials (BOM) get calculated?",
-                a: "When a render is produced, SiteSketch segments spatial planes and furniture models, cross-referencing floor areas and fixture volumes against industry standard dimensional guidelines. It calculates square footages for flooring, wall coverage for millwork or paint, linear dimensions for baseboards, and generates an itemized, exportable CSV/PDF schedule."
-              },
-              {
-                q: "Can I export my project to AutoCAD or Revit?",
-                a: "Pro and Enterprise tiers include direct spatial schema exports compatible with DXF/DWG formats and common 3D packages. You can download clean 2D vector CAD drawings, IFC 4.3 BIM parametric models, and glTF 2.0 PBR asset packages ready for AutoCAD, Revit, SketchUp, and Blender."
-              },
-              {
-                q: "Is my proprietary design data secure?",
-                a: "Yes. Projects are encrypted at rest with AES-256 and processed in isolated cloud containers. Your designs and proprietary architectural files are never used to train public models. Enterprise workspaces also support dedicated AWS S3 bucket synchronization with customer-managed keys."
-              }
-            ].map((faq, idx) => {
-              const isOpen = openFaq === idx;
-              return (
-                <div key={idx} className="rounded-xl border border-slate-800 bg-slate-900/70 overflow-hidden">
-                  <button
-                    onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full p-5 text-left flex items-center justify-between text-slate-200 hover:text-white transition-colors cursor-pointer"
-                  >
-                    <span className="font-semibold text-sm sm:text-base">{faq.q}</span>
-                    <ChevronDown className={`w-4 h-4 text-cyan-400 shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
-                  </button>
-                  {isOpen && (
-                    <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-slate-800/50">
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Global SaaS Footer */}
-      <footer className="border-t border-slate-800 bg-[#0B0F17] pt-16 pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-2 space-y-4">
-              <Link href="/" className="flex items-center space-x-3">
-                <span className="text-xl font-bold text-white tracking-tight">SiteSketch</span>
-                <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-cyan-400 border border-slate-700">
-                  SaaS Platform
-                </span>
+            <nav className="flex flex-wrap items-center gap-6 text-slate-400">
+              <a href="#spatial-engine" className="hover:text-white transition-colors">
+                Spatial Engine
+              </a>
+              <button
+                onClick={() => handleOpenModal("Changelog")}
+                className="hover:text-white transition-colors cursor-pointer"
+              >
+                Changelog
+              </button>
+              <Link href="/privacy" className="hover:text-white transition-colors">
+                Privacy Policy
               </Link>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-sm leading-relaxed">
-                The generative spatial engine turning rough concepts into photorealistic environments and accurate project takeoffs.
-              </p>
-              <div className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                SYSTEM CLOUD OPERATIONAL • AES-256 ENCRYPTED
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">Product</h4>
-              <ul className="space-y-2 text-xs text-slate-400">
-                <li><a href="#spatial-engine" className="hover:text-cyan-400 transition-colors">Spatial Engine</a></li>
-                <li><a href="#features" className="hover:text-cyan-400 transition-colors">Framing Staging</a></li>
-                <li><a href="#features" className="hover:text-cyan-400 transition-colors">BOM Generator</a></li>
-                <li><button onClick={() => handleOpenTrial("enterprise")} className="hover:text-cyan-400 transition-colors cursor-pointer text-left">API Documentation</button></li>
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">Resources</h4>
-              <ul className="space-y-2 text-xs text-slate-400">
-                <li><a href="#features" className="hover:text-cyan-400 transition-colors">Documentation</a></li>
-                <li><a href="#features" className="hover:text-cyan-400 transition-colors">Design Token Library</a></li>
-                <li><a href="#pricing" className="hover:text-cyan-400 transition-colors">Community Showcase</a></li>
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">Legal &amp; Company</h4>
-              <ul className="space-y-2 text-xs text-slate-400">
-                <li><Link href="/privacy" className="hover:text-cyan-400 transition-colors">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="hover:text-cyan-400 transition-colors">Terms of Service</Link></li>
-                <li><a href="#spatial-engine" className="hover:text-cyan-400 transition-colors">Security Architecture</a></li>
-              </ul>
-            </div>
+              <Link href="/terms" className="hover:text-white transition-colors">
+                Terms of Service
+              </Link>
+              <button
+                onClick={() => handleOpenModal("Starter")}
+                className="hover:text-white transition-colors cursor-pointer"
+              >
+                Sign In
+              </button>
+            </nav>
           </div>
 
-          <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-500 gap-4">
-            <p>© 2026 SiteSketch Technologies, Inc. All rights reserved.</p>
-            <div className="text-cyan-400">sitesketch.online</div>
+          <div className="pt-6 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono text-slate-600">
+            <p>© 2026 SiteSketch Technologies. All rights reserved.</p>
+            <span>Autonomous Spatial Architecture Platform</span>
           </div>
         </div>
       </footer>
 
-      {/* ========================================================= */}
-      {/* 7. WORKING TRIAL / BETA ACTIVATION MODAL                   */}
-      {/* ========================================================= */}
-      {trialModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-[0_0_60px_-15px_rgba(6,182,212,0.3)] p-6 sm:p-8 overflow-hidden">
+      {/* Self-Serve Studio Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+          <div className="relative w-full max-w-md rounded-xl bg-[#0C111C] border border-slate-800 p-6 space-y-4">
             <button
-              onClick={() => setTrialModalOpen(false)}
-              className="absolute top-5 right-5 text-slate-400 hover:text-white p-1 rounded-lg cursor-pointer"
+              onClick={() => setModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
 
-            {modalStep === "form" && (
-              <form onSubmit={handleModalSubmit} className="space-y-5">
-                <div>
-                  <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                    Launch Studio Beta
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800 uppercase">
-                      {selectedTier} Plan Trial
-                    </span>
-                  </h3>
-                  <p className="text-xs text-slate-400 font-mono mt-1">
-                    Instant GPU workspace • 5 Free Renders • No credit card required
+            {!modalSuccess ? (
+              <form onSubmit={handleModalSubmit} className="space-y-4">
+                <div className="space-y-1">
+                  <h3 className="text-base font-bold text-white">Start Studio Beta</h3>
+                  <p className="text-xs text-slate-400">
+                    Access {selectedPlan} workspace instantly. No credit card required.
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono text-slate-300 mb-1.5">
-                    STUDIO WORK EMAIL *
+                  <label className="block text-xs font-mono text-slate-300 mb-1">
+                    WORK EMAIL
                   </label>
                   <input
                     type="email"
                     required
-                    value={workEmail}
-                    onChange={(e) => setWorkEmail(e.target.value)}
-                    placeholder="name@archstudio.design"
-                    className="w-full px-3.5 py-2.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:border-cyan-400"
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    placeholder="architect@firm.design"
+                    className="w-full px-3 py-2 rounded bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none focus:border-cyan-400"
                   />
                 </div>
 
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    className="w-full py-3 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm flex items-center justify-center space-x-2 shadow-[0_0_20px_rgba(6,182,212,0.4)] cursor-pointer"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    <span>Activate Free Studio License</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-
-                <div className="text-center text-[11px] font-mono text-slate-500">
-                  AES-256 Encrypted • Never trained on public models
-                </div>
-              </form>
-            )}
-
-            {modalStep === "provisioning" && (
-              <div className="py-8 text-center space-y-5 font-mono">
-                <Loader2 className="w-10 h-10 text-cyan-400 animate-spin mx-auto" />
-                <div className="space-y-1">
-                  <h4 className="text-base font-bold text-white">ALLOCATING SPATIAL GPU NODE...</h4>
-                  <p className="text-xs text-slate-400">Loading generative BIM weights &amp; provisioning credits</p>
-                </div>
-                <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
-                  <div className="bg-cyan-400 h-full transition-all duration-300" style={{ width: `${provisionProgress}%` }} />
-                </div>
-              </div>
-            )}
-
-            {modalStep === "success" && (
-              <div className="py-6 text-center space-y-5">
-                <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-7 h-7" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-xl font-bold text-white">Workspace Provisioned!</h3>
-                  <p className="text-xs text-slate-300 font-mono">
-                    Token dispatched to <span className="text-cyan-400">{workEmail}</span>
-                  </p>
-                </div>
-                <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-left font-mono text-xs">
-                  <span className="text-slate-400 text-[10px]">ACTIVE STUDIO KEY:</span>
-                  <div className="text-cyan-300 select-all mt-1">sk_live_992f8a4e_arch_7b82x4</div>
-                </div>
                 <button
-                  onClick={() => setTrialModalOpen(false)}
-                  className="w-full py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs cursor-pointer hover:bg-cyan-400"
+                  type="submit"
+                  className="w-full py-2.5 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-colors cursor-pointer"
                 >
-                  Enter Studio Canvas
+                  Activate Free Trial
+                </button>
+              </form>
+            ) : (
+              <div className="py-4 text-center space-y-3">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <h4 className="text-sm font-bold text-white">Workspace Provisioned</h4>
+                <p className="text-xs text-slate-400 font-mono">
+                  Authentication token sent to {emailInput}.
+                </p>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="w-full py-2 rounded bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium cursor-pointer"
+                >
+                  Close
                 </button>
               </div>
             )}
