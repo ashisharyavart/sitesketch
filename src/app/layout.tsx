@@ -110,7 +110,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[#FAFAFA] text-slate-900 font-sans selection:bg-slate-200 selection:text-slate-900">
+      <body className="min-h-full flex flex-col bg-canvas text-slate-900 font-sans selection:bg-slate-200 selection:text-slate-900">
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-MV6KTJNX06"
           strategy="afterInteractive"

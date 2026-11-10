@@ -28,7 +28,11 @@ import {
 } from "lucide-react";
 import StudioCanvas from "@/components/StudioCanvas";
 import ComparisonSlider from "@/components/ComparisonSlider";
-import { BlueprintSketchSVG, SolarStudyDiagramSVG } from "@/components/ArchitecturalSVGs";
+import {
+  PencilFloorplanSketchSVG,
+  CadFloorplanVectorSVG,
+  SolarStudyDiagramSVG
+} from "@/components/ArchitecturalSVGs";
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -91,9 +95,12 @@ export default function Home() {
   const [contactStatusMessage, setContactStatusMessage] = useState("");
   const [contactLoading, setContactLoading] = useState(false);
 
-  // Hallmark-styled Features Interactive Inspector State
+  // Architectural Features Interactive Inspector State
   const [activeFeatureTab, setActiveFeatureTab] = useState<"vectorizer" | "daylight" | "bom" | "staging">("vectorizer");
-  const [vectorLayer, setVectorLayer] = useState<"all" | "walls" | "doors" | "dims">("all");
+  const [vectorLayer, setVectorLayer] = useState<"all" | "walls" | "doors" | "windows" | "dims">("all");
+  // Phase 5 Independent Lighting Controls
+  const [skyCondition, setSkyCondition] = useState<"clear" | "partly" | "overcast">("clear");
+  const [timeOfDay, setTimeOfDay] = useState<"morning" | "noon" | "evening">("noon");
   const [daylightKelvin, setDaylightKelvin] = useState<number>(5000);
   const [bomRoomPreset, setBomRoomPreset] = useState<"living" | "suite" | "studio">("living");
   const [stagingStep, setStagingStep] = useState<"framing" | "rough" | "finished">("finished");
@@ -242,30 +249,128 @@ export default function Home() {
     setTimeout(() => {
       setOnboardingLoading(false);
       setOnboardingStatusMessage(
-        `Studio Canvas Initialized: Project '${onboardingProjectName}' (${onboardingRoomType}) has been staged with ${onboardingStyle} PBR reflectance parameters. GPU raytracing compute worker allocation assigned to ${onboardingEmail}. Production GPU server cluster integration pending API keys.`
+        `Studio Workspace Initialized: Project '${onboardingProjectName}' (${onboardingRoomType}) has been staged with ${onboardingStyle} specifications. Early access request recorded for ${onboardingEmail}. Our team will reach out with workspace credentials.`
       );
     }, 800);
   };
 
-  // 4. SPEC PLANNER CSV EXPORT HANDLER
+  // 4. PRELIMINARY BILL OF MATERIALS (BOM) CSV EXPORT HANDLER (Phase 4)
   const handleExportCSV = () => {
-    const drywallSqft = Math.round(specArea * 2.8);
-    const paintGallons = Math.ceil(drywallSqft / 350);
-    const flooringWaste = Math.round(specArea * 1.1);
-    const fixturesCount = Math.max(4, Math.round(specArea / 75));
-
     const csvRows = [
-      ["SiteSketch Technologies - Automated Bill of Materials (BOM) Takeoff"],
-      ["Generated Date", new Date().toISOString().split("T")[0]],
-      ["Project Preset", "Scandinavian Suite Renovation Specimen"],
-      ["Floor Envelope", `${specArea} SQ FT`],
+      ["SiteSketch - Preliminary Bill of Materials (BOM) Takeoff"],
+      ["Project", "Residential Suite - Level 01 Plan (Sheet A-101)"],
+      ["Enclosed Area", `${specArea} sq ft (28'-6\" x 16'-8\", Ceiling: 10'-6\" AFF)`],
+      ["Date", new Date().toISOString().split("T")[0]],
+      ["Status", "Preliminary Quantity Takeoff (Illustrative benchmark pricing)"],
       [""],
-      ["Item Category", "Specification & Description", "Calculated Quantity", "Unit", "Compliance Notes"],
-      ["Flooring Assembly", specFinish, flooringWaste.toString(), "SQ FT", "Includes 10% cutting waste allowance"],
-      ["Wall Assembly", "Type X Gypsum Drywall (5/8\")", drywallSqft.toString(), "SQ FT", "Full interior perimeter and partitions"],
-      ["Wall Finishes", specWall, paintGallons.toString(), "GALLONS", "Two coats matte architectural finish"],
-      ["Daylighting Calibration", `${specKelvin}K Ambient South Exposure`, "1", "CALIBRATION", "Multi-bounce physical raytracing parameters"],
-      ["Lighting Fixtures", "Recessed Architectural LED Fixtures", fixturesCount.toString(), "UNITS", "Pre-wired low-voltage architectural standard"],
+      ["Item", "Category", "Specification", "Quantity", "Unit", "Unit Price ($)", "Estimated Total ($)", "Status / Confidence"],
+      [
+        "Select European White Oak Herringbone",
+        "Flooring",
+        "5/8\" Engineered, UV Ultra-Matte Lacquer (includes 10% cutting waste)",
+        "528",
+        "sq ft",
+        "14.50",
+        "7656.00",
+        "Measured (CAD geometry + 10% waste)"
+      ],
+      [
+        "Warm Mineral Limewash",
+        "Wall finishes",
+        "Roman breathable matte formula over 5/8\" Type X Gypsum",
+        "860",
+        "sq ft",
+        "4.20",
+        "3612.00",
+        "Measured (Perimeter x 10'-6\" AFF)"
+      ],
+      [
+        "Level 5 Smooth Acoustic Plaster",
+        "Ceiling",
+        "Flat white acoustic absorption ceiling finish",
+        "480",
+        "sq ft",
+        "5.80",
+        "2784.00",
+        "Measured (Reflected ceiling plan)"
+      ],
+      [
+        "Ultra-Slim Thermal Break Glazing Aperture",
+        "Doors and windows",
+        "14'-6\" Southern exposure, Low-E double glazing",
+        "14.5",
+        "lin ft",
+        "145.00",
+        "2102.50",
+        "Measured (CAD wall schedule)"
+      ],
+      [
+        "Solid Core White Oak Flush Egress Door",
+        "Doors and windows",
+        "32\" x 84\" opening, concealed pivot hinges",
+        "1",
+        "unit",
+        "680.00",
+        "680.00",
+        "Counted (Architectural door schedule)"
+      ],
+      [
+        "Recessed Architectural LED Downlights",
+        "Lighting",
+        "12V 4000K CRI 95+ trimless fixtures",
+        "6",
+        "units",
+        "85.00",
+        "510.00",
+        "Counted (Reflected lighting plan)"
+      ],
+      [
+        "Spun Brass Minimalist Dining Pendant",
+        "Lighting",
+        "Dimmable 24V integrated driver (3000K)",
+        "1",
+        "unit",
+        "520.00",
+        "520.00",
+        "Counted (Fixture schedule)"
+      ],
+      [
+        "Open Kitchen Island with Quartz Slab",
+        "Fixtures",
+        "Custom 115\" x 60\" waterfall fabrication and bar seating",
+        "1",
+        "unit",
+        "3400.00",
+        "3400.00",
+        "Illustrative specification"
+      ],
+      [
+        "Scandinavian Boucle Curved Sectional Sofa",
+        "Furniture",
+        "Custom 3-piece radius, high-resilience foam core",
+        "1",
+        "unit",
+        "3850.00",
+        "3850.00",
+        "Illustrative specification"
+      ],
+      [
+        "Monolithic Marble Plinth Coffee Table",
+        "Furniture",
+        "Beveled edge honed natural stone plinth base",
+        "1",
+        "unit",
+        "1150.00",
+        "1150.00",
+        "Illustrative specification"
+      ],
+      [""],
+      ["Material Subtotal", "", "", "", "", "", "26264.50", "Sum of preliminary material packages"],
+      ["Trade Labour Estimate", "", "Illustrative trade installation ($18.50/sq ft benchmark)", "480", "sq ft", "18.50", "8880.00", "Estimated trade benchmark"],
+      ["Waste Allowance (10% Flooring Included)", "", "Standard layout cut factor (48 sq ft)", "", "", "", "696.00", "Included in flooring schedule"],
+      ["Contingency (5%)", "", "Unforeseen site conditions & variations", "", "", "", "1757.23", "Standard preliminary contingency"],
+      ["Estimated Tax (8.25%)", "", "Estimated municipal sales tax on taxable materials", "", "", "", "2166.82", "Jurisdictional estimate"],
+      ["Final Estimated Project Total", "", "", "", "", "", "39068.55", "Comprehensive preliminary estimate"]
     ];
 
     const csvContent =
@@ -274,7 +379,7 @@ export default function Home() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `sitesketch-takeoff-scandinavian-suite-${specArea}sqft.csv`);
+    link.setAttribute("download", `sitesketch-preliminary-bom-takeoff-480sqft.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -447,51 +552,34 @@ export default function Home() {
         )}
       </header>
 
-      {/* 2. HERO SECTION (STRICTLY PRESERVED AS PER USER DIRECTIVE) */}
+      {/* 2. HERO SECTION (PHASE 7 REDESIGN) */}
       <section className="pt-12 sm:pt-20 pb-16 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          {/* Left Column: Bold Headline & Copy */}
+          {/* Left Column: Clear Architectural Headline & CTAs */}
           <div className="lg:col-span-7 space-y-6 sm:space-y-8">
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-bold tracking-tight text-slate-900 leading-[1.12]">
-              <span className="relative inline-block mr-2 sm:mr-3">
-                {/* Red Hand-Drawn Pencil Loop Around "Sketch" */}
-                <svg
-                  className="absolute -inset-x-3.5 sm:-inset-x-4 -inset-y-3 sm:-inset-y-3.5 w-[calc(100%+28px)] sm:w-[calc(100%+32px)] h-[calc(100%+24px)] sm:h-[calc(100%+28px)] pointer-events-none text-red-500 fill-none"
-                  viewBox="0 0 160 64"
-                  preserveAspectRatio="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M 18 36 C 14 18, 54 8, 108 9 C 148 10, 156 26, 146 42 C 132 58, 48 60, 18 48 C 6 42, 6 22, 34 14 C 68 6, 134 11, 150 25"
-                    stroke="currentColor"
-                    strokeWidth="2.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    opacity="0.94"
-                  />
-                </svg>
-                Sketch
-              </span>
-              your space before you build it
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-tight text-slate-900 leading-[1.12] font-sans">
+              Turn floorplans into better-designed spaces.
             </h1>
 
-            <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl">
-              SiteSketch transforms hand-drawn pencil schematics, floorplans, and raw site photos into photorealistic 3D interior renders, material takeoffs, and automated spec sheets.
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl font-sans">
+              Upload architectural sketches and floorplans, review spatial layouts, explore materials, and prepare project estimates in one workspace.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
-                onClick={handleOpenOnboarding}
+                type="button"
+                onClick={() => scrollToSection("builder")}
                 className="bg-slate-900 hover:bg-black text-white font-medium text-sm sm:text-base px-6 py-3 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
               >
-                Start your plan
+                Explore the workspace
               </button>
-              <a
-                href="#builder"
+              <button
+                type="button"
+                onClick={() => scrollToSection("workflow")}
                 className="bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-medium text-sm sm:text-base px-6 py-3 rounded-lg transition-colors cursor-pointer shadow-2xs inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
               >
-                See the builder
-              </a>
+                See how it works
+              </button>
             </div>
           </div>
 
@@ -546,7 +634,7 @@ export default function Home() {
               </div>
 
               {/* Drawing Viewport Canvas */}
-              <div className="relative aspect-[16/11] bg-slate-950 overflow-hidden">
+              <div className="relative aspect-[600/420] bg-slate-950 overflow-hidden">
                 {heroViewMode === "dual" && (
                   <div className="w-full h-full">
                     <ComparisonSlider showControls={false} />
@@ -555,18 +643,18 @@ export default function Home() {
 
                 {heroViewMode === "sketch" && (
                   <div className="w-full h-full relative">
-                    <BlueprintSketchSVG />
+                    <PencilFloorplanSketchSVG className="w-full h-full" />
                     <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-slate-950/85 border border-slate-800 text-xs text-slate-300 font-sans shadow-sm">
-                      Source pencil schematic
+                      Pencil field sketch
                     </div>
                   </div>
                 )}
 
                 {heroViewMode === "vector" && (
-                  <div className="w-full h-full relative bg-slate-900">
-                    <BlueprintSketchSVG />
+                  <div className="w-full h-full relative bg-slate-950">
+                    <CadFloorplanVectorSVG className="w-full h-full" />
                     <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-slate-950/85 border border-slate-800 text-xs text-slate-300 font-sans shadow-sm">
-                      Resolved vector CAD geometry
+                      Detected vector CAD
                     </div>
                   </div>
                 )}
@@ -588,8 +676,8 @@ export default function Home() {
                     <span className="font-semibold text-slate-900 truncate block">{specWall}</span>
                   </div>
                   <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
-                    <span className="text-slate-500 text-[11px] block">Daylight calibration:</span>
-                    <span className="font-semibold text-slate-900">{specKelvin}K ambient</span>
+                    <span className="text-slate-500 text-[11px] block">Aperture orientation:</span>
+                    <span className="font-semibold text-slate-900">South 180° glazing</span>
                   </div>
                 </div>
 
@@ -611,72 +699,72 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. STEP-BY-STEP LINEAR WORKFLOW */}
-      <section id="workflow" className="py-16 sm:py-20 border-t border-slate-200/80 bg-white/60">
+      {/* 3. STEP-BY-STEP LINEAR WORKFLOW (PHASE 7) */}
+      <section id="workflow" className="py-16 sm:py-20 border-t border-slate-200/80 bg-white/60 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-              From rough sketch to client-ready spec sheet in four steps.
+              From floorplan to project estimate in four steps.
             </h2>
-            <p className="text-slate-600 text-sm mt-2">
-              A structured spatial pipeline connecting initial pencil sketches to downstream CAD BIM exports and costed schedules.
+            <p className="text-slate-600 text-sm mt-2 leading-relaxed">
+              A structured design workflow connecting initial hand-drawn sketches to vector drawings, finish specifications, and costed schedules.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs hover:shadow-md transition-shadow relative">
               <span className="text-xs font-mono font-bold text-slate-400 block mb-2">
-                01. Sketch
+                01 — Upload your floorplan.
               </span>
-              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Upload any rough input</h3>
+              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Upload floorplan</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Snap a phone photo of hand-drawn floor sketches, architectural napkin notes, or rough CAD shells.
+                Upload architectural sketches, phone scans, or existing drawings in JPG, PNG, or PDF format.
               </p>
             </div>
 
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs hover:shadow-md transition-shadow relative">
               <span className="text-xs font-mono font-bold text-slate-400 block mb-2">
-                02. Extrude
+                02 — Review your layout.
               </span>
-              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Neural vector geometry</h3>
+              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Review layout</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Spatial algorithms automatically extrude 2D lines into watertight 3D walls, ceiling spans, and door openings.
+                Review detected wall boundaries, door swings, and window openings with editable dimensions and layer controls.
               </p>
             </div>
 
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs hover:shadow-md transition-shadow relative">
               <span className="text-xs font-mono font-bold text-slate-400 block mb-2">
-                03. Materialize
+                03 — Explore materials and finishes.
               </span>
-              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Real architectural finishes</h3>
+              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Select materials</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Select real PBR materials (oak herringbone, Carrara marble, limewash) with physically calibrated 5000K daylighting.
+                Select real flooring, wall surface finishes, and fixture specifications with realistic texture previews and lighting conditions.
               </p>
             </div>
 
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs hover:shadow-md transition-shadow relative">
               <span className="text-xs font-mono font-bold text-slate-400 block mb-2">
-                04. Export
+                04 — Prepare your project estimate.
               </span>
-              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Automated BOM &amp; 4K export</h3>
+              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Prepare estimate</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Download itemized Bill of Materials with exact square footages, fixture schedules, and client web walkthroughs.
+                Generate an itemized preliminary bill of materials with material subtotals, waste allowances, and CSV export.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4. INTERACTIVE STUDIO BUILDER (DIRECT DESTINATION FOR "SEE THE BUILDER") */}
-      <section id="builder" className="py-16 sm:py-24 border-t border-slate-200/80 bg-slate-950 text-white">
+      {/* 4. INTERACTIVE ARCHITECTURAL WORKSPACE (PHASE 3) */}
+      <section id="builder" className="py-16 sm:py-24 border-t border-slate-200/80 bg-slate-950 text-white font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="max-w-2xl space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
-                Interactive drafting canvas
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                Interactive architectural workspace
               </h2>
-              <p className="text-slate-400 text-sm leading-relaxed font-sans">
-                Inspect spatial vectorization and automated material takeoff directly from hand-drawn pencil schematics.
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Review automatic floorplan line detection, toggle drawing layers, inspect material specifications, and export preliminary schedules.
               </p>
             </div>
 
@@ -686,14 +774,14 @@ export default function Home() {
                 onClick={handleOpenOnboarding}
                 className="bg-white hover:bg-slate-100 text-slate-950 font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
-                Upload your blueprint
+                Upload your floorplan
               </button>
               <button
                 type="button"
                 onClick={() => handleOpenPricing("Pro Studio")}
                 className="border border-slate-700 hover:bg-slate-900 text-slate-200 text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               >
-                Upgrade studio tier
+                Request early access
               </button>
             </div>
           </div>
@@ -709,14 +797,14 @@ export default function Home() {
           {/* Hallmark Section Header (No tracked eyebrows, direct sentence-case heading) */}
           <div className="max-w-2xl space-y-2">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-              Capabilities built for architectural rigor.
+              Tools built for architectural workflows.
             </h2>
             <p className="text-slate-600 text-sm leading-relaxed">
-              Every tool is engineered to eliminate manual drafting redraws, calibrate accurate southern solar exposure, and quantify material takeoff assemblies directly from your sketches.
+              Review detected drawing geometry, preview natural daylight angles, and quantify preliminary material takeoffs directly from your floorplans.
             </p>
           </div>
 
-          {/* Interactive Hallmark Capability Switcher */}
+          {/* Interactive Capability Switcher */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             {/* Tab Navigation Strip */}
             <div className="flex border-b border-slate-200 bg-slate-50/70 p-2 gap-2 overflow-x-auto">
@@ -729,7 +817,7 @@ export default function Home() {
                 }`}
               >
                 <Ruler className="w-4 h-4 text-slate-700" />
-                <span>Pencil-to-CAD Vectorizer</span>
+                <span>Editable Floorplan Geometry</span>
               </button>
 
               <button
@@ -742,7 +830,7 @@ export default function Home() {
                 }`}
               >
                 <Sun className="w-4 h-4 text-slate-700" />
-                <span>Natural Daylighting &amp; Solar Studies</span>
+                <span>Lighting &amp; Orientation Preview</span>
               </button>
 
               <button
@@ -754,7 +842,7 @@ export default function Home() {
                 }`}
               >
                 <FileSpreadsheet className="w-4 h-4 text-slate-700" />
-                <span>Instant Bill of Materials (BOM)</span>
+                <span>Preliminary Bill of Materials (BOM)</span>
               </button>
 
               <button
@@ -766,24 +854,24 @@ export default function Home() {
                 }`}
               >
                 <Building2 className="w-4 h-4 text-slate-700" />
-                <span>Framing-to-Finish Site Staging</span>
+                <span>Construction &amp; Finish Planning</span>
               </button>
             </div>
 
-            {/* Tab 1: Pencil-to-CAD Vectorizer */}
+            {/* Tab 1: Editable Floorplan Geometry (Phase 6) */}
             {activeFeatureTab === "vectorizer" && (
-              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center font-sans">
                 <div className="lg:col-span-5 space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">
-                    Millimeter-accurate vector CAD from hand drawings.
+                    Editable floorplan geometry from hand drawings.
                   </h3>
                   <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                    SiteSketch analyzes freehand pencil strokes, napkin schematics, and phone-scanned blueprints, automatically converting them into watertight vector geometry with standard IFC wall classes and door swing clearances.
+                    SiteSketch reviews hand-drawn pencil sketches, scans, and PDF floorplans, converting them into clean vector drawings with wall boundaries, door swings, and dimension strings.
                   </p>
 
                   <div className="space-y-2 pt-2">
                     <span className="text-xs font-semibold text-slate-700 block">
-                      Inspect Vector Layer Segmentation:
+                      Inspect Vector Layer Controls:
                     </span>
                     <div className="flex flex-wrap gap-2">
                       <button
@@ -814,7 +902,17 @@ export default function Home() {
                             : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
-                        Door Swings &amp; Openings
+                        Door Swings
+                      </button>
+                      <button
+                        onClick={() => setVectorLayer("windows")}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                          vectorLayer === "windows"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        Glazed Aperture
                       </button>
                       <button
                         onClick={() => setVectorLayer("dims")}
@@ -832,12 +930,12 @@ export default function Home() {
                   {/* Telemetry Row */}
                   <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-xs">
                     <div>
-                      <span className="text-slate-400 block text-[11px]">Tolerance:</span>
-                      <span className="font-semibold text-slate-800">±0.2 mm</span>
+                      <span className="text-slate-400 block text-[11px]">Drawing scale:</span>
+                      <span className="font-semibold text-slate-800">1/4&quot; = 1&apos;-0&quot;</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[11px]">Format:</span>
-                      <span className="font-semibold text-slate-800">DXF / DWG / IFC</span>
+                      <span className="text-slate-400 block text-[11px]">Export format:</span>
+                      <span className="font-semibold text-slate-800">DXF / SVG</span>
                     </div>
                     <div>
                       <span className="text-slate-400 block text-[11px]">Snapping:</span>
@@ -851,137 +949,182 @@ export default function Home() {
                       className="inline-flex items-center space-x-2 bg-slate-900 hover:bg-black text-white text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      <span>{dxfExportSuccess ? "Downloaded DXF CAD File!" : "Download Sample DXF Vector CAD"}</span>
+                      <span>{dxfExportSuccess ? "Downloaded Sample DXF!" : "Download Sample DXF Vector CAD"}</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Right Interactive Blueprint Visualizer */}
+                {/* Right Interactive Vector Visualizer */}
                 <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner font-sans">
                   <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 rounded-xs bg-slate-400" />
-                      <span className="text-slate-200 font-medium">drawing-01-vector-plan.dxf</span>
+                      <span className="text-slate-200 font-medium">Sheet A-101 · Level 01 Plan</span>
                       <span className="text-slate-500">·</span>
-                      <span className="text-slate-400 text-xs">Sheet A-102</span>
+                      <span className="text-slate-400 text-xs">Sample Vector Preview</span>
                     </div>
                     <span className="text-slate-400 text-xs">Scale: 1/4&quot; = 1&apos;-0&quot;</span>
                   </div>
 
-                  <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
-                    <BlueprintSketchSVG />
-                    {vectorLayer === "walls" && (
-                      <div className="absolute inset-0 bg-slate-950/20 border border-slate-400 pointer-events-none flex items-center justify-center">
-                        <span className="bg-slate-950/90 text-slate-200 text-xs px-2.5 py-1 rounded border border-slate-700 shadow-sm">
-                          Active layer: Extruded wall shell
-                        </span>
-                      </div>
-                    )}
-                    {vectorLayer === "doors" && (
-                      <div className="absolute inset-0 bg-slate-950/20 border border-slate-400 pointer-events-none flex items-center justify-center">
-                        <span className="bg-slate-950/90 text-slate-200 text-xs px-2.5 py-1 rounded border border-slate-700 shadow-sm">
-                          Active layer: 32&quot; Egress door clearances
-                        </span>
-                      </div>
-                    )}
-                    {vectorLayer === "dims" && (
-                      <div className="absolute inset-0 bg-slate-950/20 border border-slate-400 pointer-events-none flex items-center justify-center">
-                        <span className="bg-slate-950/90 text-slate-200 text-xs px-2.5 py-1 rounded border border-slate-700 shadow-sm">
-                          Active layer: Dimension strings (28&apos;-6&quot; × 16&apos;-8&quot;)
-                        </span>
-                      </div>
-                    )}
+                  <div className="relative aspect-[600/420] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-950">
+                    <CadFloorplanVectorSVG
+                      className="w-full h-full"
+                      showWalls={vectorLayer === "all" || vectorLayer === "walls"}
+                      showDoors={vectorLayer === "all" || vectorLayer === "doors"}
+                      showWindows={vectorLayer === "all" || vectorLayer === "windows"}
+                      showDimensions={vectorLayer === "all" || vectorLayer === "dims"}
+                      showFurniture={vectorLayer === "all"}
+                      showRoomLabels={vectorLayer === "all"}
+                    />
                   </div>
 
                   <div className="flex justify-between items-center text-xs text-slate-400 pt-1">
-                    <span>IFC schema: 2x3 &amp; 4.0 compliant</span>
-                    <span className="text-emerald-400 font-medium">Watertight shell geometry</span>
+                    <span>Sample project: Residential Suite (480 sq ft)</span>
+                    <span className="text-slate-300 font-medium">Interactive vector geometry</span>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Tab 2: Natural Daylighting & Solar Studies */}
+            {/* Tab 2: Lighting & Orientation Preview (Phase 5: Separated Controls) */}
             {activeFeatureTab === "daylight" && (
               <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center font-sans">
                 <div className="lg:col-span-5 space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">
-                    Model solar angles and natural daylight penetration across room depths.
+                    Preview daylight conditions across your floorplan.
                   </h3>
                   <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                    Calculate natural solar exposure, window shadow casting, and work-plane illuminance across morning raking sun, midday clear sky, and overcast diffuse conditions.
+                    Review how daylight enters the space based on window aperture orientation, sky conditions, and time of day. This lighting preview helps visualize ambient illumination and shadow patterns before rendering.
                   </p>
 
                   <div className="space-y-3 pt-2">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="font-semibold text-slate-800">Solar color temperature:</span>
-                      <span className="font-semibold text-slate-900">{daylightKelvin} Kelvin</span>
+                    {/* Control 1: Sky Conditions */}
+                    <div className="space-y-1">
+                      <span className="text-xs font-semibold text-slate-700 block">Sky Condition:</span>
+                      <div className="grid grid-cols-3 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSkyCondition("clear")}
+                          className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer text-center ${
+                            skyCondition === "clear"
+                              ? "bg-slate-900 text-white border-slate-900 font-medium"
+                              : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                          }`}
+                        >
+                          Clear
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSkyCondition("partly")}
+                          className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer text-center ${
+                            skyCondition === "partly"
+                              ? "bg-slate-900 text-white border-slate-900 font-medium"
+                              : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                          }`}
+                        >
+                          Partly cloudy
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSkyCondition("overcast")}
+                          className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer text-center ${
+                            skyCondition === "overcast"
+                              ? "bg-slate-900 text-white border-slate-900 font-medium"
+                              : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                          }`}
+                        >
+                          Overcast
+                        </button>
+                      </div>
                     </div>
 
-                    <input
-                      type="range"
-                      min="2700"
-                      max="6500"
-                      step="100"
-                      value={daylightKelvin}
-                      onChange={(e) => setDaylightKelvin(Number(e.target.value))}
-                      className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900 focus-visible:outline-none"
-                    />
+                    {/* Control 2: Time of Day */}
+                    <div className="space-y-1">
+                      <span className="text-xs font-semibold text-slate-700 block">Time of Day:</span>
+                      <div className="grid grid-cols-3 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTimeOfDay("morning");
+                            setDaylightKelvin(2700);
+                          }}
+                          className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer text-center ${
+                            timeOfDay === "morning"
+                              ? "bg-slate-900 text-white border-slate-900 font-medium"
+                              : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                          }`}
+                        >
+                          Morning
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTimeOfDay("noon");
+                            setDaylightKelvin(5000);
+                          }}
+                          className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer text-center ${
+                            timeOfDay === "noon"
+                              ? "bg-slate-900 text-white border-slate-900 font-medium"
+                              : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                          }`}
+                        >
+                          Noon
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTimeOfDay("evening");
+                            setDaylightKelvin(2700);
+                          }}
+                          className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer text-center ${
+                            timeOfDay === "evening"
+                              ? "bg-slate-900 text-white border-slate-900 font-medium"
+                              : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                          }`}
+                        >
+                          Evening
+                        </button>
+                      </div>
+                    </div>
 
-                    <div className="flex justify-between gap-2 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => setDaylightKelvin(2800)}
-                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer whitespace-nowrap ${
-                          daylightKelvin < 3400
-                            ? "bg-amber-100 text-amber-900 border-amber-300 font-semibold"
-                            : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
-                        }`}
-                      >
-                        Morning sun (2800K, 28°)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setDaylightKelvin(5000)}
-                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer whitespace-nowrap ${
-                          daylightKelvin >= 3400 && daylightKelvin <= 5500
-                            ? "bg-slate-900 text-white border-slate-900 font-semibold"
-                            : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
-                        }`}
-                      >
-                        Solar noon (5000K, 58°)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setDaylightKelvin(6500)}
-                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer whitespace-nowrap ${
-                          daylightKelvin > 5500
-                            ? "bg-slate-200 text-slate-900 border-slate-300 font-semibold"
-                            : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
-                        }`}
-                      >
-                        Overcast (6500K, diffuse)
-                      </button>
+                    {/* Control 3: Colour Temperature */}
+                    <div className="space-y-1">
+                      <span className="text-xs font-semibold text-slate-700 block">Colour Temperature:</span>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {[2700, 4000, 5000, 6500].map((k) => (
+                          <button
+                            key={k}
+                            type="button"
+                            onClick={() => setDaylightKelvin(k)}
+                            className={`text-xs px-2 py-1.5 rounded-lg border transition-colors cursor-pointer text-center font-mono ${
+                              daylightKelvin === k
+                                ? "bg-slate-900 text-white border-slate-900 font-semibold"
+                                : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                            }`}
+                          >
+                            {k}K
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
+                  {/* Orientation & Environmental Inputs */}
                   <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-xs">
                     <div>
-                      <span className="text-slate-500 block text-[11px]">Solar altitude:</span>
+                      <span className="text-slate-500 block text-[11px]">Orientation:</span>
+                      <span className="font-semibold text-slate-800">South (180°)</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block text-[11px]">Direct Illuminance:</span>
                       <span className="font-semibold text-slate-800">
-                        {daylightKelvin < 3400 ? "28° low sun" : daylightKelvin > 5500 ? "Diffuse sky" : "58° solar noon"}
+                        {skyCondition === "overcast" ? "320 Lux" : timeOfDay === "morning" ? "850 Lux" : "1,250 Lux"}
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-[11px]">Direct illuminance:</span>
+                      <span className="text-slate-500 block text-[11px]">Solar Altitude:</span>
                       <span className="font-semibold text-slate-800">
-                        {daylightKelvin < 3400 ? "850 Lux" : daylightKelvin > 5500 ? "320 Lux" : "1,250 Lux"}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block text-[11px]">Penetration depth:</span>
-                      <span className="font-semibold text-slate-800">
-                        {daylightKelvin < 3400 ? "16.4 ft deep" : daylightKelvin > 5500 ? "Uniform daylight" : "6.8 ft direct"}
+                        {skyCondition === "overcast" ? "Diffuse" : timeOfDay === "morning" ? "28° low sun" : "58° solar noon"}
                       </span>
                     </div>
                   </div>
@@ -992,9 +1135,9 @@ export default function Home() {
                   <div className="flex flex-wrap items-center justify-between pb-3 border-b border-slate-800 text-xs gap-2">
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 rounded-xs bg-slate-400" />
-                      <span className="text-slate-200 font-medium">Solar study: South elevation</span>
+                      <span className="text-slate-200 font-medium">Lighting preview: South exposure</span>
                       <span className="text-slate-500">·</span>
-                      <span className="text-amber-400">{daylightKelvin}K</span>
+                      <span className="text-amber-400 font-mono">{daylightKelvin}K</span>
                     </div>
 
                     <div className="flex items-center bg-slate-900 border border-slate-800 p-0.5 rounded-lg text-xs">
@@ -1007,7 +1150,7 @@ export default function Home() {
                             : "text-slate-400 hover:text-slate-200"
                         }`}
                       >
-                        Interior render
+                        Interior preview
                       </button>
                       <button
                         type="button"
@@ -1028,22 +1171,22 @@ export default function Home() {
                     <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
                       <img
                         src="/images/architectural-daylight.jpg"
-                        alt="Architectural daylight study in Scandinavian timber interior"
+                        alt="Architectural daylight lighting preview"
                         className="w-full h-full object-cover transition-[filter] duration-300"
                         style={{
                           filter:
-                            daylightKelvin < 3400
-                              ? "sepia(0.28) saturate(1.25) brightness(0.92)"
-                              : daylightKelvin > 5500
-                              ? "saturate(0.85) brightness(1.04) hue-rotate(4deg)"
+                            skyCondition === "overcast" || daylightKelvin >= 6500
+                              ? "saturate(0.8) brightness(1.02) hue-rotate(4deg)"
+                              : timeOfDay === "morning" || daylightKelvin <= 3000
+                              ? "sepia(0.3) saturate(1.25) brightness(0.92)"
                               : "contrast(1.04) brightness(1.0)"
                         }}
                       />
                       <div className="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-950/85 border border-slate-800 text-xs text-slate-200 font-sans shadow-sm">
-                        {daylightKelvin < 3400
-                          ? "Morning Dawn · 28° Alt"
-                          : daylightKelvin > 5500
-                          ? "Diffuse Overcast Skylight"
+                        {skyCondition === "overcast"
+                          ? "Overcast · Diffuse Sky"
+                          : timeOfDay === "morning"
+                          ? "Morning Sun · 28° Alt"
                           : "Solar Noon · 58° Alt"}
                       </div>
                     </div>
@@ -1055,142 +1198,204 @@ export default function Home() {
 
                   {/* Viewport Footer */}
                   <div className="flex justify-between items-center text-xs text-slate-400 pt-1">
-                    <span>Glazing aperture: 14&apos;-6&quot; south exposure</span>
-                    <span className="text-emerald-400 font-medium">Daylight factor (DF): 3.8%</span>
+                    <span>Aperture: 14&apos;-6&quot; south glazing · 10&apos;-6&quot; AFF ceiling</span>
+                    <span className="text-slate-300">Interactive lighting preview</span>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Tab 3: Automated Bill of Materials (BOM) */}
+            {/* Tab 3: Rebuilt Structured Bill of Materials (BOM) Section (Phase 4) */}
             {activeFeatureTab === "bom" && (
-              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-5 space-y-4">
-                  <h3 className="text-xl font-bold text-slate-900">
-                    Instant quantity takeoffs directly from room dimensions.
-                  </h3>
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                    Stop spending hours manually scaling walls with architectural rulers. SiteSketch extracts drywall square footage, flooring cut waste allowances, and fixture counts automatically.
-                  </p>
-
-                  <div className="space-y-2 pt-2">
-                    <span className="text-xs font-semibold text-slate-700 block">
-                      Select Project Room Archetype:
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => setBomRoomPreset("living")}
-                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer ${
-                          bomRoomPreset === "living"
-                            ? "bg-slate-900 text-white border-slate-900 font-medium"
-                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                        }`}
-                      >
-                        Living &amp; Dining (480 sq ft)
-                      </button>
-                      <button
-                        onClick={() => setBomRoomPreset("suite")}
-                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer ${
-                          bomRoomPreset === "suite"
-                            ? "bg-slate-900 text-white border-slate-900 font-medium"
-                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                        }`}
-                      >
-                        Master Suite (340 sq ft)
-                      </button>
-                      <button
-                        onClick={() => setBomRoomPreset("studio")}
-                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer ${
-                          bomRoomPreset === "studio"
-                            ? "bg-slate-900 text-white border-slate-900 font-medium"
-                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                        }`}
-                      >
-                        Open Studio Loft (620 sq ft)
-                      </button>
-                    </div>
+              <div className="p-6 sm:p-8 space-y-6 font-sans">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                  <div className="max-w-2xl space-y-1.5">
+                    <h3 className="text-xl font-bold text-slate-900">
+                      Structured preliminary quantity takeoffs.
+                    </h3>
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                      Itemized takeoff table for the sample Residential Suite (480 sq ft net). Quantities are derived directly from floorplan dimensions with standard trade waste allowances.
+                    </p>
                   </div>
 
-                  <div className="pt-2">
+                  <div className="shrink-0">
                     <button
                       onClick={handleExportCSV}
                       className="inline-flex items-center space-x-2 bg-slate-900 hover:bg-black text-white text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      <span>{specDownloadSuccess ? "Takeoff CSV Downloaded!" : "Export Real Takeoff Spreadsheet (CSV)"}</span>
+                      <span>{specDownloadSuccess ? "Takeoff CSV Downloaded!" : "Export Takeoff (CSV)"}</span>
                     </button>
                   </div>
                 </div>
 
-                <div className="lg:col-span-7 bg-slate-50 rounded-xl p-5 border border-slate-200">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-200 text-xs">
-                    <span className="font-semibold text-slate-800">
-                      Calculated Bill of Materials Schedule
-                    </span>
-                    <span className="font-mono text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                      Active Preset: {bomRoomPreset.toUpperCase()}
-                    </span>
-                  </div>
-
-                  <div className="divide-y divide-slate-200/80 my-2 text-xs">
-                    <div className="py-2.5 flex justify-between items-center">
-                      <div>
-                        <span className="font-semibold text-slate-900 block">Flooring Assembly (10% Cut Waste)</span>
-                        <span className="text-[11px] text-slate-500">Herringbone White Oak Engineered</span>
-                      </div>
-                      <span className="font-mono font-bold text-slate-900">
-                        {bomRoomPreset === "living" ? "528 sq ft" : bomRoomPreset === "suite" ? "374 sq ft" : "682 sq ft"}
-                      </span>
-                    </div>
-
-                    <div className="py-2.5 flex justify-between items-center">
-                      <div>
-                        <span className="font-semibold text-slate-900 block">Drywall Partition Area</span>
-                        <span className="text-[11px] text-slate-500">5/8&quot; Type X Fire-Shield Gypsum</span>
-                      </div>
-                      <span className="font-mono font-bold text-slate-900">
-                        {bomRoomPreset === "living" ? "1,344 sq ft" : bomRoomPreset === "suite" ? "952 sq ft" : "1,736 sq ft"}
-                      </span>
-                    </div>
-
-                    <div className="py-2.5 flex justify-between items-center">
-                      <div>
-                        <span className="font-semibold text-slate-900 block">Matte Wall Primer &amp; Paint</span>
-                        <span className="text-[11px] text-slate-500">Limewash Architectural Formula</span>
-                      </div>
-                      <span className="font-mono font-bold text-slate-900">
-                        {bomRoomPreset === "living" ? "4.0 gallons" : bomRoomPreset === "suite" ? "3.0 gallons" : "5.5 gallons"}
-                      </span>
-                    </div>
-
-                    <div className="py-2.5 flex justify-between items-center">
-                      <div>
-                        <span className="font-semibold text-slate-900 block">Low-Voltage Architectural LED Fixtures</span>
-                        <span className="text-[11px] text-slate-500">Recessed 12V 4000K CRI 95+</span>
-                      </div>
-                      <span className="font-mono font-bold text-slate-900">
-                        {bomRoomPreset === "living" ? "6 units" : bomRoomPreset === "suite" ? "4 units" : "8 units"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-slate-200 flex justify-between items-center text-xs">
-                    <span className="text-slate-500">Format compatibility:</span>
-                    <span className="text-slate-700 font-sans">CSV, Excel XLSX, and Revit Schedule</span>
-                  </div>
+                {/* Structured 8-Column BOM Table */}
+                <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-2xs">
+                  <table className="w-full text-left text-xs border-collapse min-w-[760px]">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+                        <th className="py-2.5 px-3">Item</th>
+                        <th className="py-2.5 px-3">Category</th>
+                        <th className="py-2.5 px-3">Specification</th>
+                        <th className="py-2.5 px-3 text-right">Quantity</th>
+                        <th className="py-2.5 px-3">Unit</th>
+                        <th className="py-2.5 px-3 text-right">Unit Price</th>
+                        <th className="py-2.5 px-3 text-right">Estimated Total</th>
+                        <th className="py-2.5 px-3">Status / Confidence</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 text-slate-700">
+                      <tr>
+                        <td className="py-2.5 px-3 font-medium text-slate-900">Select European White Oak</td>
+                        <td className="py-2.5 px-3">Flooring</td>
+                        <td className="py-2.5 px-3 text-slate-500">Herringbone 5/8&quot; engineered (10% waste incl.)</td>
+                        <td className="py-2.5 px-3 text-right font-mono">528</td>
+                        <td className="py-2.5 px-3 text-slate-500">sq ft</td>
+                        <td className="py-2.5 px-3 text-right font-mono">$14.50</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-900">$7,656.00</td>
+                        <td className="py-2.5 px-3 text-[11px] text-emerald-700">Measured (CAD + 10% waste)</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 px-3 font-medium text-slate-900">Warm Mineral Limewash</td>
+                        <td className="py-2.5 px-3">Wall finishes</td>
+                        <td className="py-2.5 px-3 text-slate-500">Roman breathable matte over 5/8&quot; Type X Gypsum</td>
+                        <td className="py-2.5 px-3 text-right font-mono">860</td>
+                        <td className="py-2.5 px-3 text-slate-500">sq ft</td>
+                        <td className="py-2.5 px-3 text-right font-mono">$4.20</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-900">$3,612.00</td>
+                        <td className="py-2.5 px-3 text-[11px] text-emerald-700">Measured (Perimeter × 10&apos;-6&quot;)</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 px-3 font-medium text-slate-900">Level 5 Smooth Acoustic Plaster</td>
+                        <td className="py-2.5 px-3">Ceiling</td>
+                        <td className="py-2.5 px-3 text-slate-500">Flat white acoustic absorption system</td>
+                        <td className="py-2.5 px-3 text-right font-mono">480</td>
+                        <td className="py-2.5 px-3 text-slate-500">sq ft</td>
+                        <td className="py-2.5 px-3 text-right font-mono">$5.80</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-900">$2,784.00</td>
+                        <td className="py-2.5 px-3 text-[11px] text-emerald-700">Measured (Reflected ceiling)</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 px-3 font-medium text-slate-900">Ultra-Slim Thermal Break Glazing</td>
+                        <td className="py-2.5 px-3">Doors &amp; windows</td>
+                        <td className="py-2.5 px-3 text-slate-500">14&apos;-6&quot; south aperture, Low-E argon double glazed</td>
+                        <td className="py-2.5 px-3 text-right font-mono">14.5</td>
+                        <td className="py-2.5 px-3 text-slate-500">lin ft</td>
+                        <td className="py-2.5 px-3 text-right font-mono">$145.00</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-900">$2,102.50</td>
+                        <td className="py-2.5 px-3 text-[11px] text-emerald-700">Measured (Wall schedule)</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 px-3 font-medium text-slate-900">Solid Core White Oak Egress Door</td>
+                        <td className="py-2.5 px-3">Doors &amp; windows</td>
+                        <td className="py-2.5 px-3 text-slate-500">32&quot; × 84&quot; flush door, concealed pivot hardware</td>
+                        <td className="py-2.5 px-3 text-right font-mono">1</td>
+                        <td className="py-2.5 px-3 text-slate-500">unit</td>
+                        <td className="py-2.5 px-3 text-right font-mono">$680.00</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-900">$680.00</td>
+                        <td className="py-2.5 px-3 text-[11px] text-emerald-700">Counted (Door schedule)</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 px-3 font-medium text-slate-900">Recessed LED Downlights</td>
+                        <td className="py-2.5 px-3">Lighting</td>
+                        <td className="py-2.5 px-3 text-slate-500">12V 4000K CRI 95+ trimless fixtures</td>
+                        <td className="py-2.5 px-3 text-right font-mono">6</td>
+                        <td className="py-2.5 px-3 text-slate-500">units</td>
+                        <td className="py-2.5 px-3 text-right font-mono">$85.00</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-900">$510.00</td>
+                        <td className="py-2.5 px-3 text-[11px] text-emerald-700">Counted (Lighting plan)</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 px-3 font-medium text-slate-900">Spun Brass Dining Pendant</td>
+                        <td className="py-2.5 px-3">Lighting</td>
+                        <td className="py-2.5 px-3 text-slate-500">Dimmable 24V integrated driver (3000K)</td>
+                        <td className="py-2.5 px-3 text-right font-mono">1</td>
+                        <td className="py-2.5 px-3 text-slate-500">unit</td>
+                        <td className="py-2.5 px-3 text-right font-mono">$520.00</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-900">$520.00</td>
+                        <td className="py-2.5 px-3 text-[11px] text-emerald-700">Counted (Fixture schedule)</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 px-3 font-medium text-slate-900">Open Kitchen Island with Quartz Slab</td>
+                        <td className="py-2.5 px-3">Fixtures</td>
+                        <td className="py-2.5 px-3 text-slate-500">Custom 115&quot; × 60&quot; waterfall edge fabrication</td>
+                        <td className="py-2.5 px-3 text-right font-mono">1</td>
+                        <td className="py-2.5 px-3 text-slate-500">unit</td>
+                        <td className="py-2.5 px-3 text-right font-mono">$3,400.00</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-900">$3,400.00</td>
+                        <td className="py-2.5 px-3 text-[11px] text-amber-700">Illustrative estimate</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 px-3 font-medium text-slate-900">Scandinavian Bouclé Curved Sectional</td>
+                        <td className="py-2.5 px-3">Furniture</td>
+                        <td className="py-2.5 px-3 text-slate-500">Custom 3-piece radius, high-resilience foam core</td>
+                        <td className="py-2.5 px-3 text-right font-mono">1</td>
+                        <td className="py-2.5 px-3 text-slate-500">unit</td>
+                        <td className="py-2.5 px-3 text-right font-mono">$3,850.00</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-900">$3,850.00</td>
+                        <td className="py-2.5 px-3 text-[11px] text-amber-700">Illustrative estimate</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 px-3 font-medium text-slate-900">Monolithic Marble Plinth Table</td>
+                        <td className="py-2.5 px-3">Furniture</td>
+                        <td className="py-2.5 px-3 text-slate-500">Beveled edge honed stone table base</td>
+                        <td className="py-2.5 px-3 text-right font-mono">1</td>
+                        <td className="py-2.5 px-3 text-slate-500">unit</td>
+                        <td className="py-2.5 px-3 text-right font-mono">$1,150.00</td>
+                        <td className="py-2.5 px-3 text-right font-mono font-medium text-slate-900">$1,150.00</td>
+                        <td className="py-2.5 px-3 text-[11px] text-amber-700">Illustrative estimate</td>
+                      </tr>
+                    </tbody>
+                    <tfoot className="bg-slate-50/90 border-t border-slate-200 text-xs text-slate-800">
+                      <tr>
+                        <td colSpan={6} className="py-2 px-3 font-semibold text-right">Materials Subtotal:</td>
+                        <td className="py-2 px-3 font-mono font-bold text-right text-slate-900">$26,264.50</td>
+                        <td className="py-2 px-3 text-[11px] text-slate-500">Sum of materials</td>
+                      </tr>
+                      <tr>
+                        <td colSpan={6} className="py-2 px-3 text-slate-600 text-right">Trade Labour Estimate ($18.50/sq ft benchmark):</td>
+                        <td className="py-2 px-3 font-mono text-right text-slate-800">$8,880.00</td>
+                        <td className="py-2 px-3 text-[11px] text-slate-500">Estimated trade rate</td>
+                      </tr>
+                      <tr>
+                        <td colSpan={6} className="py-2 px-3 text-slate-600 text-right">Waste Allowance (10% Flooring Included):</td>
+                        <td className="py-2 px-3 font-mono text-right text-slate-600">($696.00)</td>
+                        <td className="py-2 px-3 text-[11px] text-slate-500">Included in schedule</td>
+                      </tr>
+                      <tr>
+                        <td colSpan={6} className="py-2 px-3 text-slate-600 text-right">Contingency (5%):</td>
+                        <td className="py-2 px-3 font-mono text-right text-slate-800">$1,757.23</td>
+                        <td className="py-2 px-3 text-[11px] text-slate-500">Preliminary reserve</td>
+                      </tr>
+                      <tr>
+                        <td colSpan={6} className="py-2 px-3 text-slate-600 text-right">Estimated Sales Tax (8.25%):</td>
+                        <td className="py-2 px-3 font-mono text-right text-slate-800">$2,166.82</td>
+                        <td className="py-2 px-3 text-[11px] text-slate-500">Taxable materials</td>
+                      </tr>
+                      <tr className="border-t border-slate-300 bg-slate-100 font-bold">
+                        <td colSpan={6} className="py-2.5 px-3 text-right text-slate-900">Final Estimated Project Total:</td>
+                        <td className="py-2.5 px-3 font-mono text-right text-slate-900 text-sm">$39,068.55</td>
+                        <td className="py-2.5 px-3 text-[11px] text-slate-600">USD benchmark</td>
+                      </tr>
+                    </tfoot>
+                  </table>
                 </div>
+
+                <p className="text-[11px] text-slate-500 leading-normal">
+                  Note: Preliminary estimate for design planning purposes only. Illustrative prices do not represent formal contractor bids or supplier quotations. Contractors must verify all field dimensions on site prior to material procurement.
+                </p>
               </div>
             )}
 
-            {/* Tab 4: Framing-to-Finish Site Staging */}
+            {/* Tab 4: Construction & Finish Planning (Phase 2 & Phase 3) */}
             {activeFeatureTab === "staging" && (
               <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center font-sans">
                 <div className="lg:col-span-5 space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">
-                    Stage unfinished construction sites in seconds.
+                    Track spaces through each phase of construction.
                   </h3>
                   <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                    Walk through a raw jobsite with bare 2x4 wood studs or exposed concrete framing, snap a photo, and let SiteSketch overlay drywall, finished hardwood, and modern furniture for client walk-throughs.
+                    Review how structural framing, rough-in mechanical routing, and final surface finishes assemble across your floorplan.
                   </p>
 
                   <div className="space-y-2 pt-2">
@@ -1207,8 +1412,8 @@ export default function Home() {
                             : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
-                        <span className="whitespace-nowrap">Phase 1: Raw stud framing</span>
-                        <span className="text-[11px] opacity-75 font-sans">Site capture</span>
+                        <span>Phase 1: Structural wall framing</span>
+                        <span className="text-[11px] opacity-75 font-sans">Framing layout</span>
                       </button>
 
                       <button
@@ -1220,8 +1425,8 @@ export default function Home() {
                             : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
-                        <span className="whitespace-nowrap">Phase 2: Drywall and MEP</span>
-                        <span className="text-[11px] opacity-75 font-sans">Perimeter aligned</span>
+                        <span>Phase 2: Rough-in openings &amp; drywall</span>
+                        <span className="text-[11px] opacity-75 font-sans">Perimeter verified</span>
                       </button>
 
                       <button
@@ -1233,8 +1438,8 @@ export default function Home() {
                             : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
-                        <span className="whitespace-nowrap">Phase 3: Finished architectural interior</span>
-                        <span className="text-[11px] opacity-75 font-sans">Client ready</span>
+                        <span>Phase 3: Completed architectural finishes</span>
+                        <span className="text-[11px] opacity-75 font-sans">Final finishes</span>
                       </button>
                     </div>
                   </div>
@@ -1243,38 +1448,38 @@ export default function Home() {
                 <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner font-sans">
                   <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
                     <span className="text-slate-200 font-medium">
-                      Phase preview: {stagingStep === "framing" ? "Raw stud framing" : stagingStep === "rough" ? "Drywall & MEP rough-in" : "Finished interior"}
+                      Phase preview: {stagingStep === "framing" ? "Structural framing" : stagingStep === "rough" ? "Drywall & MEP rough-in" : "Completed finishes"}
                     </span>
-                    <span className="text-emerald-400 font-medium">Perspective calibrated</span>
+                    <span className="text-emerald-400 font-medium">Perspective aligned</span>
                   </div>
 
                   <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
                     {stagingStep === "framing" && (
                       <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-6 text-center text-amber-200/90 font-sans space-y-2">
                         <Building2 className="w-12 h-12 text-amber-500 stroke-[1.5]" />
-                        <span className="text-sm font-semibold">Raw 2x4 timber stud framing</span>
-                        <span className="text-xs text-amber-400/80">36 studs, 2 rough door openings, 312 sq ft subfloor</span>
+                        <span className="text-sm font-semibold">Structural timber stud layout</span>
+                        <span className="text-xs text-amber-400/80">36 studs, 2 door openings, 480 sq ft subfloor</span>
                       </div>
                     )}
                     {stagingStep === "rough" && (
                       <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-6 text-center text-slate-200 font-sans space-y-2">
                         <Layers className="w-12 h-12 text-slate-400 stroke-[1.5]" />
-                        <span className="text-sm font-semibold">Drywall and electrical MEP overlaid</span>
-                        <span className="text-xs text-slate-400">Taped gypsum partitions with pre-wired junction points</span>
+                        <span className="text-sm font-semibold">Drywall and electrical rough-in</span>
+                        <span className="text-xs text-slate-400">5/8&quot; Type X gypsum partitions with rough-in junction points</span>
                       </div>
                     )}
                     {stagingStep === "finished" && (
                       <img
                         src="/images/architectural-modernist.jpg"
-                        alt="Finished modern architectural living interior"
+                        alt="Completed modern architectural living interior"
                         className="w-full h-full object-cover"
                       />
                     )}
                   </div>
 
                   <div className="flex justify-between items-center text-xs text-slate-400 pt-1">
-                    <span>Eliminates physical furniture staging costs</span>
-                    <span className="text-slate-200 font-medium">Watertight CAD alignment</span>
+                    <span>Construction planning sequence</span>
+                    <span className="text-slate-200 font-medium">Level 01 Suite</span>
                   </div>
                 </div>
               </div>
@@ -1283,29 +1488,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. PRICING SECTION (HALLMARK APPLIED: NO EYEBROWS, TABULAR NUMBERS, CLEAN CARDS, SENTENCE CASE BADGE) */}
-      <section id="pricing" className="py-16 sm:py-24 border-t border-slate-200/80 bg-white/50">
+      {/* 6. PRICING SECTION (PHASE 8: FIXED LOGIC & HONEST TIERS) */}
+      <section id="pricing" className="py-16 sm:py-24 border-t border-slate-200/80 bg-white/50 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
-          {/* Hallmark Section Header (No tracked eyebrows, direct sentence-case heading) */}
           <div className="text-center max-w-xl mx-auto space-y-4">
             <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Predictable studio plans.
+              Transparent pricing for studios of every scale.
             </h2>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Scale your spatial pipeline without per-minute compute charges or surprise GPU overages.
+              Choose the plan that fits your practice. All annual subscriptions include a 20% discount.
             </p>
 
-            {/* Annual Billing Toggle with Untracked Sentence-Case Pill */}
+            {/* Monthly vs Annual Billing Toggle */}
             <div className="inline-flex items-center p-1 bg-slate-100 rounded-lg border border-slate-200 text-xs font-medium">
               <button
+                type="button"
                 onClick={() => setIsAnnual(false)}
                 className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
                   !isAnnual ? "bg-white text-slate-900 shadow-2xs font-semibold" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                Monthly
+                Monthly billing
               </button>
               <button
+                type="button"
                 onClick={() => setIsAnnual(true)}
                 className={`px-3 py-1.5 rounded-md transition-colors flex items-center space-x-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
                   isAnnual ? "bg-white text-slate-900 shadow-2xs font-semibold" : "text-slate-600 hover:text-slate-900"
@@ -1330,39 +1536,47 @@ export default function Home() {
                   </span>
                   <span className="text-xs text-slate-500">/ month</span>
                 </div>
+                <p className="text-xs text-slate-500">
+                  {isAnnual ? "$276 billed annually" : "Billed monthly, cancel anytime"}
+                </p>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Ideal for solo architects and independent interior planners.
+                  For independent architects and interior design consultants.
                 </p>
 
                 <ul className="space-y-2.5 pt-4 text-xs text-slate-700">
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span className="tabular-nums">25 4K Photoreal renders / mo</span>
+                    <span>Up to 15 floorplan reviews per month</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Pencil &amp; Blueprint vectorizer</span>
+                    <span>Editable 2D vector geometry preview</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Standard PDF export</span>
+                    <span>Preliminary quantity takeoff &amp; CSV export</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Single studio seat</span>
+                    <span>Standard material finishes catalog</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
+                    <span>Single user workspace</span>
                   </li>
                 </ul>
               </div>
 
               <button
+                type="button"
                 onClick={() => handleOpenPricing("Starter")}
                 className="mt-8 w-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-medium text-xs py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
               >
-                Select Starter Plan
+                Request early access
               </button>
             </div>
 
-            {/* Pro Studio (Recommended) - Sentence-case untracked badge */}
+            {/* Pro Studio (Recommended) */}
             <div className="bg-white rounded-xl border-2 border-slate-900 p-6 sm:p-7 shadow-md relative flex flex-col justify-between">
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[11px] font-medium px-3 py-0.5 rounded-full">
                 Recommended for studios
@@ -1376,39 +1590,43 @@ export default function Home() {
                   </span>
                   <span className="text-xs text-slate-500">/ month</span>
                 </div>
+                <p className="text-xs text-slate-500">
+                  {isAnnual ? "$756 billed annually" : "Billed monthly, cancel anytime"}
+                </p>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  For growing architecture firms and interior design studios.
+                  For growing architecture firms and design studios.
                 </p>
 
                 <ul className="space-y-2.5 pt-4 text-xs text-slate-800 font-medium">
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span className="tabular-nums">150 4K Photoreal renders / mo</span>
+                    <span>Up to 100 floorplan reviews per month</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Automated Bill of Materials (BOM)</span>
+                    <span>Vector CAD drawing exports (DXF)</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Interactive 360° client web viewer</span>
+                    <span>Structured Bill of Materials (BOM) &amp; CSV export</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Framing-to-finish staging</span>
+                    <span>Lighting and orientation previews</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>3 studio seats &amp; priority GPU queue</span>
+                    <span>3 studio team seats</span>
                   </li>
                 </ul>
               </div>
 
               <button
+                type="button"
                 onClick={() => handleOpenPricing("Pro Studio")}
                 className="mt-8 w-full bg-slate-900 hover:bg-black text-white font-medium text-xs py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
               >
-                Select Pro Studio Plan
+                Request early access
               </button>
             </div>
 
@@ -1422,43 +1640,68 @@ export default function Home() {
                   </span>
                   <span className="text-xs text-slate-500">/ month</span>
                 </div>
+                <p className="text-xs text-slate-500">
+                  {isAnnual ? "$1,908 billed annually" : "Billed monthly, cancel anytime"}
+                </p>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Custom material libraries, API access, and dedicated team seats.
+                  For large multi-office practices requiring custom finish catalogs.
                 </p>
 
                 <ul className="space-y-2.5 pt-4 text-xs text-slate-700">
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Unlimited 4K renders</span>
+                    <span>Unlimited floorplan reviews</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Custom PBR manufacturer catalogs</span>
+                    <span>Custom material catalogs &amp; supplier pricing</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Revit BIM &amp; Webhook API sync</span>
+                    <span>Multi-team project workspaces</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Dedicated account architect &amp; SLA</span>
+                    <span>Dedicated onboarding and support desk</span>
                   </li>
                 </ul>
               </div>
 
               <button
+                type="button"
                 onClick={() => handleOpenPricing("Enterprise")}
                 className="mt-8 w-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-medium text-xs py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
               >
-                Contact Enterprise Desk
+                Contact for early access
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 7. MINIMAL FOOTER */}
-      <footer className="border-t border-slate-200 py-10 bg-white text-xs text-slate-500">
+      {/* 7. FINAL CALL TO ACTION (PHASE 7) */}
+      <section className="py-20 sm:py-24 border-t border-slate-200 bg-white text-center font-sans">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-6">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
+            Start planning your next project.
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+            Upload your floorplans, review spatial layouts, test materials, and generate preliminary project estimates with SiteSketch.
+          </p>
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={handleOpenOnboarding}
+              className="bg-slate-900 hover:bg-black text-white font-medium text-sm sm:text-base px-7 py-3.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+            >
+              Request early access
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. MINIMAL FOOTER */}
+      <footer className="border-t border-slate-200 py-10 bg-white text-xs text-slate-500 font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-2.5">
@@ -1480,7 +1723,7 @@ export default function Home() {
                 How it works
               </a>
               <a href="#builder" className="hover:text-slate-800 transition-colors">
-                Studio Builder
+                Studio Workspace
               </a>
               <a href="#features" className="hover:text-slate-800 transition-colors">
                 Features
@@ -1504,9 +1747,9 @@ export default function Home() {
           </div>
 
           <div className="flex items-center justify-between pt-4 border-t border-slate-100 text-[11px] text-slate-400">
-            <span>Spatial Engine version 2.4 · High-precision architectural BIM generation</span>
+            <span>SiteSketch · Architectural workspace and floorplan estimation</span>
             <button
-              onClick={scrollToTop}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="inline-flex items-center space-x-1 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
             >
               <ArrowUp className="w-3.5 h-3.5" />

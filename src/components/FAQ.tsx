@@ -25,11 +25,11 @@ export default function FAQ({ onOpenTrial }: FAQProps) {
     },
     {
       q: "Is my proprietary design data secure?",
-      a: "Yes. Projects are encrypted at rest with AES-256 and processed in isolated cloud containers. Your designs and proprietary architectural files are never used to train public models. Enterprise workspaces also support dedicated AWS S3 bucket synchronization with customer-managed keys."
+      a: "Yes. Projects are encrypted in transit via TLS and stored in secure cloud storage. Your drawings and proprietary floorplan files remain your exclusive property and are never shared or made public."
     },
     {
-      q: "What is the typical render generation speed?",
-      a: "On our dedicated GPU cloud queue, 4K raytraced renders are synthesized in under 1.5 seconds. Multi-Kelvin lighting swaps and material preview adjustments update nearly instantaneously within the interactive Studio Canvas."
+      q: "How does the floorplan line detection work?",
+      a: "SiteSketch analyzes uploaded sketches and floorplans to identify wall perimeters, interior partition runs, window openings, and door swings. You can review and adjust dimensions directly within the interactive workspace before generating preliminary quantity takeoffs."
     },
     {
       q: "Can I invite team members and clients to view designs?",

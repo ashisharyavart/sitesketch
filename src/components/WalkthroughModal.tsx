@@ -21,29 +21,29 @@ export default function WalkthroughModal({
   const steps = [
     {
       time: "0:00 - 0:12",
-      title: "Step 01: Capture & Vectorize",
-      description: "Upload rough pencil schematics or job-site photos. SiteSketch's vision engine instantly identifies load-bearing walls, door arcs, and window openings.",
-      tag: "SPATIAL OCR",
+      title: "Step 01: Hand-Drawn Sketch Line Detection",
+      description: "Upload hand-drawn pencil sketches, scans, or PDF floorplans. SiteSketch identifies exterior wall perimeters, partition lines, door swings, and window openings.",
+      tag: "LINE DETECTION",
       component: <BlueprintSketchSVG className="w-full h-full" />
     },
     {
       time: "0:12 - 0:28",
-      title: "Step 02: 4K Raytraced Interior Synthesis",
-      description: "Neural rendering maps light bounces, Kelvin color temperatures, and high-fidelity textures (herringbone oak, honed marble) directly onto detected geometry.",
-      tag: "PHOTOREAL RAYTRACE",
+      title: "Step 02: Realistic Lighting & Material Preview",
+      description: "Review material finishes, ambient lighting color temperatures, and surface textures directly applied to the detected room layout.",
+      tag: "FINISH PREVIEW",
       component: <PhotorealLivingRoomSVG lighting="daylight" className="w-full h-full" />
     },
     {
       time: "0:28 - 0:45",
-      title: "Step 03: Raw Framing to Finished Space",
-      description: "Snap unfinished wood studs or concrete slabs on-site. SiteSketch registers 3D finishes onto the exact physical framing for walkthrough previews.",
-      tag: "SITE STAGING",
+      title: "Step 03: Construction Phase Progression",
+      description: "Track spatial progress from structural wall layout through rough-in mechanical routing to completed interior finishes.",
+      tag: "CONSTRUCTION PLANNING",
       component: <FramingStagingSVG className="w-full h-full" />
     },
     {
       time: "0:45 - 1:00",
-      title: "Step 04: Automated BOM & BIM Handoff",
-      description: "Calculates every square foot of flooring, millwork cost, and fixture count. One-click export to CSV, PDF, and direct Revit BIM parameter sync.",
+      title: "Step 04: Preliminary Bill of Materials (BOM) Takeoff",
+      description: "Calculates flooring square footages with waste allowances, wall finishes, and fixture counts with instant CSV export.",
       tag: "BOM SPEC EXPORT",
       component: <PhotorealLivingRoomSVG lighting="sunset" className="w-full h-full" />
     }

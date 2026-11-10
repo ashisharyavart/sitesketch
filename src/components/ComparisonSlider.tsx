@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { BlueprintSketchSVG } from "./ArchitecturalSVGs";
-import { Sparkles, Compass, Eye, Sun, Sunset, Cloud } from "lucide-react";
+import { PencilFloorplanSketchSVG, CadFloorplanVectorSVG } from "./ArchitecturalSVGs";
+import { Sparkles, Compass, Eye } from "lucide-react";
 
 interface ComparisonSliderProps {
   className?: string;
@@ -15,7 +15,6 @@ export default function ComparisonSlider({
 }: ComparisonSliderProps) {
   const [sliderPosition, setSliderPosition] = useState<number>(50);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [activeLighting, setActiveLighting] = useState<"daylight" | "sunset" | "overcast">("daylight");
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -76,52 +75,37 @@ export default function ComparisonSlider({
           <div className="flex items-center gap-2">
             <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-300 font-sans text-xs">
               <Compass className="w-3.5 h-3.5 text-slate-400" />
-              <span>Source schematic ({Math.round(100 - sliderPosition)}%)</span>
+              <span>Pencil field sketch ({Math.round(sliderPosition)}%)</span>
             </span>
             <span className="text-slate-600 font-sans">→</span>
             <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-200 font-sans text-xs">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Architectural render ({Math.round(sliderPosition)}%)</span>
+              <span>Detected vector CAD ({Math.round(100 - sliderPosition)}%)</span>
             </span>
           </div>
 
-          {/* Lighting Mode Selector */}
+          {/* Quick preset positions */}
           <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-lg border border-slate-800 text-xs">
             <button
               type="button"
-              onClick={() => setActiveLighting("daylight")}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors cursor-pointer ${
-                activeLighting === "daylight"
-                  ? "bg-slate-800 text-slate-100 font-medium"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              onClick={() => setSliderPosition(85)}
+              className="px-2.5 py-1 rounded text-slate-400 hover:text-white transition-colors cursor-pointer"
             >
-              <Sun className="w-3.5 h-3.5 text-amber-300" />
-              <span>Daylight 4000K</span>
+              Sketch only
             </button>
             <button
               type="button"
-              onClick={() => setActiveLighting("sunset")}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors cursor-pointer ${
-                activeLighting === "sunset"
-                  ? "bg-slate-800 text-slate-100 font-medium"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              onClick={() => setSliderPosition(50)}
+              className="px-2.5 py-1 rounded bg-slate-800 text-slate-200 font-medium transition-colors cursor-pointer"
             >
-              <Sunset className="w-3.5 h-3.5 text-orange-400" />
-              <span>Golden 2700K</span>
+              Split 50/50
             </button>
             <button
               type="button"
-              onClick={() => setActiveLighting("overcast")}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors cursor-pointer ${
-                activeLighting === "overcast"
-                  ? "bg-slate-800 text-slate-100 font-medium"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
+              onClick={() => setSliderPosition(15)}
+              className="px-2.5 py-1 rounded text-slate-400 hover:text-white transition-colors cursor-pointer"
             >
-              <Cloud className="w-3.5 h-3.5 text-slate-400" />
-              <span>Overcast 6500K</span>
+              CAD only
             </button>
           </div>
         </div>
@@ -136,55 +120,47 @@ export default function ComparisonSlider({
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchMove}
-        className="relative w-full aspect-[16/10] rounded-xl overflow-hidden cursor-ew-resize select-none border border-slate-800 shadow-xl bg-slate-950"
+        className="relative w-full aspect-[600/420] rounded-xl overflow-hidden cursor-ew-resize select-none border border-slate-800 shadow-xl bg-slate-950"
       >
-        {/* Right Layer (Background): Real Architectural Daylit Interior Render */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <img
-            src="/images/architectural-daylight.jpg"
-            alt="Daylit architectural interior with timber walls and high glazing"
-            className="w-full h-full object-cover transition-[filter] duration-300"
+        {/* Right Layer (Background): Resolved Vector CAD Layout */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-950">
+          <div
+            className="absolute inset-0"
             style={{
-              filter:
-                activeLighting === "sunset"
-                  ? "sepia(0.28) saturate(1.25) brightness(0.92)"
-                  : activeLighting === "overcast"
-                  ? "saturate(0.85) brightness(1.05) hue-rotate(4deg)"
-                  : "contrast(1.04) brightness(1.0)"
+              width: containerWidth > 0 ? `${containerWidth}px` : "100%",
+              height: "100%"
             }}
-          />
-          {/* Subtle architectural vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/30 pointer-events-none" />
+          >
+            <CadFloorplanVectorSVG className="w-full h-full" />
+          </div>
 
           {/* Label Badge Right */}
-          <div className="absolute top-4 right-4 pointer-events-none z-10">
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-700/80 text-slate-200 text-xs font-sans shadow-sm">
-              <span>Architectural render</span>
+          <div className="absolute top-3 right-3 pointer-events-none z-10">
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-700/80 text-slate-200 text-xs font-sans shadow-sm">
+              <span>Detected vector CAD</span>
             </span>
           </div>
         </div>
 
-        {/* Left Layer (Foreground with Clip): Source Blueprint Schematic */}
+        {/* Left Layer (Foreground with Clip): Hand-Drawn Pencil Floorplan Sketch */}
         <div
-          className="absolute inset-0 w-full h-full overflow-hidden"
+          className="absolute inset-0 w-full h-full overflow-hidden border-r border-slate-300 shadow-lg"
           style={{ width: `${sliderPosition}%` }}
         >
-          <div className="absolute inset-0 w-full h-full min-w-[300px]">
-            <div
-              className="absolute inset-0"
-              style={{
-                width: containerWidth > 0 ? `${containerWidth}px` : "100%",
-                height: "100%"
-              }}
-            >
-              <BlueprintSketchSVG />
-            </div>
+          <div
+            className="absolute inset-0"
+            style={{
+              width: containerWidth > 0 ? `${containerWidth}px` : "100%",
+              height: "100%"
+            }}
+          >
+            <PencilFloorplanSketchSVG className="w-full h-full" />
           </div>
 
           {/* Label Badge Left */}
-          <div className="absolute top-4 left-4 pointer-events-none z-10">
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-700/80 text-slate-200 text-xs font-sans shadow-sm">
-              <span>Source schematic</span>
+          <div className="absolute top-3 left-3 pointer-events-none z-10">
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-700/80 text-slate-200 text-xs font-sans shadow-sm">
+              <span>Pencil field sketch</span>
             </span>
           </div>
         </div>
@@ -195,11 +171,11 @@ export default function ComparisonSlider({
           style={{ left: `${sliderPosition}%` }}
         >
           {/* Hairline precision steel line */}
-          <div className="absolute top-0 bottom-0 w-[1.5px] -ml-[0.75px] bg-white shadow-sm" />
+          <div className="absolute top-0 bottom-0 w-[2px] -ml-[1px] bg-white shadow-sm" />
 
           {/* Interactive Drag Handle */}
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-slate-900 border border-slate-300 flex items-center justify-center shadow-md cursor-ew-resize">
-            <div className="flex items-center space-x-1 text-slate-200 text-[10px] font-mono select-none">
+          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center shadow-lg cursor-ew-resize">
+            <div className="flex items-center space-x-0.5 text-slate-200 text-xs font-mono select-none">
               <span>‹</span>
               <span>›</span>
             </div>
@@ -210,7 +186,7 @@ export default function ComparisonSlider({
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
           <span className="px-3 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-800 text-slate-300 text-[11px] font-sans flex items-center gap-1.5 shadow-sm">
             <Eye className="w-3.5 h-3.5 text-slate-400" />
-            <span>Drag divider to inspect transformation</span>
+            <span>Drag to compare pencil sketch and detected CAD lines</span>
           </span>
         </div>
       </div>

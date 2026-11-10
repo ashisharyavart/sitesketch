@@ -49,130 +49,345 @@ export function SiteSketchLogo({ className = "w-8 h-8", glow = true }: { classNa
   );
 }
 
-// 2D Hand-Drawn Blueprint Sketch SVG
-export function BlueprintSketchSVG({ className = "w-full h-full" }: { className?: string }) {
+// 1. Hand-Drawn Pencil Floorplan Sketch (The Authentic "Before" Source Input)
+export function PencilFloorplanSketchSVG({ className = "w-full h-full" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 600 420"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      aria-label="Hand-drawn architectural pencil floorplan sketch on grid paper"
     >
       <defs>
-        {/* Grid pattern background */}
-        <pattern id="sketchGrid" width="24" height="24" patternUnits="userSpaceOnUse">
-          <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255, 255, 255, 0.07)" strokeWidth="0.75" />
+        {/* Soft graphite drafting grid */}
+        <pattern id="pencilGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(100, 116, 139, 0.12)" strokeWidth="0.75" />
         </pattern>
-        <pattern id="denseHatch" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="0" x2="0" y2="6" stroke="rgba(203, 213, 225, 0.4)" strokeWidth="1" />
+        <pattern id="pencilHatch" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="6" stroke="rgba(71, 85, 105, 0.28)" strokeWidth="1" />
         </pattern>
       </defs>
 
-      {/* Blueprint base background */}
-      <rect width="600" height="420" fill="#0D1524" />
-      <rect width="600" height="420" fill="url(#sketchGrid)" />
+      {/* Warm Architect's Tracing / Vellum Paper Background */}
+      <rect width="600" height="420" fill="#F6F3EB" />
+      <rect width="600" height="420" fill="url(#pencilGrid)" />
 
-      {/* Tracing paper subtle vignette overlay */}
-      <rect x="20" y="20" width="560" height="380" rx="8" stroke="rgba(6, 182, 212, 0.2)" strokeWidth="1" strokeDasharray="6 4" fill="none" />
+      {/* Outer Tracing Border with subtle corner staple marks */}
+      <rect x="18" y="18" width="564" height="384" stroke="rgba(148, 163, 184, 0.35)" strokeWidth="1" strokeDasharray="6 4" fill="none" />
 
-      {/* Exterior Walls (Double-line architectural drafting) */}
-      <g stroke="#E2E8F0" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.95">
-        {/* Outer perimeter */}
-        <path d="M 70 80 L 530 80 L 530 350 L 70 350 Z" />
-        <path d="M 82 92 L 518 92 L 518 338 L 82 338 Z" strokeDasharray="1 0" />
+      {/* Hand-Drawn Exterior Walls with realistic corner overshoots */}
+      <g stroke="#334155" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" opacity="0.92">
+        {/* Top wall with pencil overshoot past corners */}
+        <path d="M 64 80 L 536 80" />
+        <path d="M 76 92 L 524 92" />
+        {/* Bottom wall with pencil overshoot */}
+        <path d="M 64 350 L 536 350" />
+        <path d="M 76 338 L 524 338" />
+        {/* Left wall with corner overshoots */}
+        <path d="M 70 74 L 70 356" />
+        <path d="M 82 86 L 82 344" />
+        {/* Right wall with corner overshoots */}
+        <path d="M 530 74 L 530 356" />
+        <path d="M 518 86 L 518 344" />
       </g>
 
-      {/* Load-bearing wall cross hatching */}
-      <rect x="70" y="80" width="12" height="270" fill="url(#denseHatch)" opacity="0.6" />
-      <rect x="70" y="80" width="460" height="12" fill="url(#denseHatch)" opacity="0.6" />
-      <rect x="518" y="80" width="12" height="270" fill="url(#denseHatch)" opacity="0.6" />
-      <rect x="70" y="338" width="460" height="12" fill="url(#denseHatch)" opacity="0.6" />
+      {/* Wall Cavity Pencil Hatching */}
+      <rect x="70" y="80" width="12" height="270" fill="url(#pencilHatch)" />
+      <rect x="70" y="80" width="460" height="12" fill="url(#pencilHatch)" />
+      <rect x="518" y="80" width="12" height="270" fill="url(#pencilHatch)" />
+      <rect x="70" y="338" width="460" height="12" fill="url(#pencilHatch)" />
 
-      {/* Interior Partition Walls */}
-      <g stroke="#CBD5E1" strokeWidth="2" strokeLinecap="round" opacity="0.85">
-        {/* Living Room / Kitchen Divider */}
-        <path d="M 330 92 L 330 220" />
-        <path d="M 342 92 L 342 220" />
-        {/* Balcony / Terrace Opening */}
-        <path d="M 220 338 L 220 350" />
-        <path d="M 380 338 L 380 350" />
+      {/* Interior Partition Walls (Kitchen / Living divider) */}
+      <g stroke="#475569" strokeWidth="2" strokeLinecap="round" opacity="0.88">
+        <path d="M 330 88 L 330 224" />
+        <path d="M 342 88 L 342 224" />
+        {/* Balcony / South Glazing Opening */}
+        <path d="M 220 336 L 220 352" />
+        <path d="M 380 336 L 380 352" />
       </g>
 
-      {/* Door Swings (Dotted 90° arcs) */}
-      <g stroke="#06B6D4" strokeWidth="1.5">
-        {/* Main Entry Door Swing */}
+      {/* Hand-Sketched South Window / Glazing Run */}
+      <g stroke="#64748B" strokeWidth="1.5">
+        <line x1="225" y1="344" x2="375" y2="344" strokeWidth="2.5" />
+        <line x1="230" y1="340" x2="370" y2="340" stroke="#0284C7" strokeWidth="1" strokeDasharray="3 2" />
+        <text x="300" y="362" fontSize="8" fill="#64748B" fontFamily="monospace" textAnchor="middle">
+          14&apos;-6&quot; GLAZING APERTURE
+        </text>
+      </g>
+
+      {/* Hand-Drawn Door Swing Arc (Entry Door) */}
+      <g stroke="#0284C7" strokeWidth="1.6" opacity="0.85">
         <line x1="120" y1="338" x2="160" y2="338" strokeDasharray="3 3" />
-        <line x1="120" y1="338" x2="120" y2="298" stroke="#E2E8F0" strokeWidth="2" />
+        <line x1="120" y1="338" x2="120" y2="298" stroke="#334155" strokeWidth="2.2" />
         <path d="M 120 298 A 40 40 0 0 1 160 338" fill="none" strokeDasharray="3 3" />
-
-        {/* Terrace Sliding Glass Door */}
-        <line x1="225" y1="344" x2="375" y2="344" stroke="#38BDF8" strokeWidth="3" />
-        <line x1="260" y1="341" x2="340" y2="341" stroke="#F59E0B" strokeWidth="2" />
+        <text x="140" y="325" fontSize="7.5" fill="#0284C7" fontFamily="sans-serif">32&quot; SWING</text>
       </g>
 
-      {/* Furniture Layout (Pencil Hand-drawn schematics) */}
-      <g stroke="#94A3B8" strokeWidth="1.5" fill="rgba(15, 23, 42, 0.4)">
-        {/* Scandinavian Curved Sectional Sofa */}
-        <path d="M 140 130 C 140 120, 270 120, 270 130 L 270 185 C 270 195, 255 195, 255 185 L 255 145 L 155 145 L 155 210 C 155 220, 140 220, 140 210 Z" />
+      {/* Hand-Sketched Furniture Footprints */}
+      <g stroke="#64748B" strokeWidth="1.4" fill="rgba(241, 245, 249, 0.45)">
+        {/* Curved Sectional Sofa (Rough pencil curves) */}
+        <path
+          d="M 140 130 C 140 120, 270 120, 270 130 L 270 185 C 270 195, 255 195, 255 185 L 255 145 L 155 145 L 155 210 C 155 220, 140 220, 140 210 Z"
+          stroke="#475569"
+        />
         {/* Coffee Table Plinth */}
-        <rect x="180" y="165" width="65" height="38" rx="6" stroke="#06B6D4" strokeDasharray="2 2" />
-        {/* TV Console / Media Credenza */}
-        <rect x="140" y="260" width="130" height="22" rx="2" />
+        <rect x="180" y="165" width="65" height="38" rx="4" stroke="#64748B" strokeDasharray="2 2" />
+        <text x="212" y="188" fontSize="7" fill="#64748B" textAnchor="middle" fontFamily="sans-serif">PLINTH</text>
+
+        {/* Media credenza */}
+        <rect x="140" y="260" width="130" height="22" rx="2" stroke="#64748B" />
+
         {/* Kitchen Island */}
-        <rect x="375" y="130" width="115" height="60" rx="3" stroke="#F59E0B" />
-        {/* 3 Bar Stools */}
-        <circle cx="395" cy="205" r="9" />
-        <circle cx="432" cy="205" r="9" />
-        <circle cx="470" cy="205" r="9" />
+        <rect x="375" y="130" width="115" height="60" rx="3" stroke="#D97706" />
+        <circle cx="395" cy="205" r="9" stroke="#94A3B8" />
+        <circle cx="432" cy="205" r="9" stroke="#94A3B8" />
+        <circle cx="470" cy="205" r="9" stroke="#94A3B8" />
+
         {/* Dining Table */}
-        <rect x="380" y="245" width="105" height="55" rx="4" />
+        <rect x="380" y="245" width="105" height="55" rx="4" stroke="#475569" />
         <rect x="400" y="232" width="28" height="8" rx="2" />
         <rect x="440" y="232" width="28" height="8" rx="2" />
         <rect x="400" y="305" width="28" height="8" rx="2" />
         <rect x="440" y="305" width="28" height="8" rx="2" />
       </g>
 
-      {/* Dimensional Callouts & Annotations (Hand-drawn font look) */}
-      <g fill="#38BDF8" fontSize="10" fontFamily="monospace">
-        {/* Top Dimension */}
-        <line x1="70" y1="58" x2="530" y2="58" stroke="#06B6D4" strokeWidth="1" />
-        <line x1="70" y1="52" x2="70" y2="64" stroke="#06B6D4" strokeWidth="1.5" />
-        <line x1="530" y1="52" x2="530" y2="64" stroke="#06B6D4" strokeWidth="1.5" />
-        <rect x="270" y="50" width="60" height="16" fill="#0D1524" />
-        <text x="300" y="62" textAnchor="middle" fill="#06B6D4" fontWeight="bold">28&apos;-6&quot; [8.68m]</text>
+      {/* Hand-Drawn Dimensions (Pencil slash ticks & measurements) */}
+      <g stroke="#334155" strokeWidth="1" fill="#1E293B" fontSize="9.5" fontFamily="sans-serif">
+        {/* Top Dimension String */}
+        <line x1="70" y1="58" x2="530" y2="58" />
+        <line x1="66" y1="64" x2="74" y2="52" strokeWidth="1.8" />
+        <line x1="526" y1="64" x2="534" y2="52" strokeWidth="1.8" />
+        <rect x="272" y="48" width="56" height="18" fill="#F6F3EB" />
+        <text x="300" y="61" textAnchor="middle" fontWeight="bold">28&apos;-6&quot;</text>
 
-        {/* Left Dimension */}
-        <line x1="45" y1="80" x2="45" y2="350" stroke="#06B6D4" strokeWidth="1" />
-        <line x1="39" y1="80" x2="51" y2="80" stroke="#06B6D4" strokeWidth="1.5" />
-        <line x1="39" y1="350" x2="51" y2="350" stroke="#06B6D4" strokeWidth="1.5" />
-        <text x="36" y="220" textAnchor="middle" fill="#06B6D4" fontWeight="bold" transform="rotate(-90 36 220)">16&apos;-8&quot; [5.08m]</text>
+        {/* Left Dimension String */}
+        <line x1="45" y1="80" x2="45" y2="350" />
+        <line x1="39" y1="86" x2="51" y2="74" strokeWidth="1.8" />
+        <line x1="39" y1="356" x2="51" y2="344" strokeWidth="1.8" />
+        <text x="36" y="220" textAnchor="middle" fontWeight="bold" transform="rotate(-90 36 220)">16&apos;-8&quot;</text>
       </g>
 
-      {/* Room Labels & Stamps */}
-      <g fill="#E2E8F0" fontFamily="monospace">
-        <text x="205" y="235" fontSize="12" fontWeight="700" fill="#F8FAFC" textAnchor="middle">LIVING AREA</text>
-        <text x="205" y="249" fontSize="9" fill="#94A3B8" textAnchor="middle">312 SQ. FT. // HERRINGBONE OAK</text>
+      {/* Architect's Field Sketch Notes */}
+      <g fill="#475569" fontFamily="sans-serif">
+        <text x="205" y="236" fontSize="11" fontWeight="bold" textAnchor="middle">LIVING AREA</text>
+        <text x="205" y="249" fontSize="8.5" fill="#64748B" textAnchor="middle">~312 SQ FT · OAK FLOOR</text>
 
-        <text x="432" y="120" fontSize="11" fontWeight="700" fill="#F8FAFC" textAnchor="middle">OPEN KITCHEN</text>
-        <text x="432" y="170" fontSize="9" fill="#F59E0B" textAnchor="middle">QUARTZ ISLAND</text>
-
-        {/* Hand-drawn pencil note tag */}
-        <path d="M 245 180 L 290 195" stroke="#F59E0B" strokeWidth="1" strokeDasharray="2 2" />
-        <circle cx="245" cy="180" r="2" fill="#F59E0B" />
-        <rect x="285" y="190" width="85" height="18" rx="3" fill="#1E293B" stroke="#F59E0B" strokeWidth="0.8" />
-        <text x="327" y="202" fontSize="8" fill="#FCD34D" textAnchor="middle">LOW PLINTH #M-104</text>
+        <text x="432" y="120" fontSize="10" fontWeight="bold" textAnchor="middle">OPEN KITCHEN</text>
+        <text x="432" y="170" fontSize="8" fill="#D97706" textAnchor="middle">ISLAND TAKEOFF</text>
       </g>
 
-      {/* Architectural Title Block */}
+      {/* Sketch Sheet Stamp Header */}
       <g>
-        <rect x="410" y="346" width="160" height="54" fill="#0B1320" stroke="#334155" strokeWidth="1" rx="2" />
-        <line x1="410" y1="364" x2="570" y2="364" stroke="#1E293B" strokeWidth="1" />
-        <text x="420" y="358" fontSize="8" fill="#94A3B8" fontFamily="sans-serif">SHEET A-101 · LEVEL 01 PLAN</text>
-        <text x="420" y="378" fontSize="9" fill="#F8FAFC" fontFamily="sans-serif" fontWeight="bold">LIVING SUITE LAYOUT</text>
-        <text x="420" y="392" fontSize="7.5" fill="#64748B" fontFamily="monospace">SCALE: 1/4&quot; = 1&apos;-0&quot; · 480 SQ FT</text>
+        <rect x="28" y="28" width="180" height="28" rx="2" fill="#EDE8DC" stroke="#CBD5E1" strokeWidth="0.8" />
+        <text x="36" y="42" fontSize="7.5" fill="#64748B" fontFamily="monospace">ORIGINAL PENCIL FIELD SKETCH</text>
+        <text x="36" y="51" fontSize="8.5" fill="#1E293B" fontFamily="sans-serif" fontWeight="bold">
+          Level 01 Suite · 480 sq ft
+        </text>
       </g>
     </svg>
   );
+}
+
+// 2. Resolved CAD Vector Floorplan SVG (The Exact Same Geometry, Converted to Clean CAD)
+export function CadFloorplanVectorSVG({
+  className = "w-full h-full",
+  showWalls = true,
+  showDoors = true,
+  showWindows = true,
+  showDimensions = true,
+  showFurniture = true,
+  showRoomLabels = true,
+  selectedElement = null,
+  onSelectElement
+}: {
+  className?: string;
+  showWalls?: boolean;
+  showDoors?: boolean;
+  showWindows?: boolean;
+  showDimensions?: boolean;
+  showFurniture?: boolean;
+  showRoomLabels?: boolean;
+  selectedElement?: string | null;
+  onSelectElement?: (el: string) => void;
+}) {
+  return (
+    <svg
+      viewBox="0 0 600 420"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-label="Resolved architectural vector CAD floorplan drawing"
+    >
+      <defs>
+        {/* CAD Drafting Grid */}
+        <pattern id="cadGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+          <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="0.75" />
+        </pattern>
+        {/* Standard Architectural Concrete Wall Hatch */}
+        <pattern id="cadWallHatch" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(148, 163, 184, 0.5)" strokeWidth="1" />
+        </pattern>
+      </defs>
+
+      {/* Dark Architectural CAD Workstation Viewport */}
+      <rect width="600" height="420" fill="#0D1524" />
+      <rect width="600" height="420" fill="url(#cadGrid)" />
+
+      {/* Sheet Frame & Tracing Area */}
+      <rect x="20" y="20" width="560" height="380" rx="4" stroke="rgba(71, 85, 105, 0.4)" strokeWidth="1" fill="none" />
+
+      {/* 1. EXTRACTED WALL BOUNDARIES (EXACT SAME 70,80 to 530,350 COORDINATES) */}
+      {showWalls && (
+        <g
+          className="cursor-pointer transition-opacity"
+          onClick={() => onSelectElement && onSelectElement("walls")}
+          opacity={selectedElement && selectedElement !== "walls" ? 0.4 : 1}
+        >
+          {/* Wall Cavity Hatch */}
+          <rect x="70" y="80" width="12" height="270" fill="url(#cadWallHatch)" />
+          <rect x="70" y="80" width="460" height="12" fill="url(#cadWallHatch)" />
+          <rect x="518" y="80" width="12" height="270" fill="url(#cadWallHatch)" />
+          <rect x="70" y="338" width="460" height="12" fill="url(#cadWallHatch)" />
+
+          {/* Precision Double-Line Walls */}
+          <g stroke={selectedElement === "walls" ? "#38BDF8" : "#F8FAFC"} strokeWidth="2.2" strokeLinecap="square" strokeLinejoin="miter">
+            <path d="M 70 80 L 530 80 L 530 350 L 70 350 Z" />
+            <path d="M 82 92 L 518 92 L 518 338 L 82 338 Z" />
+          </g>
+
+          {/* Interior Partitions */}
+          <g stroke={selectedElement === "walls" ? "#38BDF8" : "#CBD5E1"} strokeWidth="2">
+            <path d="M 330 92 L 330 220" />
+            <path d="M 342 92 L 342 220" />
+          </g>
+        </g>
+      )}
+
+      {/* 2. SOUTH WINDOW GLAZING (EXACT SAME 220 to 380 COORDINATES) */}
+      {showWindows && (
+        <g
+          className="cursor-pointer"
+          onClick={() => onSelectElement && onSelectElement("windows")}
+          opacity={selectedElement && selectedElement !== "windows" ? 0.4 : 1}
+        >
+          <line x1="220" y1="344" x2="380" y2="344" stroke={selectedElement === "windows" ? "#38BDF8" : "#38BDF8"} strokeWidth="3.5" />
+          <line x1="250" y1="341" x2="350" y2="341" stroke="#F59E0B" strokeWidth="2" />
+          <text x="300" y="362" fontSize="7.5" fill="#38BDF8" fontFamily="sans-serif" textAnchor="middle" fontWeight="bold">
+            14&apos;-6&quot; THERMAL BREAK GLAZING
+          </text>
+        </g>
+      )}
+
+      {/* 3. DOOR SWINGS & EGRESS CLEARANCE (EXACT SAME 120,338 COORDINATES) */}
+      {showDoors && (
+        <g
+          className="cursor-pointer"
+          onClick={() => onSelectElement && onSelectElement("doors")}
+          opacity={selectedElement && selectedElement !== "doors" ? 0.4 : 1}
+        >
+          {/* Main Entry Door Swing */}
+          <line x1="120" y1="338" x2="160" y2="338" stroke="#38BDF8" strokeWidth="1.5" strokeDasharray="3 3" />
+          <line x1="120" y1="338" x2="120" y2="298" stroke="#E2E8F0" strokeWidth="2.5" />
+          <path d="M 120 298 A 40 40 0 0 1 160 338" fill="none" stroke="#38BDF8" strokeWidth="1.5" strokeDasharray="3 3" />
+          <text x="140" y="325" fontSize="7.5" fill="#38BDF8" fontFamily="monospace">32&quot; EGRESS</text>
+        </g>
+      )}
+
+      {/* 4. FURNITURE CAD BLOCKS (EXACT SAME POSITIONS: SOFA, COFFEE TABLE, DINING, ISLAND) */}
+      {showFurniture && (
+        <g
+          className="cursor-pointer"
+          onClick={() => onSelectElement && onSelectElement("furniture")}
+          opacity={selectedElement && selectedElement !== "furniture" ? 0.4 : 1}
+          stroke={selectedElement === "furniture" ? "#F59E0B" : "#94A3B8"}
+          strokeWidth="1.5"
+          fill="rgba(15, 23, 42, 0.4)"
+        >
+          {/* Modular Curved Sectional Sofa CAD Block */}
+          <path d="M 140 130 C 140 120, 270 120, 270 130 L 270 185 C 270 195, 255 195, 255 185 L 255 145 L 155 145 L 155 210 C 155 220, 140 220, 140 210 Z" />
+          {/* Coffee Table Plinth */}
+          <rect x="180" y="165" width="65" height="38" rx="4" stroke="#38BDF8" strokeDasharray="2 2" />
+          <text x="212" y="188" fontSize="7.5" fill="#38BDF8" textAnchor="middle" fontFamily="sans-serif">MARBLE PLINTH</text>
+
+          {/* Media Credenza */}
+          <rect x="140" y="260" width="130" height="22" rx="2" />
+
+          {/* Kitchen Island */}
+          <rect x="375" y="130" width="115" height="60" rx="3" stroke="#F59E0B" />
+          {/* 3 Stools */}
+          <circle cx="395" cy="205" r="9" />
+          <circle cx="432" cy="205" r="9" />
+          <circle cx="470" cy="205" r="9" />
+
+          {/* Dining Table */}
+          <rect x="380" y="245" width="105" height="55" rx="4" />
+          <rect x="400" y="232" width="28" height="8" rx="2" />
+          <rect x="440" y="232" width="28" height="8" rx="2" />
+          <rect x="400" y="305" width="28" height="8" rx="2" />
+          <rect x="440" y="305" width="28" height="8" rx="2" />
+        </g>
+      )}
+
+      {/* 5. CAD DIMENSION STRINGS (EXACT SAME 28'-6" & 16'-8" MEASUREMENTS) */}
+      {showDimensions && (
+        <g
+          className="cursor-pointer"
+          onClick={() => onSelectElement && onSelectElement("dimensions")}
+          opacity={selectedElement && selectedElement !== "dimensions" ? 0.4 : 1}
+          fill="#38BDF8"
+          stroke="#38BDF8"
+          fontSize="9.5"
+          fontFamily="sans-serif"
+        >
+          {/* Top Dimension String */}
+          <line x1="70" y1="58" x2="530" y2="58" strokeWidth="1" />
+          <line x1="66" y1="64" x2="74" y2="52" strokeWidth="1.8" />
+          <line x1="526" y1="64" x2="534" y2="52" strokeWidth="1.8" />
+          <rect x="268" y="49" width="64" height="18" fill="#0D1524" stroke="#334155" strokeWidth="0.8" rx="2" />
+          <text x="300" y="62" textAnchor="middle" fontWeight="bold">28&apos;-6&quot; [8.68m]</text>
+
+          {/* Left Dimension String */}
+          <line x1="45" y1="80" x2="45" y2="350" strokeWidth="1" />
+          <line x1="39" y1="86" x2="51" y2="74" strokeWidth="1.8" />
+          <line x1="39" y1="356" x2="51" y2="344" strokeWidth="1.8" />
+          <rect x="22" y="209" width="46" height="18" fill="#0D1524" stroke="#334155" strokeWidth="0.8" rx="2" />
+          <text x="45" y="221" textAnchor="middle" fontWeight="bold">16&apos;-8&quot;</text>
+        </g>
+      )}
+
+      {/* 6. ROOM LABELS & SPATIAL ANNOTATIONS */}
+      {showRoomLabels && (
+        <g
+          className="cursor-pointer"
+          onClick={() => onSelectElement && onSelectElement("room")}
+          opacity={selectedElement && selectedElement !== "room" ? 0.4 : 1}
+          fill="#F8FAFC"
+          fontFamily="sans-serif"
+        >
+          <text x="205" y="235" fontSize="11" fontWeight="bold" textAnchor="middle">LIVING AREA</text>
+          <text x="205" y="249" fontSize="8.5" fill="#94A3B8" textAnchor="middle">312 SQ FT // HERRINGBONE OAK</text>
+
+          <text x="432" y="120" fontSize="10.5" fontWeight="bold" textAnchor="middle">OPEN KITCHEN</text>
+          <text x="432" y="170" fontSize="8.5" fill="#F59E0B" textAnchor="middle">QUARTZ ISLAND // 168 SQ FT</text>
+        </g>
+      )}
+
+      {/* Professional Architectural Sheet Title Block */}
+      <g>
+        <rect x="400" y="344" width="170" height="56" fill="#0B1320" stroke="#334155" strokeWidth="1" rx="2" />
+        <line x1="400" y1="363" x2="570" y2="363" stroke="#1E293B" strokeWidth="1" />
+        <text x="410" y="357" fontSize="7.5" fill="#94A3B8" fontFamily="sans-serif">SHEET A-101 · LEVEL 01 PLAN</text>
+        <text x="410" y="377" fontSize="9" fill="#F8FAFC" fontFamily="sans-serif" fontWeight="bold">RESIDENTIAL SUITE</text>
+        <text x="410" y="392" fontSize="7.5" fill="#38BDF8" fontFamily="sans-serif">SCALE 1/4&quot; = 1&apos;-0&quot; · 480 SQ FT</text>
+      </g>
+    </svg>
+  );
+}
+
+// 2D Hand-Drawn Blueprint Sketch SVG (Legacy compatibility wrapper)
+export function BlueprintSketchSVG({ className = "w-full h-full" }: { className?: string }) {
+  return <CadFloorplanVectorSVG className={className} />;
 }
 
 // 4K Photorealistic Scandinavian Living Room SVG (Realistic lighting, materials, furniture)

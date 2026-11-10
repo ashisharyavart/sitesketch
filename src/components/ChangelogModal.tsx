@@ -18,44 +18,44 @@ export default function ChangelogModal({ isOpen, onClose, onOpenTrial }: Changel
       version: "v2.4.0",
       date: "November 2026",
       badge: "Current Beta Release",
-      title: "Generative BIM & Real-Time Kelvin Raytracing Engine",
+      title: "Floorplan Vectorization & Preliminary Takeoff Engine",
       items: [
-        "Introduced Spatial Engine v2.4: 60% faster latent diffusion sampling on Ampere/Hopper cloud clusters.",
-        "Multi-Kelvin temperature scheduler: calibrates light bounces from 2200K (candlelight) up to 7500K (high-altitude overcast).",
-        "Automated Bill of Materials (BOM) v2: added dynamic waste factor calculation (standard 10% on herringbone hardwood and tile).",
-        "Revit 2026 IFC 4.3 bi-directional spatial schema exporter.",
-        "Interactive 360° panoramic client viewer with web-native spatial markup & approval pins."
+        "Introduced automatic floorplan line detection for scanned drawings and field sketches.",
+        "Separated lighting preview controls with independent sky condition, time of day, and Kelvin options.",
+        "Automated preliminary Bill of Materials (BOM) takeoff with 10% standard waste allowances and CSV export.",
+        "DXF vector export preview with editable wall and door layer segmentation.",
+        "Interactive architectural workspace with zoom, pan, and real-time element selection."
       ]
     },
     {
       version: "v2.3.2",
       date: "October 2026",
       badge: "Maintenance",
-      title: "Hand-Drawn Pencil OCR & Tracing Paper Denoising",
+      title: "Hand-Drawn Sketch Recognition & Layer Segmentation",
       items: [
-        "Enhanced neural OCR filter to filter out camera glare on glossy tracing paper.",
-        "Recognizes handwritten fractional dimensional annotations (e.g. 14'-6 1/2\").",
-        "Auto-detection of structural shear walls vs non-load-bearing 2x4 drywall partitions.",
-        "Added export support for SketchUp (.skp) layer groups."
+        "Enhanced sketch contrast filtering to support rough graphite strokes on grid paper.",
+        "Recognizes standard architectural dimension formats (feet and inches).",
+        "Distinguishes exterior load-bearing walls from interior partitions.",
+        "Added sample DXF vector download support."
       ]
     },
     {
       version: "v2.2.0",
       date: "September 2026",
       badge: "Major Update",
-      title: "Raw Job-Site Framing Staging Pipeline",
+      title: "Material Takeoffs & Construction Planning",
       items: [
-        "Computer vision alignment for unfinished wooden stud framing and poured concrete slabs.",
-        "Direct point-cloud projection from iPhone LiDAR scans.",
-        "AES-256 cloud encryption architecture deployed across all workspace storage volumes.",
-        "Multi-seat Studio team permissions with custom access roles."
+        "Standard flooring and wall finishes catalog with illustrative unit pricing.",
+        "Multi-stage construction planning preview (framing, rough-in, completed interior).",
+        "TLS encrypted transit and secure cloud storage across all workspace files.",
+        "Multi-seat studio team accounts for collaborative review."
       ]
     }
   ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-2xl rounded-2xl bg-slate-900 border border-slate-800 shadow-[0_0_60px_-15px_rgba(6,182,212,0.3)] p-6 sm:p-8 max-h-[85vh] flex flex-col">
+      <div className="relative w-full max-w-2xl rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 sm:p-8 max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
           <div className="flex items-center space-x-3">

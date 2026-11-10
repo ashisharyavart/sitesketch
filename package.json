@@ -2,7 +2,7 @@
   "name": "sitesketch-saas",
   "version": "2.4.0",
   "private": true,
-  "description": "SiteSketch - Generative Architectural, Interior Visualization & Automated Bill-of-Materials (BOM) SaaS Platform",
+  "description": "SiteSketch - Floorplan review, finish specification, and preliminary project estimation workspace",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

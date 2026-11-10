@@ -3,14 +3,14 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Privacy Policy | SiteSketch",
-  description: "Privacy Policy and architectural data protection architecture for SiteSketch Technologies, Inc.",
+  description: "Privacy policy and data protection practices for the SiteSketch architectural workspace.",
 };
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] architectural-grid text-slate-900 flex flex-col justify-between font-sans">
+    <div className="min-h-screen bg-canvas architectural-grid text-slate-900 flex flex-col justify-between font-sans">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#FAFAFA]/90 backdrop-blur-md border-b border-slate-200/80">
+      <header className="sticky top-0 z-40 bg-canvas/90 backdrop-blur-md border-b border-slate-200/80">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2.5">
             <div className="w-6 h-6 rounded border-2 border-slate-900 flex items-center justify-center p-0.5 bg-white shadow-2xs">
@@ -35,14 +35,11 @@ export default function PrivacyPolicy() {
         <div className="max-w-3xl mx-auto space-y-10 bg-white p-8 sm:p-12 rounded-2xl border border-slate-200 shadow-2xs">
           {/* Header */}
           <div className="space-y-3 border-b border-slate-100 pb-6">
-            <span className="text-xs font-mono tracking-wider uppercase text-slate-500 font-semibold">
-              TRUST &amp; ARCHITECTURAL DATA SECURITY
-            </span>
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
               Privacy Policy
             </h1>
-            <p className="text-xs font-mono text-slate-500">
-              SiteSketch Technologies, Inc. • Effective Date: November 2026
+            <p className="text-xs text-slate-500">
+              SiteSketch · Effective Date: November 2026
             </p>
           </div>
 
@@ -51,47 +48,47 @@ export default function PrivacyPolicy() {
             <section className="space-y-3">
               <h2 className="text-base font-bold text-slate-900 font-mono">1. Information We Collect</h2>
               <p>
-                As a B2B Software-as-a-Service (SaaS) provider, SiteSketch Technologies, Inc. collects information necessary to provision studio workspaces, render 3D environments, and maintain cloud GPU pipelines:
+                SiteSketch collects basic information necessary to provide floorplan editing workspaces, material schedules, and early access accounts:
               </p>
               <ul className="list-disc pl-5 space-y-1.5 text-xs text-slate-600">
-                <li><strong className="text-slate-800">Studio Account Information:</strong> Name, professional work email, architecture/interior design firm name, billing address, and team seat allocations.</li>
-                <li><strong className="text-slate-800">Customer Project Data:</strong> 2D architectural blueprints, PDF drawing sets, CAD (.DWG/.DXF) files, raw job-site photographs, material specifications, and client markup annotations uploaded to your workspace.</li>
-                <li><strong className="text-slate-800">Platform Telemetry:</strong> GPU compute duration, rendering resolution selections, API request rates, and browser technical specifications to optimize real-time 360° viewer performance.</li>
+                <li><strong className="text-slate-800">Account Information:</strong> Name, professional work email, firm or practice name, and account preferences.</li>
+                <li><strong className="text-slate-800">Floorplans and Project Files:</strong> 2D architectural sketches, PDF floorplans, image files (JPG, PNG), and user-entered dimension and finish specifications.</li>
+                <li><strong className="text-slate-800">Technical Logs:</strong> Standard web server access logs, error reports, and feature utilization telemetry used to debug and improve workspace performance.</li>
               </ul>
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-base font-bold text-slate-900 font-mono">2. How We Process Spatial Data</h2>
+              <h2 className="text-base font-bold text-slate-900 font-mono">2. How We Use Your Data</h2>
               <p>
-                Spatial inputs uploaded to SiteSketch are processed strictly within isolated containerized cloud environments. Once vectorization, volumetric extrusion, and Kelvin lighting rendering passes are executed, outputs are stored securely within your private workspace storage bucket.
+                Uploaded sketches and project files are processed solely to execute line detection, generate quantity takeoffs, and display previews within your workspace. We do not sell your personal or project data to third parties.
               </p>
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-base font-bold text-slate-900 font-mono">3. Security Architecture &amp; Storage</h2>
+              <h2 className="text-base font-bold text-slate-900 font-mono">3. Security and Storage</h2>
               <p>
-                All data transmitted to or from SiteSketch is encrypted in transit using TLS 1.3 and at rest with AES-256 encryption. Enterprise customers can configure customer-managed encryption keys (CMEK) and direct automated sync to dedicated AWS S3 or Google Cloud storage vaults.
+                All data transmitted to or from SiteSketch is encrypted in transit using industry-standard TLS. Project files are stored in protected cloud object storage with role-based access controls.
               </p>
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-base font-bold text-slate-900 font-mono">4. Third-Party Infrastructure</h2>
+              <h2 className="text-base font-bold text-slate-900 font-mono">4. Third-Party Service Providers</h2>
               <p>
-                We do not sell personal or project data. We partner with industry-leading infrastructure providers (e.g. AWS, Cloudflare, Stripe) solely for cloud compute, secure hosting, content delivery, and payment processing.
+                We use reputable third-party cloud infrastructure providers for hosting and managed database services. These providers process data only as instructed to deliver core service functionality.
               </p>
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-base font-bold text-slate-900 font-mono">5. Data Deletion &amp; Export</h2>
+              <h2 className="text-base font-bold text-slate-900 font-mono">5. Data Retention and Deletion</h2>
               <p>
-                Studio administrators can permanently delete workspaces, rendering histories, and project models at any time through the Studio Settings console. Upon account termination, all customer data is wiped from primary storage volumes within 30 days.
+                You may request complete deletion of your early access account and associated uploaded files at any time by contacting us. Upon confirmation, data is removed from active databases within 30 days.
               </p>
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-base font-bold text-slate-900 font-mono">6. Contact Legal</h2>
+              <h2 className="text-base font-bold text-slate-900 font-mono">6. Contact</h2>
               <p className="text-xs text-slate-600">
-                For security inquiries, DPA requests, or SOC2 audit reports, contact our privacy engineering team at <span className="font-mono text-slate-900 font-medium">security@sitesketch.online</span>.
+                For questions regarding this privacy policy or your project data, please contact our team at <span className="font-mono text-slate-900 font-medium">privacy@sitesketch.online</span>.
               </p>
             </section>
           </div>
