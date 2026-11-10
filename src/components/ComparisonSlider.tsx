@@ -41,7 +41,10 @@ export default function ComparisonSlider({
     []
   );
 
-  const handleMouseDown = () => setIsDragging(true);
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    handleMove(e.clientX);
+  };
   const handleMouseUp = () => setIsDragging(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -50,8 +53,17 @@ export default function ComparisonSlider({
     }
   };
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    setIsDragging(true);
     if (e.touches.length > 0) {
+      handleMove(e.touches[0].clientX);
+    }
+  };
+
+  const handleTouchEnd = () => setIsDragging(false);
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (isDragging && e.touches.length > 0) {
       handleMove(e.touches[0].clientX);
     }
   };
@@ -118,6 +130,8 @@ export default function ComparisonSlider({
         onMouseMove={handleMouseMove}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchMove}
         className="relative w-full aspect-[16/10] sm:aspect-[16/10] rounded-xl overflow-hidden cursor-ew-resize select-none border border-slate-800 shadow-2xl bg-slate-950"
       >

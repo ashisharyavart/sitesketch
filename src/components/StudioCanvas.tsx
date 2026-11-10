@@ -81,8 +81,42 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
   const grandTotal = subtotal + taxEst;
 
   const handleCopyBom = () => {
+    // Generate real CSV takeoff and trigger immediate browser download
+    const csvRows = [
+      ["SiteSketch Studio - Project Takeoff Export"],
+      ["Project", "Res_Project_402_Living_Scandinavian.skx"],
+      ["Date", new Date().toISOString().split("T")[0]],
+      [""],
+      ["Line Item", "Category", "Description", "Specification", "Quantity", "Unit Rate", "Total Cost ($)"],
+      ...bomItems.map((item) => [
+        item.id,
+        item.category,
+        item.item,
+        item.spec,
+        item.qty,
+        item.rate,
+        item.cost.toFixed(2)
+      ]),
+      [""],
+      ["Materials Subtotal", "", "", "", "", "", subtotal.toFixed(2)],
+      ["Estimated Tax (8.25%)", "", "", "", "", "", taxEst.toFixed(2)],
+      ["Grand Total Takeoff", "", "", "", "", "", grandTotal.toFixed(2)]
+    ];
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      csvRows
+        .map((e) => e.map((cell) => `"${cell.toString().replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "sitesketch-studio-takeoff-project402.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
     setCopiedBom(true);
-    setTimeout(() => setCopiedBom(false), 2000);
+    setTimeout(() => setCopiedBom(false), 3000);
   };
 
   return (

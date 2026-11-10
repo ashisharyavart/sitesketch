@@ -23,8 +23,11 @@ import {
   AlertCircle,
   RefreshCw,
   UploadCloud,
-  FileText
+  FileText,
+  ArrowRight
 } from "lucide-react";
+import StudioCanvas from "@/components/StudioCanvas";
+import { BlueprintSketchSVG, PhotorealLivingRoomSVG } from "@/components/ArchitecturalSVGs";
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -34,7 +37,7 @@ export default function Home() {
   // Modal States
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"signin" | "register" | "forgot">("signin");
-  
+
   const [pricingModalOpen, setPricingModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<"Starter" | "Pro Studio" | "Enterprise">("Pro Studio");
 
@@ -68,6 +71,7 @@ export default function Home() {
   const [onboardingFileSelected, setOnboardingFileSelected] = useState<string | null>("sample-blueprint-scan.pdf");
   const [onboardingLoading, setOnboardingLoading] = useState(false);
   const [onboardingStatusMessage, setOnboardingStatusMessage] = useState("");
+  const [onboardingError, setOnboardingError] = useState("");
 
   // Spec Planner State (Taped Spec Card)
   const [specArea, setSpecArea] = useState(480);
@@ -84,6 +88,14 @@ export default function Home() {
   const [contactStatusMessage, setContactStatusMessage] = useState("");
   const [contactLoading, setContactLoading] = useState(false);
 
+  // Hallmark-styled Features Interactive Inspector State
+  const [activeFeatureTab, setActiveFeatureTab] = useState<"vectorizer" | "daylight" | "bom" | "staging">("vectorizer");
+  const [vectorLayer, setVectorLayer] = useState<"all" | "walls" | "doors" | "dims">("all");
+  const [daylightKelvin, setDaylightKelvin] = useState<number>(5000);
+  const [bomRoomPreset, setBomRoomPreset] = useState<"living" | "suite" | "studio">("living");
+  const [stagingStep, setStagingStep] = useState<"framing" | "rough" | "finished">("finished");
+  const [dxfExportSuccess, setDxfExportSuccess] = useState(false);
+
   // Cookie banner local persistence check
   useEffect(() => {
     const consent = localStorage.getItem("sitesketch_cookie_consent");
@@ -99,7 +111,15 @@ export default function Home() {
   };
 
   const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  };
+
+  // Helper to scroll smoothly to any section
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   // 1. AUTH HANDLERS
@@ -136,7 +156,7 @@ export default function Home() {
       setAuthLoading(false);
       if (authMode === "signin") {
         setAuthStatusMessage(
-          "Authentication Service Notice: Backend authentication provider (NextAuth.js / Supabase) is currently in development mode. No remote user session was established. To inspect studio capabilities, proceed via 'Start your plan' or early-access registration."
+          "Authentication Service Notice: Backend authentication provider (NextAuth.js / Supabase) is currently in development mode. No remote user session was established. To inspect studio capabilities, proceed via 'Start your plan' or test the Interactive Studio."
         );
       } else if (authMode === "register") {
         setAuthStatusMessage(
@@ -180,11 +200,18 @@ export default function Home() {
 
     setTimeout(() => {
       setCheckoutLoading(false);
-      const priceStr = selectedPlan === "Starter" 
-        ? (isAnnual ? "$23/mo ($276 billed annually)" : "$29/mo")
-        : selectedPlan === "Pro Studio"
-        ? (isAnnual ? "$63/mo ($756 billed annually)" : "$79/mo")
-        : (isAnnual ? "$159/mo ($1,908 billed annually)" : "$199/mo");
+      const priceStr =
+        selectedPlan === "Starter"
+          ? isAnnual
+            ? "$23/mo ($276 billed annually)"
+            : "$29/mo"
+          : selectedPlan === "Pro Studio"
+          ? isAnnual
+            ? "$63/mo ($756 billed annually)"
+            : "$79/mo"
+          : isAnnual
+          ? "$159/mo ($1,908 billed annually)"
+          : "$199/mo";
 
       setCheckoutStatusMessage(
         `Payment Integration Notice: Stripe Checkout is currently in sandbox verification mode (production STRIPE_SECRET_KEY not set). Your subscription reservation for ${selectedPlan} (${priceStr}) for '${checkoutFirm}' has been logged on the priority queue. An onboarding account executive will contact ${checkoutEmail} with direct invoice billing details.`
@@ -195,22 +222,26 @@ export default function Home() {
   // 3. STUDIO ONBOARDING HANDLERS
   const handleOpenOnboarding = () => {
     setOnboardingStatusMessage("");
+    setOnboardingError("");
     setOnboardingModalOpen(true);
   };
 
   const handleOnboardingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setOnboardingError("");
+
     if (!validateEmail(onboardingEmail)) {
-      alert("Please enter a valid studio email.");
+      setOnboardingError("Please enter a valid studio email address.");
       return;
     }
+
     setOnboardingLoading(true);
     setTimeout(() => {
       setOnboardingLoading(false);
       setOnboardingStatusMessage(
         `Studio Canvas Initialized: Project '${onboardingProjectName}' (${onboardingRoomType}) has been staged with ${onboardingStyle} PBR reflectance parameters. GPU raytracing compute worker allocation assigned to ${onboardingEmail}. Production GPU server cluster integration pending API keys.`
       );
-    }, 900);
+    }, 800);
   };
 
   // 4. SPEC PLANNER CSV EXPORT HANDLER
@@ -248,7 +279,23 @@ export default function Home() {
     setTimeout(() => setSpecDownloadSuccess(false), 3500);
   };
 
-  // 5. CONTACT SUPPORT HANDLER
+  // 5. DXF CAD SAMPLE EXPORT HANDLER (For Features Section)
+  const handleExportDXF = () => {
+    const dxfContent = `0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n0\nLINE\n8\nWALLS\n10\n0.0\n20\n0.0\n11\n8686.8\n21\n0.0\n0\nLINE\n8\nWALLS\n10\n8686.8\n20\n0.0\n11\n8686.8\n21\n5080.0\n0\nLINE\n8\nWALLS\n10\n8686.8\n20\n5080.0\n11\n0.0\n21\n5080.0\n0\nLINE\n8\nWALLS\n10\n0.0\n20\n5080.0\n11\n0.0\n21\n0.0\n0\nENDSEC\n0\nEOF\n`;
+    const blob = new Blob([dxfContent], { type: "application/dxf" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sitesketch-vector-living-suite.dxf";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setDxfExportSuccess(true);
+    setTimeout(() => setDxfExportSuccess(false), 3500);
+  };
+
+  // 6. CONTACT SUPPORT HANDLER
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setContactError("");
@@ -302,18 +349,21 @@ export default function Home() {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-7 text-sm font-medium text-slate-600">
-            <a href="#workflow" className="hover:text-slate-900 transition-colors">
+            <a href="#workflow" className="hover:text-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 rounded px-1">
               How it works
             </a>
-            <a href="#features" className="hover:text-slate-900 transition-colors">
+            <a href="#builder" className="hover:text-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 rounded px-1">
+              Studio Builder
+            </a>
+            <a href="#features" className="hover:text-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 rounded px-1">
               Features
             </a>
-            <a href="#pricing" className="hover:text-slate-900 transition-colors">
+            <a href="#pricing" className="hover:text-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 rounded px-1">
               Pricing
             </a>
             <button
               onClick={() => handleOpenAuth("signin")}
-              className="hover:text-slate-900 transition-colors cursor-pointer"
+              className="hover:text-slate-900 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 rounded px-1"
             >
               Sign in
             </button>
@@ -323,7 +373,7 @@ export default function Home() {
           <div className="hidden md:flex items-center">
             <button
               onClick={handleOpenOnboarding}
-              className="bg-slate-900 hover:bg-black text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors cursor-pointer shadow-xs"
+              className="bg-slate-900 hover:bg-black text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
             >
               Start your plan
             </button>
@@ -332,7 +382,7 @@ export default function Home() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-slate-700 hover:text-slate-900"
+            className="md:hidden p-2 text-slate-700 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 rounded"
             aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -348,6 +398,13 @@ export default function Home() {
               className="block py-1 hover:text-slate-900"
             >
               How it works
+            </a>
+            <a
+              href="#builder"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-1 hover:text-slate-900"
+            >
+              Studio Builder
             </a>
             <a
               href="#features"
@@ -387,7 +444,7 @@ export default function Home() {
         )}
       </header>
 
-      {/* 2. HERO SECTION */}
+      {/* 2. HERO SECTION (STRICTLY PRESERVED AS PER USER DIRECTIVE) */}
       <section className="pt-12 sm:pt-20 pb-16 sm:pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Bold Headline & Copy */}
@@ -422,13 +479,13 @@ export default function Home() {
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
                 onClick={handleOpenOnboarding}
-                className="bg-slate-900 hover:bg-black text-white font-medium text-sm sm:text-base px-6 py-3 rounded-lg transition-colors cursor-pointer shadow-xs"
+                className="bg-slate-900 hover:bg-black text-white font-medium text-sm sm:text-base px-6 py-3 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
               >
                 Start your plan
               </button>
               <a
-                href="#workflow"
-                className="bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-medium text-sm sm:text-base px-6 py-3 rounded-lg transition-colors cursor-pointer shadow-2xs inline-block"
+                href="#builder"
+                className="bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-medium text-sm sm:text-base px-6 py-3 rounded-lg transition-colors cursor-pointer shadow-2xs inline-block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
               >
                 See the builder
               </a>
@@ -511,7 +568,7 @@ export default function Home() {
 
                 <button
                   onClick={() => setSpecPlannerModalOpen(true)}
-                  className="shrink-0 border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs sm:text-sm font-medium px-4 py-2 rounded-lg shadow-2xs transition-colors cursor-pointer"
+                  className="shrink-0 border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs sm:text-sm font-medium px-4 py-2 rounded-lg shadow-2xs transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
                   Try the planner
                 </button>
@@ -525,51 +582,51 @@ export default function Home() {
       <section id="workflow" className="py-16 sm:py-20 border-t border-slate-200/80 bg-white/60">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-12">
-            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-500">
-              LINEAR SPATIAL PIPELINE
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mt-1">
-              From rough sketch to client-ready spec sheet in 4 steps.
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+              From rough sketch to client-ready spec sheet in four steps.
             </h2>
+            <p className="text-slate-600 text-sm mt-2">
+              A structured spatial pipeline connecting initial pencil sketches to downstream CAD BIM exports and costed schedules.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs hover:shadow-md transition-shadow relative">
-              <span className="text-[11px] font-mono font-bold text-slate-400 block mb-2">
-                01. DESCRIBE &amp; SKETCH
+              <span className="text-xs font-mono font-bold text-slate-400 block mb-2">
+                01. Sketch
               </span>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Upload any rough input</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Upload any rough input</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Snap a phone photo of hand-drawn floor sketches, architectural napkin notes, or rough CAD shells.
               </p>
             </div>
 
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs hover:shadow-md transition-shadow relative">
-              <span className="text-[11px] font-mono font-bold text-slate-400 block mb-2">
-                02. PLAN &amp; EXTRUDE
+              <span className="text-xs font-mono font-bold text-slate-400 block mb-2">
+                02. Extrude
               </span>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Neural vector geometry</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Neural vector geometry</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Spatial algorithms automatically extrude 2D lines into watertight 3D walls, ceiling spans, and door openings.
               </p>
             </div>
 
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs hover:shadow-md transition-shadow relative">
-              <span className="text-[11px] font-mono font-bold text-slate-400 block mb-2">
-                03. BUILD &amp; MATERIALIZE
+              <span className="text-xs font-mono font-bold text-slate-400 block mb-2">
+                03. Materialize
               </span>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Real architectural finishes</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Real architectural finishes</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Select real PBR materials (oak herringbone, Carrara marble, limewash) with physically calibrated 5000K daylighting.
               </p>
             </div>
 
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-2xs hover:shadow-md transition-shadow relative">
-              <span className="text-[11px] font-mono font-bold text-slate-400 block mb-2">
-                04. PUBLISH &amp; TAKEOFF
+              <span className="text-xs font-mono font-bold text-slate-400 block mb-2">
+                04. Export
               </span>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Automated BOM &amp; 4K export</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <h3 className="text-base font-semibold text-slate-900 mb-1.5">Automated BOM &amp; 4K export</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Download itemized Bill of Materials with exact square footages, fixture schedules, and client web walkthroughs.
               </p>
             </div>
@@ -577,81 +634,571 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. FEATURES GRID */}
-      <section id="features" className="py-16 sm:py-24 border-t border-slate-200/80">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="max-w-2xl mb-12">
-            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-500">
-              CORE CAPABILITIES
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mt-1">
-              Built specifically for modern architecture studios.
-            </h2>
+      {/* 4. INTERACTIVE STUDIO BUILDER (DIRECT DESTINATION FOR "SEE THE BUILDER") */}
+      <section id="builder" className="py-16 sm:py-24 border-t border-slate-200/80 bg-slate-950 text-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="max-w-2xl space-y-2">
+              <div className="flex items-center space-x-2 text-cyan-400 font-mono text-xs">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span>Live Interactive Workspace</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                Inspect spatial extrusion in real time.
+              </h2>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Drag the viewport divider to inspect the generative transition between raw hand-drawn pencil schematics and photoreal interior daylighting.
+              </p>
+            </div>
+
+            <div className="flex items-center space-x-3 shrink-0">
+              <button
+                onClick={handleOpenOnboarding}
+                className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              >
+                Upload your blueprint
+              </button>
+              <button
+                onClick={() => handleOpenPricing("Pro Studio")}
+                className="border border-slate-700 hover:bg-slate-900 text-slate-200 text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+              >
+                Upgrade studio tier
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-2xs">
-              <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 mb-4">
-                <Ruler className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Pencil-to-CAD Vectorizer</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Convert messy freehand pencil floorplans into millimeter-accurate vector DXF/DWG files and IFC-standard architectural geometry ready for Revit.
-              </p>
+          {/* Embedded Full Studio Canvas Component */}
+          <StudioCanvas onOpenTrial={(tier) => handleOpenPricing(tier === "pro" ? "Pro Studio" : "Starter")} />
+        </div>
+      </section>
+
+      {/* 5. FEATURES SECTION (HALLMARK APPLIED: NO EYEBROWS, SENTENCE CASE, HIGH CRAFT INTERACTIVE INSPECTOR) */}
+      <section id="features" className="py-16 sm:py-24 border-t border-slate-200/80 bg-[#FAFAFA]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
+          {/* Hallmark Section Header (No tracked eyebrows, direct sentence-case heading) */}
+          <div className="max-w-2xl space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+              Capabilities built for architectural rigor.
+            </h2>
+            <p className="text-slate-600 text-sm leading-relaxed">
+              Every tool is engineered to eliminate manual drafting redraws, calibrate accurate southern solar exposure, and quantify material takeoff assemblies directly from your sketches.
+            </p>
+          </div>
+
+          {/* Interactive Hallmark Capability Switcher */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            {/* Tab Navigation Strip */}
+            <div className="flex border-b border-slate-200 bg-slate-50/70 p-2 gap-2 overflow-x-auto">
+              <button
+                onClick={() => setActiveFeatureTab("vectorizer")}
+                className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                  activeFeatureTab === "vectorizer"
+                    ? "bg-white text-slate-900 shadow-2xs font-semibold border border-slate-200"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
+                }`}
+              >
+                <Ruler className="w-4 h-4 text-slate-700" />
+                <span>Pencil-to-CAD Vectorizer</span>
+              </button>
+
+              <button
+                onClick={() => setActiveFeatureTab("daylight")}
+                className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                  activeFeatureTab === "daylight"
+                    ? "bg-white text-slate-900 shadow-2xs font-semibold border border-slate-200"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
+                }`}
+              >
+                <Sun className="w-4 h-4 text-slate-700" />
+                <span>Photoreal Daylighting Simulator</span>
+              </button>
+
+              <button
+                onClick={() => setActiveFeatureTab("bom")}
+                className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                  activeFeatureTab === "bom"
+                    ? "bg-white text-slate-900 shadow-2xs font-semibold border border-slate-200"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
+                }`}
+              >
+                <FileSpreadsheet className="w-4 h-4 text-slate-700" />
+                <span>Instant Bill of Materials (BOM)</span>
+              </button>
+
+              <button
+                onClick={() => setActiveFeatureTab("staging")}
+                className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                  activeFeatureTab === "staging"
+                    ? "bg-white text-slate-900 shadow-2xs font-semibold border border-slate-200"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
+                }`}
+              >
+                <Building2 className="w-4 h-4 text-slate-700" />
+                <span>Framing-to-Finish Site Staging</span>
+              </button>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-2xs">
-              <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 mb-4">
-                <Sun className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Photoreal Daylighting Simulator</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Calibrate accurate solar angles, southern exposures, and ambient Kelvin warmth (3000K to 6500K) with multi-bounce physical raytracing.
-              </p>
-            </div>
+            {/* Tab 1: Pencil-to-CAD Vectorizer */}
+            {activeFeatureTab === "vectorizer" && (
+              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-5 space-y-4">
+                  <h3 className="text-xl font-bold text-slate-900">
+                    Millimeter-accurate vector CAD from hand drawings.
+                  </h3>
+                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                    SiteSketch analyzes freehand pencil strokes, napkin schematics, and phone-scanned blueprints, automatically converting them into watertight vector geometry with standard IFC wall classes and door swing clearances.
+                  </p>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-2xs">
-              <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 mb-4">
-                <FileSpreadsheet className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Instant Bill of Materials (BOM) Takeoffs</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Auto-generate flooring square footages, drywall linear runs, paint coverage estimates, and itemized lighting fixture schedules straight from your model.
-              </p>
-            </div>
+                  <div className="space-y-2 pt-2">
+                    <span className="text-xs font-semibold text-slate-700 block">
+                      Inspect Vector Layer Segmentation:
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => setVectorLayer("all")}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                          vectorLayer === "all"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        All Layers
+                      </button>
+                      <button
+                        onClick={() => setVectorLayer("walls")}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                          vectorLayer === "walls"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        Wall Boundaries
+                      </button>
+                      <button
+                        onClick={() => setVectorLayer("doors")}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                          vectorLayer === "doors"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        Door Swings &amp; Openings
+                      </button>
+                      <button
+                        onClick={() => setVectorLayer("dims")}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                          vectorLayer === "dims"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        Dimension Strings
+                      </button>
+                    </div>
+                  </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-2xs">
-              <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 mb-4">
-                <Building2 className="w-5 h-5" />
+                  {/* Telemetry Row */}
+                  <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-xs">
+                    <div>
+                      <span className="text-slate-400 block text-[11px]">Tolerance:</span>
+                      <span className="font-semibold text-slate-800">±0.2 mm</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[11px]">Format:</span>
+                      <span className="font-semibold text-slate-800">DXF / DWG / IFC</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[11px]">Snapping:</span>
+                      <span className="font-semibold text-slate-800">90.0° Ortho</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      onClick={handleExportDXF}
+                      className="inline-flex items-center space-x-2 bg-slate-900 hover:bg-black text-white text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>{dxfExportSuccess ? "Downloaded DXF CAD File!" : "Download Sample DXF Vector CAD"}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right Interactive Blueprint Visualizer */}
+                <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs font-mono">
+                    <div className="flex items-center space-x-2">
+                      <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                      <span className="text-cyan-300">Vector Preview: Living_Suite_CAD.dxf</span>
+                    </div>
+                    <span className="text-slate-400 text-[11px]">Scale: 1/4&quot; = 1&apos;-0&quot;</span>
+                  </div>
+
+                  <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
+                    <BlueprintSketchSVG />
+                    {vectorLayer === "walls" && (
+                      <div className="absolute inset-0 bg-cyan-500/10 border-2 border-cyan-400 pointer-events-none flex items-center justify-center">
+                        <span className="bg-slate-900/90 text-cyan-300 font-mono text-xs px-2.5 py-1 rounded border border-cyan-500">
+                          Active Layer: Extruded Wall Shell
+                        </span>
+                      </div>
+                    )}
+                    {vectorLayer === "doors" && (
+                      <div className="absolute inset-0 bg-amber-500/10 border-2 border-amber-400 pointer-events-none flex items-center justify-center">
+                        <span className="bg-slate-900/90 text-amber-300 font-mono text-xs px-2.5 py-1 rounded border border-amber-500">
+                          Active Layer: 32&quot; Egress Door Clearance Swings
+                        </span>
+                      </div>
+                    )}
+                    {vectorLayer === "dims" && (
+                      <div className="absolute inset-0 bg-emerald-500/10 border-2 border-emerald-400 pointer-events-none flex items-center justify-center">
+                        <span className="bg-slate-900/90 text-emerald-300 font-mono text-xs px-2.5 py-1 rounded border border-emerald-500">
+                          Active Layer: Dimension Annotations (28&apos;-6&quot; × 16&apos;-8&quot;)
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-between items-center text-[11px] font-mono text-slate-400 pt-1">
+                    <span>IFC Schema: 2x3 &amp; 4.0 Compliant</span>
+                    <span className="text-emerald-400">Watertight Shell: 100%</span>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Framing-to-Finish Site Staging</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Snap photos of raw jobsite wood framing or bare concrete slabs. SiteSketch overlays drywall, trim, flooring, and millwork for immediate owner presentations.
-              </p>
-            </div>
+            )}
+
+            {/* Tab 2: Photoreal Daylighting Simulator */}
+            {activeFeatureTab === "daylight" && (
+              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-5 space-y-4">
+                  <h3 className="text-xl font-bold text-slate-900">
+                    Physically accurate multi-Kelvin solar illumination.
+                  </h3>
+                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                    Simulate real-world sun angles, southern architectural exposures, and circadian warmth variations from warm 2700K dawn light to crisp 6500K overcast daylight with 8-bounce physical raytracing.
+                  </p>
+
+                  <div className="space-y-3 pt-2">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-semibold text-slate-800">Solar Color Temperature:</span>
+                      <span className="font-mono font-bold text-slate-900">{daylightKelvin} Kelvin</span>
+                    </div>
+
+                    <input
+                      type="range"
+                      min="2700"
+                      max="6500"
+                      step="100"
+                      value={daylightKelvin}
+                      onChange={(e) => setDaylightKelvin(Number(e.target.value))}
+                      className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900 focus-visible:outline-none"
+                    />
+
+                    <div className="flex justify-between gap-2 pt-1">
+                      <button
+                        onClick={() => setDaylightKelvin(2800)}
+                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                          daylightKelvin < 3400
+                            ? "bg-amber-100 text-amber-900 border-amber-300 font-semibold"
+                            : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        Sunrise (2800K)
+                      </button>
+                      <button
+                        onClick={() => setDaylightKelvin(5000)}
+                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                          daylightKelvin >= 3400 && daylightKelvin <= 5500
+                            ? "bg-cyan-100 text-cyan-900 border-cyan-300 font-semibold"
+                            : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        Natural Noon (5000K)
+                      </button>
+                      <button
+                        onClick={() => setDaylightKelvin(6500)}
+                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                          daylightKelvin > 5500
+                            ? "bg-slate-200 text-slate-900 border-slate-300 font-semibold"
+                            : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        Overcast (6500K)
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-xs">
+                    <div>
+                      <span className="text-slate-400 block text-[11px]">Solar Angle:</span>
+                      <span className="font-semibold text-slate-800">42° Altitude</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[11px]">Direct Illuminance:</span>
+                      <span className="font-semibold text-slate-800">850 Lux</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[11px]">Ray Bounces:</span>
+                      <span className="font-semibold text-slate-800">8 Physical</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs font-mono">
+                    <span className="text-cyan-300">Raytracing Viewport · Kelvin Exposure</span>
+                    <span className="text-amber-400 font-semibold">{daylightKelvin}K Calibrated</span>
+                  </div>
+
+                  <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
+                    <PhotorealLivingRoomSVG
+                      lighting={
+                        daylightKelvin < 3400
+                          ? "sunset"
+                          : daylightKelvin > 5500
+                          ? "overcast"
+                          : "daylight"
+                      }
+                    />
+                  </div>
+
+                  <div className="flex justify-between items-center text-[11px] font-mono text-slate-400 pt-1">
+                    <span>Exposure Index: EV 13.5</span>
+                    <span className="text-cyan-400">PBR Photometric Accurate</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 3: Automated Bill of Materials (BOM) */}
+            {activeFeatureTab === "bom" && (
+              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-5 space-y-4">
+                  <h3 className="text-xl font-bold text-slate-900">
+                    Instant quantity takeoffs directly from room dimensions.
+                  </h3>
+                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                    Stop spending hours manually scaling walls with architectural rulers. SiteSketch extracts drywall square footage, flooring cut waste allowances, and fixture counts automatically.
+                  </p>
+
+                  <div className="space-y-2 pt-2">
+                    <span className="text-xs font-semibold text-slate-700 block">
+                      Select Project Room Archetype:
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => setBomRoomPreset("living")}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                          bomRoomPreset === "living"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        Living &amp; Dining (480 sq ft)
+                      </button>
+                      <button
+                        onClick={() => setBomRoomPreset("suite")}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                          bomRoomPreset === "suite"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        Master Suite (340 sq ft)
+                      </button>
+                      <button
+                        onClick={() => setBomRoomPreset("studio")}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                          bomRoomPreset === "studio"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        Open Studio Loft (620 sq ft)
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      onClick={handleExportCSV}
+                      className="inline-flex items-center space-x-2 bg-slate-900 hover:bg-black text-white text-xs font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>{specDownloadSuccess ? "Takeoff CSV Downloaded!" : "Export Real Takeoff Spreadsheet (CSV)"}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7 bg-slate-50 rounded-xl p-5 border border-slate-200">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-200 text-xs">
+                    <span className="font-semibold text-slate-800">
+                      Calculated Bill of Materials Schedule
+                    </span>
+                    <span className="font-mono text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      Active Preset: {bomRoomPreset.toUpperCase()}
+                    </span>
+                  </div>
+
+                  <div className="divide-y divide-slate-200/80 my-2 text-xs">
+                    <div className="py-2.5 flex justify-between items-center">
+                      <div>
+                        <span className="font-semibold text-slate-900 block">Flooring Assembly (10% Cut Waste)</span>
+                        <span className="text-[11px] text-slate-500">Herringbone White Oak Engineered</span>
+                      </div>
+                      <span className="font-mono font-bold text-slate-900">
+                        {bomRoomPreset === "living" ? "528 sq ft" : bomRoomPreset === "suite" ? "374 sq ft" : "682 sq ft"}
+                      </span>
+                    </div>
+
+                    <div className="py-2.5 flex justify-between items-center">
+                      <div>
+                        <span className="font-semibold text-slate-900 block">Drywall Partition Area</span>
+                        <span className="text-[11px] text-slate-500">5/8&quot; Type X Fire-Shield Gypsum</span>
+                      </div>
+                      <span className="font-mono font-bold text-slate-900">
+                        {bomRoomPreset === "living" ? "1,344 sq ft" : bomRoomPreset === "suite" ? "952 sq ft" : "1,736 sq ft"}
+                      </span>
+                    </div>
+
+                    <div className="py-2.5 flex justify-between items-center">
+                      <div>
+                        <span className="font-semibold text-slate-900 block">Matte Wall Primer &amp; Paint</span>
+                        <span className="text-[11px] text-slate-500">Limewash Architectural Formula</span>
+                      </div>
+                      <span className="font-mono font-bold text-slate-900">
+                        {bomRoomPreset === "living" ? "4.0 gallons" : bomRoomPreset === "suite" ? "3.0 gallons" : "5.5 gallons"}
+                      </span>
+                    </div>
+
+                    <div className="py-2.5 flex justify-between items-center">
+                      <div>
+                        <span className="font-semibold text-slate-900 block">Low-Voltage Architectural LED Fixtures</span>
+                        <span className="text-[11px] text-slate-500">Recessed 12V 4000K CRI 95+</span>
+                      </div>
+                      <span className="font-mono font-bold text-slate-900">
+                        {bomRoomPreset === "living" ? "6 units" : bomRoomPreset === "suite" ? "4 units" : "8 units"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-200 flex justify-between items-center text-xs">
+                    <span className="text-slate-500">Format Compatibility:</span>
+                    <span className="font-mono text-slate-700">CSV · Excel XLSX · Revit Schedule</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 4: Framing-to-Finish Site Staging */}
+            {activeFeatureTab === "staging" && (
+              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-5 space-y-4">
+                  <h3 className="text-xl font-bold text-slate-900">
+                    Stage unfinished construction sites in seconds.
+                  </h3>
+                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                    Walk through a raw jobsite with bare 2x4 wood studs or exposed concrete framing, snap a photo, and let SiteSketch overlay drywall, finished hardwood, and modern furniture for client walk-throughs.
+                  </p>
+
+                  <div className="space-y-2 pt-2">
+                    <span className="text-xs font-semibold text-slate-700 block">
+                      Toggle Construction Phase Progression:
+                    </span>
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => setStagingStep("framing")}
+                        className={`text-xs px-3.5 py-2 rounded-lg border text-left flex items-center justify-between transition-colors cursor-pointer ${
+                          stagingStep === "framing"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>Phase 1: Raw Stud Framing &amp; Subfloor</span>
+                        <span className="font-mono text-[10px] opacity-75">Site Capture</span>
+                      </button>
+
+                      <button
+                        onClick={() => setStagingStep("rough")}
+                        className={`text-xs px-3.5 py-2 rounded-lg border text-left flex items-center justify-between transition-colors cursor-pointer ${
+                          stagingStep === "rough"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>Phase 2: Drywall &amp; MEP Rough-In</span>
+                        <span className="font-mono text-[10px] opacity-75">Perimeter Aligned</span>
+                      </button>
+
+                      <button
+                        onClick={() => setStagingStep("finished")}
+                        className={`text-xs px-3.5 py-2 rounded-lg border text-left flex items-center justify-between transition-colors cursor-pointer ${
+                          stagingStep === "finished"
+                            ? "bg-slate-900 text-white border-slate-900 font-medium"
+                            : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>Phase 3: Finished Scandinavian Interior</span>
+                        <span className="font-mono text-[10px] opacity-75">Client Ready</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs font-mono">
+                    <span className="text-cyan-300">Phase Preview: {stagingStep.toUpperCase()}</span>
+                    <span className="text-emerald-400 font-semibold">Perspective Calibrated</span>
+                  </div>
+
+                  <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
+                    {stagingStep === "framing" && (
+                      <div className="absolute inset-0 bg-[#17130E] flex flex-col items-center justify-center p-6 text-center text-amber-200/90 font-mono space-y-2">
+                        <Building2 className="w-12 h-12 text-amber-500 stroke-[1.5]" />
+                        <span className="text-sm font-semibold">Raw 2x4 Douglas Fir Stud Framing Detected</span>
+                        <span className="text-xs text-amber-400/80">36 Studs · 2 Rough Door Openings · 312 sq ft concrete subfloor</span>
+                      </div>
+                    )}
+                    {stagingStep === "rough" && (
+                      <div className="absolute inset-0 bg-[#1E232A] flex flex-col items-center justify-center p-6 text-center text-slate-200 font-mono space-y-2">
+                        <Layers className="w-12 h-12 text-cyan-400 stroke-[1.5]" />
+                        <span className="text-sm font-semibold">Drywall &amp; Electrical MEP Overlaid</span>
+                        <span className="text-xs text-cyan-300/80">Taped Gypsum Partitions · Pre-wired junction points aligned</span>
+                      </div>
+                    )}
+                    {stagingStep === "finished" && (
+                      <PhotorealLivingRoomSVG lighting="daylight" />
+                    )}
+                  </div>
+
+                  <div className="flex justify-between items-center text-[11px] font-mono text-slate-400 pt-1">
+                    <span>Eliminates physical furniture rental costs</span>
+                    <span className="text-slate-200 font-medium">99.2% Dimension Alignment</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* 5. PRICING SECTION */}
+      {/* 6. PRICING SECTION (HALLMARK APPLIED: NO EYEBROWS, TABULAR NUMBERS, CLEAN CARDS, SENTENCE CASE BADGE) */}
       <section id="pricing" className="py-16 sm:py-24 border-t border-slate-200/80 bg-white/50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-xl mx-auto mb-10 space-y-4">
-            <span className="text-xs font-mono font-semibold uppercase tracking-wider text-slate-500">
-              TRANSPARENT PRICING
-            </span>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+          {/* Hallmark Section Header (No tracked eyebrows, direct sentence-case heading) */}
+          <div className="text-center max-w-xl mx-auto space-y-4">
             <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
               Predictable studio plans.
             </h2>
-            <p className="text-sm text-slate-600">
-              Scale your spatial pipeline without complex per-minute compute charges.
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Scale your spatial pipeline without per-minute compute charges or surprise GPU overages.
             </p>
 
-            {/* Annual Toggle */}
+            {/* Annual Billing Toggle with Untracked Sentence-Case Pill */}
             <div className="inline-flex items-center p-1 bg-slate-100 rounded-lg border border-slate-200 text-xs font-medium">
               <button
                 onClick={() => setIsAnnual(false)}
-                className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
                   !isAnnual ? "bg-white text-slate-900 shadow-2xs font-semibold" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
@@ -659,35 +1206,37 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setIsAnnual(true)}
-                className={`px-3 py-1.5 rounded-md transition-colors flex items-center space-x-1.5 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-md transition-colors flex items-center space-x-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
                   isAnnual ? "bg-white text-slate-900 shadow-2xs font-semibold" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <span>Annual</span>
-                <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full font-bold">
-                  SAVE 20%
+                <span>Annual billing</span>
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-semibold">
+                  Save 20%
                 </span>
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {/* Starter */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
+            {/* Starter Plan Card */}
             <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-7 shadow-2xs flex flex-col justify-between">
               <div className="space-y-4">
-                <span className="text-xs font-mono font-semibold uppercase text-slate-500">Starter</span>
+                <span className="text-xs font-semibold text-slate-500 block">Starter</span>
                 <div className="flex items-baseline space-x-1">
-                  <span className="text-3xl font-bold text-slate-900">${isAnnual ? "23" : "29"}</span>
+                  <span className="text-3xl font-bold text-slate-900 tabular-nums">
+                    ${isAnnual ? "23" : "29"}
+                  </span>
                   <span className="text-xs text-slate-500">/ month</span>
                 </div>
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Ideal for solo architects and independent interior planners.
                 </p>
 
                 <ul className="space-y-2.5 pt-4 text-xs text-slate-700">
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>25 4K Photoreal renders / mo</span>
+                    <span className="tabular-nums">25 4K Photoreal renders / mo</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
@@ -699,39 +1248,41 @@ export default function Home() {
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Email customer support</span>
+                    <span>Single studio seat</span>
                   </li>
                 </ul>
               </div>
 
               <button
                 onClick={() => handleOpenPricing("Starter")}
-                className="mt-8 w-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-medium text-xs py-2.5 rounded-lg transition-colors cursor-pointer"
+                className="mt-8 w-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-medium text-xs py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
               >
                 Select Starter Plan
               </button>
             </div>
 
-            {/* Pro Studio (Recommended) */}
+            {/* Pro Studio (Recommended) - Sentence-case untracked badge */}
             <div className="bg-white rounded-xl border-2 border-slate-900 p-6 sm:p-7 shadow-md relative flex flex-col justify-between">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                Most Popular
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[11px] font-medium px-3 py-0.5 rounded-full">
+                Recommended for studios
               </span>
 
               <div className="space-y-4">
-                <span className="text-xs font-mono font-semibold uppercase text-slate-900">Pro Studio</span>
+                <span className="text-xs font-semibold text-slate-900 block">Pro Studio</span>
                 <div className="flex items-baseline space-x-1">
-                  <span className="text-3xl font-bold text-slate-900">${isAnnual ? "63" : "79"}</span>
+                  <span className="text-3xl font-bold text-slate-900 tabular-nums">
+                    ${isAnnual ? "63" : "79"}
+                  </span>
                   <span className="text-xs text-slate-500">/ month</span>
                 </div>
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   For growing architecture firms and interior design studios.
                 </p>
 
                 <ul className="space-y-2.5 pt-4 text-xs text-slate-800 font-medium">
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>150 4K Photoreal renders / mo</span>
+                    <span className="tabular-nums">150 4K Photoreal renders / mo</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
@@ -747,28 +1298,30 @@ export default function Home() {
                   </li>
                   <li className="flex items-center space-x-2">
                     <Check className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                    <span>Priority GPU compute queue</span>
+                    <span>3 studio seats &amp; priority GPU queue</span>
                   </li>
                 </ul>
               </div>
 
               <button
                 onClick={() => handleOpenPricing("Pro Studio")}
-                className="mt-8 w-full bg-slate-900 hover:bg-black text-white font-medium text-xs py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs"
+                className="mt-8 w-full bg-slate-900 hover:bg-black text-white font-medium text-xs py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
               >
                 Select Pro Studio Plan
               </button>
             </div>
 
-            {/* Enterprise */}
+            {/* Enterprise Plan Card */}
             <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-7 shadow-2xs flex flex-col justify-between">
               <div className="space-y-4">
-                <span className="text-xs font-mono font-semibold uppercase text-slate-500">Enterprise</span>
+                <span className="text-xs font-semibold text-slate-500 block">Enterprise</span>
                 <div className="flex items-baseline space-x-1">
-                  <span className="text-3xl font-bold text-slate-900">${isAnnual ? "159" : "199"}</span>
+                  <span className="text-3xl font-bold text-slate-900 tabular-nums">
+                    ${isAnnual ? "159" : "199"}
+                  </span>
                   <span className="text-xs text-slate-500">/ month</span>
                 </div>
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Custom material libraries, API access, and dedicated team seats.
                 </p>
 
@@ -794,7 +1347,7 @@ export default function Home() {
 
               <button
                 onClick={() => handleOpenPricing("Enterprise")}
-                className="mt-8 w-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-medium text-xs py-2.5 rounded-lg transition-colors cursor-pointer"
+                className="mt-8 w-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-medium text-xs py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
               >
                 Contact Enterprise Desk
               </button>
@@ -803,7 +1356,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. MINIMAL FOOTER */}
+      {/* 7. MINIMAL FOOTER */}
       <footer className="border-t border-slate-200 py-10 bg-white text-xs text-slate-500">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -824,6 +1377,9 @@ export default function Home() {
             <div className="flex items-center space-x-6">
               <a href="#workflow" className="hover:text-slate-800 transition-colors">
                 How it works
+              </a>
+              <a href="#builder" className="hover:text-slate-800 transition-colors">
+                Studio Builder
               </a>
               <a href="#features" className="hover:text-slate-800 transition-colors">
                 Features
@@ -859,7 +1415,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* 7. FUNCTIONAL COOKIE BANNER WITH PERSISTENCE */}
+      {/* 8. FUNCTIONAL COOKIE BANNER WITH PERSISTENCE */}
       {cookieBannerVisible && (
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 py-3 px-4 sm:px-6 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -890,7 +1446,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 8. AUTHENTICATION MODAL */}
+      {/* 9. AUTHENTICATION MODAL */}
       {authModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6 sm:p-7 relative space-y-5">
@@ -903,12 +1459,12 @@ export default function Home() {
             </button>
 
             <div>
-              <span className="text-[11px] font-mono tracking-wider font-semibold text-slate-500 uppercase">
+              <span className="text-xs font-semibold text-slate-500 block">
                 {authMode === "signin"
-                  ? "STUDIO AUTHENTICATION"
+                  ? "Studio authentication"
                   : authMode === "register"
-                  ? "ACCOUNT REGISTRATION"
-                  : "CREDENTIAL RECOVERY"}
+                  ? "Account registration"
+                  : "Credential recovery"}
               </span>
               <h3 className="text-xl font-bold text-slate-900 tracking-tight mt-0.5">
                 {authMode === "signin"
@@ -1021,7 +1577,7 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={authLoading}
-                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 mt-2"
+                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
                   {authLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
                   <span>
@@ -1042,7 +1598,7 @@ export default function Home() {
                         "Google OAuth Integration Notice: GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET environment variables are pending configuration in .env.local."
                       );
                     }}
-                    className="w-full border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-medium py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+                    className="w-full border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-medium py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24">
                       <path
@@ -1098,7 +1654,7 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setAuthModalOpen(false)}
-                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors"
+                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors cursor-pointer"
                 >
                   Close &amp; Return to Overview
                 </button>
@@ -1108,7 +1664,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 9. PRICING SUBSCRIPTION & CHECKOUT MODAL */}
+      {/* 10. PRICING SUBSCRIPTION & CHECKOUT MODAL (RESOLVES MEDIA_1794310670054_17EAF4AF) */}
       {pricingModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 sm:p-7 relative space-y-5">
@@ -1121,8 +1677,8 @@ export default function Home() {
             </button>
 
             <div>
-              <span className="text-[11px] font-mono tracking-wider font-semibold text-slate-500 uppercase">
-                SUBSCRIPTION CHECKOUT DESK
+              <span className="text-xs font-semibold text-slate-500 block">
+                Subscription checkout desk
               </span>
               <h3 className="text-xl font-bold text-slate-900 tracking-tight mt-0.5">
                 Reserve your {selectedPlan} plan
@@ -1136,13 +1692,13 @@ export default function Home() {
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-2">
-                  <span className="text-xs font-bold text-slate-900 uppercase font-mono">{selectedPlan}</span>
-                  <span className="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-mono">
+                  <span className="text-xs font-bold text-slate-900">{selectedPlan}</span>
+                  <span className="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded">
                     {isAnnual ? "Annual Billing (-20%)" : "Monthly Billing"}
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-lg font-bold text-slate-900">
+                  <span className="text-lg font-bold text-slate-900 tabular-nums">
                     {selectedPlan === "Starter"
                       ? isAnnual ? "$23" : "$29"
                       : selectedPlan === "Pro Studio"
@@ -1179,7 +1735,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* Integration Status Notice */}
+            {/* Integration Status Notice with Working Action Buttons */}
             {checkoutStatusMessage ? (
               <div className="space-y-4">
                 <div className="p-3.5 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg space-y-1.5 font-mono">
@@ -1191,13 +1747,26 @@ export default function Home() {
                     {checkoutStatusMessage}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setPricingModalOpen(false)}
-                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors cursor-pointer"
-                >
-                  Done &amp; Close Checkout
-                </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPricingModalOpen(false);
+                      scrollToSection("builder");
+                    }}
+                    className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors cursor-pointer flex items-center justify-center space-x-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+                  >
+                    <span>Open Studio Builder</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPricingModalOpen(false)}
+                    className="w-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+                  >
+                    Done &amp; Close Checkout
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleCheckoutSubmit} className="space-y-3">
@@ -1279,7 +1848,7 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={checkoutLoading}
-                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 mt-2"
+                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
                   {checkoutLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
                   <span>
@@ -1292,7 +1861,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 10. STUDIO ONBOARDING MODAL (GET STARTED / START YOUR PLAN) */}
+      {/* 11. STUDIO ONBOARDING MODAL (RESOLVES MEDIA_1794310628274_63D6C3E8) */}
       {onboardingModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 sm:p-7 relative space-y-5">
@@ -1305,8 +1874,8 @@ export default function Home() {
             </button>
 
             <div>
-              <span className="text-[11px] font-mono tracking-wider font-semibold text-slate-500 uppercase">
-                STUDIO WORKSPACE SETUP
+              <span className="text-xs font-semibold text-slate-500 block">
+                Studio workspace setup
               </span>
               <h3 className="text-xl font-bold text-slate-900 tracking-tight mt-0.5">
                 Initialize your spatial project
@@ -1316,6 +1885,15 @@ export default function Home() {
               </p>
             </div>
 
+            {/* Error Message Box */}
+            {onboardingError && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-start space-x-2">
+                <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                <span>{onboardingError}</span>
+              </div>
+            )}
+
+            {/* Vectorization Complete State with Action Buttons */}
             {onboardingStatusMessage ? (
               <div className="space-y-4">
                 <div className="p-3.5 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg space-y-1.5 font-mono">
@@ -1327,13 +1905,39 @@ export default function Home() {
                     {onboardingStatusMessage}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setOnboardingModalOpen(false)}
-                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors cursor-pointer"
-                >
-                  Enter Workspace Console
-                </button>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOnboardingModalOpen(false);
+                      scrollToSection("builder");
+                    }}
+                    className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors cursor-pointer flex items-center justify-center space-x-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+                  >
+                    <span>Enter Live Studio Builder</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleExportCSV}
+                    className="w-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2.5 rounded-lg transition-colors cursor-pointer flex items-center justify-center space-x-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download Project Takeoff (CSV)</span>
+                  </button>
+                </div>
+
+                <div className="text-center pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setOnboardingModalOpen(false)}
+                    className="text-xs text-slate-500 hover:text-slate-800 underline underline-offset-2 cursor-pointer"
+                  >
+                    Close &amp; Return to Overview
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleOnboardingSubmit} className="space-y-3.5">
@@ -1427,7 +2031,7 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={onboardingLoading}
-                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 mt-2"
+                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
                   {onboardingLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
                   <span>Launch Spatial Vectorization</span>
@@ -1438,7 +2042,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 11. ROOM SPEC PLANNER MODAL (TRY THE PLANNER / LIVE CSV EXPORT) */}
+      {/* 12. ROOM SPEC PLANNER MODAL (TRY THE PLANNER / LIVE CSV EXPORT) */}
       {specPlannerModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 sm:p-7 relative space-y-5">
@@ -1451,8 +2055,8 @@ export default function Home() {
             </button>
 
             <div>
-              <span className="text-[11px] font-mono tracking-wider font-semibold text-slate-500 uppercase">
-                INTERACTIVE SCANDINAVIAN SUITE PLANNER
+              <span className="text-xs font-semibold text-slate-500 block">
+                Interactive spec planner
               </span>
               <h3 className="text-xl font-bold text-slate-900 tracking-tight mt-0.5">
                 Tune your architectural parameters
@@ -1466,7 +2070,7 @@ export default function Home() {
             <div className="space-y-1.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-semibold text-slate-800">Floor Envelope Area</span>
-                <span className="font-mono font-bold text-slate-900 text-sm">{specArea} sq ft</span>
+                <span className="font-mono font-bold text-slate-900 text-sm tabular-nums">{specArea} sq ft</span>
               </div>
               <input
                 type="range"
@@ -1542,19 +2146,19 @@ export default function Home() {
               </div>
               <div className="flex justify-between text-slate-700">
                 <span>Flooring (+10% waste):</span>
-                <span className="font-semibold text-slate-900">{Math.round(specArea * 1.1)} sq ft</span>
+                <span className="font-semibold text-slate-900 tabular-nums">{Math.round(specArea * 1.1)} sq ft</span>
               </div>
               <div className="flex justify-between text-slate-700">
                 <span>Drywall Partition Area:</span>
-                <span className="font-semibold text-slate-900">{Math.round(specArea * 2.8)} sq ft</span>
+                <span className="font-semibold text-slate-900 tabular-nums">{Math.round(specArea * 2.8)} sq ft</span>
               </div>
               <div className="flex justify-between text-slate-700">
                 <span>Paint ({specWall}):</span>
-                <span className="font-semibold text-slate-900">{Math.ceil((specArea * 2.8) / 350)} gallons</span>
+                <span className="font-semibold text-slate-900 tabular-nums">{Math.ceil((specArea * 2.8) / 350)} gallons</span>
               </div>
               <div className="flex justify-between text-slate-700">
                 <span>LED Fixture Units:</span>
-                <span className="font-semibold text-slate-900">{Math.max(4, Math.round(specArea / 75))} units</span>
+                <span className="font-semibold text-slate-900 tabular-nums">{Math.max(4, Math.round(specArea / 75))} units</span>
               </div>
             </div>
 
@@ -1563,7 +2167,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={handleExportCSV}
-                className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2"
+                className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
               >
                 <Download className="w-4 h-4" />
                 <span>Export Real CSV Takeoff Sheet</span>
@@ -1578,7 +2182,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 12. CONTACT SUPPORT MODAL */}
+      {/* 13. CONTACT SUPPORT MODAL */}
       {contactModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6 sm:p-7 relative space-y-4">
@@ -1591,8 +2195,8 @@ export default function Home() {
             </button>
 
             <div>
-              <span className="text-[11px] font-mono tracking-wider font-semibold text-slate-500 uppercase">
-                STUDIO INQUIRY &amp; SUPPORT
+              <span className="text-xs font-semibold text-slate-500 block">
+                Studio inquiry &amp; support
               </span>
               <h3 className="text-xl font-bold text-slate-900 tracking-tight mt-0.5">
                 Contact SiteSketch Desk
@@ -1675,7 +2279,7 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={contactLoading}
-                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2"
+                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
                   {contactLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
                   <span>Submit Studio Inquiry</span>
