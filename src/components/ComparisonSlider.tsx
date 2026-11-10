@@ -73,37 +73,49 @@ export default function ComparisonSlider({
       {showControls && (
         <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
           <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-300 font-sans text-xs">
-              <Compass className="w-3.5 h-3.5 text-slate-400" />
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F8F7F2] border border-[#D8D5CB] text-[#292C29] font-sans text-xs">
+              <Compass className="w-3.5 h-3.5 text-[#74756E]" />
               <span>Pencil field sketch ({Math.round(sliderPosition)}%)</span>
             </span>
-            <span className="text-slate-600 font-sans">→</span>
-            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-200 font-sans text-xs">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-[#74756E] font-sans">→</span>
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F8F7F2] border border-[#D8D5CB] text-[#292C29] font-sans text-xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#B47757]" />
               <span>Detected vector CAD ({Math.round(100 - sliderPosition)}%)</span>
             </span>
           </div>
 
           {/* Quick preset positions */}
-          <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-lg border border-slate-800 text-xs">
+          <div className="flex items-center gap-1 bg-[#E8E5DC] p-1 rounded-lg border border-[#D8D5CB] text-xs">
             <button
               type="button"
               onClick={() => setSliderPosition(85)}
-              className="px-2.5 py-1 rounded text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
+                sliderPosition > 70
+                  ? "bg-[#777B64] text-[#F8F7F2] font-medium"
+                  : "text-[#74756E] hover:text-[#292C29]"
+              }`}
             >
               Sketch only
             </button>
             <button
               type="button"
               onClick={() => setSliderPosition(50)}
-              className="px-2.5 py-1 rounded bg-slate-800 text-slate-200 font-medium transition-colors cursor-pointer"
+              className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
+                sliderPosition >= 40 && sliderPosition <= 60
+                  ? "bg-[#777B64] text-[#F8F7F2] font-medium"
+                  : "text-[#74756E] hover:text-[#292C29]"
+              }`}
             >
               Split 50/50
             </button>
             <button
               type="button"
               onClick={() => setSliderPosition(15)}
-              className="px-2.5 py-1 rounded text-slate-400 hover:text-white transition-colors cursor-pointer"
+              className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
+                sliderPosition < 30
+                  ? "bg-[#777B64] text-[#F8F7F2] font-medium"
+                  : "text-[#74756E] hover:text-[#292C29]"
+              }`}
             >
               CAD only
             </button>
@@ -120,10 +132,10 @@ export default function ComparisonSlider({
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchMove}
-        className="relative w-full aspect-[600/420] rounded-xl overflow-hidden cursor-ew-resize select-none border border-slate-800 shadow-xl bg-slate-950"
+        className="relative w-full aspect-[600/420] rounded-xl overflow-hidden cursor-ew-resize select-none border border-[#D8D5CB] shadow-sm bg-[#232624]"
       >
         {/* Right Layer (Background): Resolved Vector CAD Layout */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden bg-slate-950">
+        <div className="absolute inset-0 w-full h-full overflow-hidden bg-[#232624]">
           <div
             className="absolute inset-0"
             style={{
@@ -136,7 +148,7 @@ export default function ComparisonSlider({
 
           {/* Label Badge Right */}
           <div className="absolute top-3 right-3 pointer-events-none z-10">
-            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-700/80 text-slate-200 text-xs font-sans shadow-sm">
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#1A1C1A]/90 backdrop-blur-sm border border-[#3D403A] text-[#F8F7F2] text-xs font-sans shadow-xs">
               <span>Detected vector CAD</span>
             </span>
           </div>
@@ -144,7 +156,7 @@ export default function ComparisonSlider({
 
         {/* Left Layer (Foreground with Clip): Hand-Drawn Pencil Floorplan Sketch */}
         <div
-          className="absolute inset-0 w-full h-full overflow-hidden border-r border-slate-300 shadow-lg"
+          className="absolute inset-0 w-full h-full overflow-hidden border-r border-[#D8D5CB] shadow-xs"
           style={{ width: `${sliderPosition}%` }}
         >
           <div
@@ -159,7 +171,7 @@ export default function ComparisonSlider({
 
           {/* Label Badge Left */}
           <div className="absolute top-3 left-3 pointer-events-none z-10">
-            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-700/80 text-slate-200 text-xs font-sans shadow-sm">
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F8F7F2]/90 backdrop-blur-sm border border-[#D8D5CB] text-[#292C29] text-xs font-sans shadow-xs">
               <span>Pencil field sketch</span>
             </span>
           </div>
@@ -171,11 +183,11 @@ export default function ComparisonSlider({
           style={{ left: `${sliderPosition}%` }}
         >
           {/* Hairline precision steel line */}
-          <div className="absolute top-0 bottom-0 w-[2px] -ml-[1px] bg-white shadow-sm" />
+          <div className="absolute top-0 bottom-0 w-[2px] -ml-[1px] bg-[#F8F7F2] shadow-xs" />
 
           {/* Interactive Drag Handle */}
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center shadow-lg cursor-ew-resize">
-            <div className="flex items-center space-x-0.5 text-slate-200 text-xs font-mono select-none">
+          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 h-7 rounded-full bg-[#292C29] border border-[#F8F7F2] flex items-center justify-center shadow-md cursor-ew-resize">
+            <div className="flex items-center space-x-0.5 text-[#F8F7F2] text-xs font-mono select-none">
               <span>‹</span>
               <span>›</span>
             </div>
@@ -184,8 +196,8 @@ export default function ComparisonSlider({
 
         {/* Drag Instruction Hint */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-          <span className="px-3 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-800 text-slate-300 text-[11px] font-sans flex items-center gap-1.5 shadow-sm">
-            <Eye className="w-3.5 h-3.5 text-slate-400" />
+          <span className="px-3 py-1 rounded-md bg-[#F8F7F2]/90 backdrop-blur-sm border border-[#D8D5CB] text-[#292C29] text-[11px] font-sans flex items-center gap-1.5 shadow-xs">
+            <Eye className="w-3.5 h-3.5 text-[#74756E]" />
             <span>Drag to compare pencil sketch and detected CAD lines</span>
           </span>
         </div>

@@ -222,20 +222,20 @@ export function CadFloorplanVectorSVG({
       <defs>
         {/* CAD Drafting Grid */}
         <pattern id="cadGrid" width="24" height="24" patternUnits="userSpaceOnUse">
-          <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="0.75" />
+          <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(216, 213, 203, 0.08)" strokeWidth="0.75" />
         </pattern>
         {/* Standard Architectural Concrete Wall Hatch */}
         <pattern id="cadWallHatch" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(148, 163, 184, 0.5)" strokeWidth="1" />
+          <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(216, 213, 203, 0.35)" strokeWidth="1" />
         </pattern>
       </defs>
 
-      {/* Dark Architectural CAD Workstation Viewport */}
-      <rect width="600" height="420" fill="#0D1524" />
+      {/* Softer Graphite Architectural CAD Workstation Viewport */}
+      <rect width="600" height="420" fill="#232624" />
       <rect width="600" height="420" fill="url(#cadGrid)" />
 
       {/* Sheet Frame & Tracing Area */}
-      <rect x="20" y="20" width="560" height="380" rx="4" stroke="rgba(71, 85, 105, 0.4)" strokeWidth="1" fill="none" />
+      <rect x="20" y="20" width="560" height="380" rx="4" stroke="rgba(216, 213, 203, 0.2)" strokeWidth="1" fill="none" />
 
       {/* 1. EXTRACTED WALL BOUNDARIES (EXACT SAME 70,80 to 530,350 COORDINATES) */}
       {showWalls && (
@@ -251,13 +251,13 @@ export function CadFloorplanVectorSVG({
           <rect x="70" y="338" width="460" height="12" fill="url(#cadWallHatch)" />
 
           {/* Precision Double-Line Walls */}
-          <g stroke={selectedElement === "walls" ? "#38BDF8" : "#F8FAFC"} strokeWidth="2.2" strokeLinecap="square" strokeLinejoin="miter">
+          <g stroke={selectedElement === "walls" ? "#B47757" : "#F8F7F2"} strokeWidth="2.2" strokeLinecap="square" strokeLinejoin="miter">
             <path d="M 70 80 L 530 80 L 530 350 L 70 350 Z" />
             <path d="M 82 92 L 518 92 L 518 338 L 82 338 Z" />
           </g>
 
           {/* Interior Partitions */}
-          <g stroke={selectedElement === "walls" ? "#38BDF8" : "#CBD5E1"} strokeWidth="2">
+          <g stroke={selectedElement === "walls" ? "#B47757" : "#D8D5CB"} strokeWidth="2">
             <path d="M 330 92 L 330 220" />
             <path d="M 342 92 L 342 220" />
           </g>
@@ -271,9 +271,9 @@ export function CadFloorplanVectorSVG({
           onClick={() => onSelectElement && onSelectElement("windows")}
           opacity={selectedElement && selectedElement !== "windows" ? 0.4 : 1}
         >
-          <line x1="220" y1="344" x2="380" y2="344" stroke={selectedElement === "windows" ? "#38BDF8" : "#38BDF8"} strokeWidth="3.5" />
-          <line x1="250" y1="341" x2="350" y2="341" stroke="#F59E0B" strokeWidth="2" />
-          <text x="300" y="362" fontSize="7.5" fill="#38BDF8" fontFamily="sans-serif" textAnchor="middle" fontWeight="bold">
+          <line x1="220" y1="344" x2="380" y2="344" stroke={selectedElement === "windows" ? "#B47757" : "#777B64"} strokeWidth="3.5" />
+          <line x1="250" y1="341" x2="350" y2="341" stroke="#A8A69E" strokeWidth="2" />
+          <text x="300" y="362" fontSize="7.5" fill={selectedElement === "windows" ? "#B47757" : "#CBD5E1"} fontFamily="sans-serif" textAnchor="middle" fontWeight="bold">
             14&apos;-6&quot; THERMAL BREAK GLAZING
           </text>
         </g>
@@ -287,10 +287,10 @@ export function CadFloorplanVectorSVG({
           opacity={selectedElement && selectedElement !== "doors" ? 0.4 : 1}
         >
           {/* Main Entry Door Swing */}
-          <line x1="120" y1="338" x2="160" y2="338" stroke="#38BDF8" strokeWidth="1.5" strokeDasharray="3 3" />
-          <line x1="120" y1="338" x2="120" y2="298" stroke="#E2E8F0" strokeWidth="2.5" />
-          <path d="M 120 298 A 40 40 0 0 1 160 338" fill="none" stroke="#38BDF8" strokeWidth="1.5" strokeDasharray="3 3" />
-          <text x="140" y="325" fontSize="7.5" fill="#38BDF8" fontFamily="monospace">32&quot; EGRESS</text>
+          <line x1="120" y1="338" x2="160" y2="338" stroke={selectedElement === "doors" ? "#B47757" : "#777B64"} strokeWidth="1.5" strokeDasharray="3 3" />
+          <line x1="120" y1="338" x2="120" y2="298" stroke="#F8F7F2" strokeWidth="2.5" />
+          <path d="M 120 298 A 40 40 0 0 1 160 338" fill="none" stroke={selectedElement === "doors" ? "#B47757" : "#777B64"} strokeWidth="1.5" strokeDasharray="3 3" />
+          <text x="140" y="325" fontSize="7.5" fill={selectedElement === "doors" ? "#B47757" : "#A8A69E"} fontFamily="monospace">32&quot; EGRESS</text>
         </g>
       )}
 
@@ -300,21 +300,21 @@ export function CadFloorplanVectorSVG({
           className="cursor-pointer"
           onClick={() => onSelectElement && onSelectElement("furniture")}
           opacity={selectedElement && selectedElement !== "furniture" ? 0.4 : 1}
-          stroke={selectedElement === "furniture" ? "#F59E0B" : "#94A3B8"}
+          stroke={selectedElement === "furniture" ? "#B47757" : "#8A8D84"}
           strokeWidth="1.5"
-          fill="rgba(15, 23, 42, 0.4)"
+          fill="rgba(24, 26, 24, 0.4)"
         >
           {/* Modular Curved Sectional Sofa CAD Block */}
           <path d="M 140 130 C 140 120, 270 120, 270 130 L 270 185 C 270 195, 255 195, 255 185 L 255 145 L 155 145 L 155 210 C 155 220, 140 220, 140 210 Z" />
           {/* Coffee Table Plinth */}
-          <rect x="180" y="165" width="65" height="38" rx="4" stroke="#38BDF8" strokeDasharray="2 2" />
-          <text x="212" y="188" fontSize="7.5" fill="#38BDF8" textAnchor="middle" fontFamily="sans-serif">MARBLE PLINTH</text>
+          <rect x="180" y="165" width="65" height="38" rx="4" stroke={selectedElement === "furniture" ? "#B47757" : "#777B64"} strokeDasharray="2 2" />
+          <text x="212" y="188" fontSize="7.5" fill={selectedElement === "furniture" ? "#B47757" : "#CBD5E1"} textAnchor="middle" fontFamily="sans-serif">MARBLE PLINTH</text>
 
           {/* Media Credenza */}
           <rect x="140" y="260" width="130" height="22" rx="2" />
 
           {/* Kitchen Island */}
-          <rect x="375" y="130" width="115" height="60" rx="3" stroke="#F59E0B" />
+          <rect x="375" y="130" width="115" height="60" rx="3" stroke={selectedElement === "furniture" ? "#B47757" : "#777B64"} />
           {/* 3 Stools */}
           <circle cx="395" cy="205" r="9" />
           <circle cx="432" cy="205" r="9" />
@@ -335,8 +335,8 @@ export function CadFloorplanVectorSVG({
           className="cursor-pointer"
           onClick={() => onSelectElement && onSelectElement("dimensions")}
           opacity={selectedElement && selectedElement !== "dimensions" ? 0.4 : 1}
-          fill="#38BDF8"
-          stroke="#38BDF8"
+          fill="#F8F7F2"
+          stroke={selectedElement === "dimensions" ? "#B47757" : "#777B64"}
           fontSize="9.5"
           fontFamily="sans-serif"
         >
@@ -344,14 +344,14 @@ export function CadFloorplanVectorSVG({
           <line x1="70" y1="58" x2="530" y2="58" strokeWidth="1" />
           <line x1="66" y1="64" x2="74" y2="52" strokeWidth="1.8" />
           <line x1="526" y1="64" x2="534" y2="52" strokeWidth="1.8" />
-          <rect x="268" y="49" width="64" height="18" fill="#0D1524" stroke="#334155" strokeWidth="0.8" rx="2" />
+          <rect x="268" y="49" width="64" height="18" fill="#1A1C1A" stroke="#3D403A" strokeWidth="0.8" rx="2" />
           <text x="300" y="62" textAnchor="middle" fontWeight="bold">28&apos;-6&quot; [8.68m]</text>
 
           {/* Left Dimension String */}
           <line x1="45" y1="80" x2="45" y2="350" strokeWidth="1" />
           <line x1="39" y1="86" x2="51" y2="74" strokeWidth="1.8" />
           <line x1="39" y1="356" x2="51" y2="344" strokeWidth="1.8" />
-          <rect x="22" y="209" width="46" height="18" fill="#0D1524" stroke="#334155" strokeWidth="0.8" rx="2" />
+          <rect x="22" y="209" width="46" height="18" fill="#1A1C1A" stroke="#3D403A" strokeWidth="0.8" rx="2" />
           <text x="45" y="221" textAnchor="middle" fontWeight="bold">16&apos;-8&quot;</text>
         </g>
       )}
@@ -362,24 +362,24 @@ export function CadFloorplanVectorSVG({
           className="cursor-pointer"
           onClick={() => onSelectElement && onSelectElement("room")}
           opacity={selectedElement && selectedElement !== "room" ? 0.4 : 1}
-          fill="#F8FAFC"
+          fill="#F8F7F2"
           fontFamily="sans-serif"
         >
           <text x="205" y="235" fontSize="11" fontWeight="bold" textAnchor="middle">LIVING AREA</text>
-          <text x="205" y="249" fontSize="8.5" fill="#94A3B8" textAnchor="middle">312 SQ FT // HERRINGBONE OAK</text>
+          <text x="205" y="249" fontSize="8.5" fill="#A8A69E" textAnchor="middle">312 SQ FT // HERRINGBONE OAK</text>
 
           <text x="432" y="120" fontSize="10.5" fontWeight="bold" textAnchor="middle">OPEN KITCHEN</text>
-          <text x="432" y="170" fontSize="8.5" fill="#F59E0B" textAnchor="middle">QUARTZ ISLAND // 168 SQ FT</text>
+          <text x="432" y="170" fontSize="8.5" fill="#777B64" textAnchor="middle">QUARTZ ISLAND // 168 SQ FT</text>
         </g>
       )}
 
       {/* Professional Architectural Sheet Title Block */}
       <g>
-        <rect x="400" y="344" width="170" height="56" fill="#0B1320" stroke="#334155" strokeWidth="1" rx="2" />
-        <line x1="400" y1="363" x2="570" y2="363" stroke="#1E293B" strokeWidth="1" />
-        <text x="410" y="357" fontSize="7.5" fill="#94A3B8" fontFamily="sans-serif">SHEET A-101 · LEVEL 01 PLAN</text>
-        <text x="410" y="377" fontSize="9" fill="#F8FAFC" fontFamily="sans-serif" fontWeight="bold">RESIDENTIAL SUITE</text>
-        <text x="410" y="392" fontSize="7.5" fill="#38BDF8" fontFamily="sans-serif">SCALE 1/4&quot; = 1&apos;-0&quot; · 480 SQ FT</text>
+        <rect x="400" y="344" width="170" height="56" fill="#1A1C1A" stroke="#3D403A" strokeWidth="1" rx="2" />
+        <line x1="400" y1="363" x2="570" y2="363" stroke="#2B2E29" strokeWidth="1" />
+        <text x="410" y="357" fontSize="7.5" fill="#A8A69E" fontFamily="sans-serif">SHEET A-101 · LEVEL 01 PLAN</text>
+        <text x="410" y="377" fontSize="9" fill="#F8F7F2" fontFamily="sans-serif" fontWeight="bold">RESIDENTIAL SUITE</text>
+        <text x="410" y="392" fontSize="7.5" fill="#777B64" fontFamily="sans-serif">SCALE 1/4&quot; = 1&apos;-0&quot; · 480 SQ FT</text>
       </g>
     </svg>
   );

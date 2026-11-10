@@ -634,7 +634,7 @@ export default function Home() {
               </div>
 
               {/* Drawing Viewport Canvas */}
-              <div className="relative aspect-[600/420] bg-slate-950 overflow-hidden">
+              <div className="relative aspect-[600/420] bg-[#232624] overflow-hidden">
                 {heroViewMode === "dual" && (
                   <div className="w-full h-full">
                     <ComparisonSlider showControls={false} />
@@ -644,16 +644,16 @@ export default function Home() {
                 {heroViewMode === "sketch" && (
                   <div className="w-full h-full relative">
                     <PencilFloorplanSketchSVG className="w-full h-full" />
-                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-slate-950/85 border border-slate-800 text-xs text-slate-300 font-sans shadow-sm">
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-[#F8F7F2]/90 border border-[#D8D5CB] text-xs text-[#292C29] font-sans shadow-xs">
                       Pencil field sketch
                     </div>
                   </div>
                 )}
 
                 {heroViewMode === "vector" && (
-                  <div className="w-full h-full relative bg-slate-950">
+                  <div className="w-full h-full relative bg-[#232624]">
                     <CadFloorplanVectorSVG className="w-full h-full" />
-                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-slate-950/85 border border-slate-800 text-xs text-slate-300 font-sans shadow-sm">
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-[#1A1C1A]/90 border border-[#3D403A] text-xs text-[#F8F7F2] font-sans shadow-xs">
                       Detected vector CAD
                     </div>
                   </div>
@@ -755,15 +755,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. INTERACTIVE ARCHITECTURAL WORKSPACE (PHASE 3) */}
-      <section id="builder" className="py-16 sm:py-24 border-t border-slate-200/80 bg-slate-950 text-white font-sans">
+      {/* 4. INTERACTIVE ARCHITECTURAL WORKSPACE (REFINED ARCHITECTURAL STUDIO PALETTE) */}
+      <section id="builder" className="py-16 sm:py-24 border-t border-[#D8D5CB] bg-[#F1EEE6] text-[#292C29] font-sans">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="max-w-2xl space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#292C29]">
                 Interactive architectural workspace
               </h2>
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <p className="text-[#74756E] text-sm leading-relaxed">
                 Review automatic floorplan line detection, toggle drawing layers, inspect material specifications, and export preliminary schedules.
               </p>
             </div>
@@ -772,14 +772,14 @@ export default function Home() {
               <button
                 type="button"
                 onClick={handleOpenOnboarding}
-                className="bg-white hover:bg-slate-100 text-slate-950 font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                className="bg-[#292C29] hover:bg-[#1A1C1A] text-[#F8F7F2] font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#777B64]"
               >
                 Upload your floorplan
               </button>
               <button
                 type="button"
                 onClick={() => handleOpenPricing("Pro Studio")}
-                className="border border-slate-700 hover:bg-slate-900 text-slate-200 text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+                className="border border-[#D8D5CB] bg-[#F8F7F2] hover:bg-[#E8E5DC] text-[#292C29] text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#777B64]"
               >
                 Request early access
               </button>

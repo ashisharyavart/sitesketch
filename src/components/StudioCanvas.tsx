@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import ComparisonSlider from "./ComparisonSlider";
-import { CadFloorplanVectorSVG, PencilFloorplanSketchSVG } from "./ArchitecturalSVGs";
+import { CadFloorplanVectorSVG } from "./ArchitecturalSVGs";
 import {
   FileSpreadsheet,
   Download,
@@ -81,7 +81,7 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
       finish: "Matte Penetrating Silicate Seal",
       unit: "sq ft",
       rate: 11.00,
-      color: "bg-[#64748B]"
+      color: "bg-[#74756E]"
     }
   ];
 
@@ -111,7 +111,7 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
       finish: "Hand-troweled low-sheen wax",
       unit: "sq ft",
       rate: 12.80,
-      color: "bg-[#CBD5E1]"
+      color: "bg-[#D8D5CB]"
     }
   ];
 
@@ -263,34 +263,34 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
   };
 
   return (
-    <div className="relative w-full rounded-2xl border border-slate-800 bg-slate-950 shadow-2xl overflow-hidden font-sans">
+    <div className="relative w-full rounded-2xl border border-[#D8D5CB] bg-[#F1EEE6] shadow-sm overflow-hidden font-sans">
       {/* Studio Header Bar */}
-      <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800 text-xs gap-3">
+      <div className="flex flex-wrap items-center justify-between px-4 py-3 bg-[#E8E5DC] border-b border-[#D8D5CB] text-xs gap-3">
         {/* Left: Document Info & Sample Tag */}
         <div className="flex items-center space-x-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#78866D] ring-2 ring-[#78866D]/20" />
           <div className="flex items-center space-x-2">
-            <span className="text-slate-100 font-semibold text-xs">
+            <span className="text-[#292C29] font-semibold text-xs">
               Residential Suite · Sheet A-101
             </span>
-            <span className="text-slate-400 text-xs hidden sm:inline">
+            <span className="text-[#74756E] text-xs hidden sm:inline">
               ({calculatedSqFt} sq ft · Scale 1/4&quot; = 1&apos;-0&quot;)
             </span>
-            <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-mono">
+            <span className="px-2 py-0.5 rounded bg-[#F8F7F2] text-[#74756E] border border-[#D8D5CB] text-[10px] font-mono">
               Sample Project
             </span>
           </div>
         </div>
 
         {/* Center: Workspace Mode Switcher */}
-        <div className="flex items-center bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+        <div className="flex items-center bg-[#F1EEE6] p-1 rounded-lg border border-[#D8D5CB] text-xs">
           <button
             type="button"
             onClick={() => setActiveTab("workspace")}
             className={`px-3 py-1 rounded transition-colors cursor-pointer ${
               activeTab === "workspace"
-                ? "bg-slate-800 text-white font-medium shadow-xs"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-[#777B64] text-[#F8F7F2] font-medium shadow-xs"
+                : "text-[#74756E] hover:text-[#292C29]"
             }`}
           >
             CAD Workspace
@@ -300,8 +300,8 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
             onClick={() => setActiveTab("compare")}
             className={`px-3 py-1 rounded transition-colors cursor-pointer ${
               activeTab === "compare"
-                ? "bg-slate-800 text-white font-medium shadow-xs"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-[#777B64] text-[#F8F7F2] font-medium shadow-xs"
+                : "text-[#74756E] hover:text-[#292C29]"
             }`}
           >
             Sketch vs CAD
@@ -311,8 +311,8 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
             onClick={() => setActiveTab("materials")}
             className={`px-3 py-1 rounded transition-colors cursor-pointer ${
               activeTab === "materials"
-                ? "bg-slate-800 text-white font-medium shadow-xs"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-[#777B64] text-[#F8F7F2] font-medium shadow-xs"
+                : "text-[#74756E] hover:text-[#292C29]"
             }`}
           >
             Materials &amp; Takeoff
@@ -324,15 +324,15 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
           <button
             type="button"
             onClick={handleExportCSV}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-[#D8D5CB] bg-[#F8F7F2] hover:bg-[#E8E5DC] text-[#292C29] text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#777B64]"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5 text-[#74756E]" />
             <span>Export Takeoff (CSV)</span>
           </button>
           <button
             type="button"
             onClick={() => onOpenTrial && onOpenTrial("pro")}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-950 font-semibold text-xs transition-colors cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#292C29] hover:bg-[#1A1C1A] text-[#F8F7F2] font-medium text-xs transition-colors cursor-pointer"
           >
             <span>Request Early Access</span>
           </button>
@@ -340,120 +340,120 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
       </div>
 
       {/* Main 3-Pane Architectural Studio Workspace Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-800 min-h-[520px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-[#D8D5CB] min-h-[520px]">
         {/* PANE 1: LEFT SIDEBAR (Project Navigation & Active Layer Toggles) */}
-        <div className="col-span-1 lg:col-span-3 bg-slate-950 p-4 space-y-5 text-xs text-slate-300">
+        <div className="col-span-1 lg:col-span-3 bg-[#F8F7F2] p-4 space-y-5 text-xs text-[#292C29]">
           {/* Project Source Block */}
           <div className="space-y-2">
-            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+            <span className="text-[11px] font-semibold text-[#74756E] uppercase tracking-wider block">
               Project Source
             </span>
-            <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
-              <div className="flex items-center justify-between text-slate-200 font-medium">
+            <div className="p-2.5 rounded-lg bg-[#F1EEE6] border border-[#D8D5CB] space-y-1">
+              <div className="flex items-center justify-between text-[#292C29] font-medium">
                 <span className="truncate">pencil-suite-scan-01.jpg</span>
-                <span className="text-[10px] text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-800/60">
+                <span className="text-[10px] text-[#78866D] bg-[#78866D]/15 px-1.5 py-0.5 rounded border border-[#78866D]/30 font-medium">
                   Detected
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 leading-snug">
+              <p className="text-[11px] text-[#74756E] leading-snug">
                 Hand-drawn graphite on 1/4&quot; grid paper. 480 sq ft exterior perimeter identified.
               </p>
             </div>
           </div>
 
-          {/* Interactive Layer Visibility Controls (Actually changes the drawing!) */}
-          <div className="space-y-2.5 pt-2 border-t border-slate-800/80">
+          {/* Interactive Layer Visibility Controls (Actually changes the drawing) */}
+          <div className="space-y-2.5 pt-2 border-t border-[#E3E0D7]">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              <span className="text-[11px] font-semibold text-[#74756E] uppercase tracking-wider">
                 Drawing Layers
               </span>
-              <span className="text-[10px] text-slate-500">Toggle visibility</span>
+              <span className="text-[10px] text-[#74756E]">Toggle visibility</span>
             </div>
 
             <div className="space-y-1.5">
-              <label className="flex items-center justify-between p-2 rounded hover:bg-slate-900 cursor-pointer transition-colors">
+              <label className="flex items-center justify-between p-2 rounded hover:bg-[#E8E5DC]/60 cursor-pointer transition-colors">
                 <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-xs bg-[#CBD5E1]" />
-                  <span className="text-slate-200 font-medium">Exterior &amp; Partition Walls</span>
+                  <span className="w-2.5 h-2.5 rounded-xs bg-[#777B64]" />
+                  <span className="text-[#292C29] font-medium">Exterior &amp; Partition Walls</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={layerWalls}
                   onChange={(e) => setLayerWalls(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-800 accent-sky-500 cursor-pointer"
+                  className="w-3.5 h-3.5 rounded border-[#D8D5CB] bg-[#F8F7F2] accent-[#777B64] cursor-pointer"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-2 rounded hover:bg-slate-900 cursor-pointer transition-colors">
+              <label className="flex items-center justify-between p-2 rounded hover:bg-[#E8E5DC]/60 cursor-pointer transition-colors">
                 <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-xs bg-[#38BDF8]" />
-                  <span className="text-slate-200 font-medium">Glazed Window Aperture</span>
+                  <span className="w-2.5 h-2.5 rounded-xs bg-[#B47757]" />
+                  <span className="text-[#292C29] font-medium">Glazed Window Aperture</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={layerWindows}
                   onChange={(e) => setLayerWindows(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-800 accent-sky-500 cursor-pointer"
+                  className="w-3.5 h-3.5 rounded border-[#D8D5CB] bg-[#F8F7F2] accent-[#777B64] cursor-pointer"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-2 rounded hover:bg-slate-900 cursor-pointer transition-colors">
+              <label className="flex items-center justify-between p-2 rounded hover:bg-[#E8E5DC]/60 cursor-pointer transition-colors">
                 <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-xs bg-[#E2E8F0]" />
-                  <span className="text-slate-200 font-medium">Egress Door Swings</span>
+                  <span className="w-2.5 h-2.5 rounded-xs bg-[#78866D]" />
+                  <span className="text-[#292C29] font-medium">Egress Door Swings</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={layerDoors}
                   onChange={(e) => setLayerDoors(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-800 accent-sky-500 cursor-pointer"
+                  className="w-3.5 h-3.5 rounded border-[#D8D5CB] bg-[#F8F7F2] accent-[#777B64] cursor-pointer"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-2 rounded hover:bg-slate-900 cursor-pointer transition-colors">
+              <label className="flex items-center justify-between p-2 rounded hover:bg-[#E8E5DC]/60 cursor-pointer transition-colors">
                 <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-xs bg-[#F59E0B]" />
-                  <span className="text-slate-200 font-medium">Spatial CAD Blocks</span>
+                  <span className="w-2.5 h-2.5 rounded-xs bg-[#A39E93]" />
+                  <span className="text-[#292C29] font-medium">Spatial CAD Blocks</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={layerFurniture}
                   onChange={(e) => setLayerFurniture(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-800 accent-sky-500 cursor-pointer"
+                  className="w-3.5 h-3.5 rounded border-[#D8D5CB] bg-[#F8F7F2] accent-[#777B64] cursor-pointer"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-2 rounded hover:bg-slate-900 cursor-pointer transition-colors">
+              <label className="flex items-center justify-between p-2 rounded hover:bg-[#E8E5DC]/60 cursor-pointer transition-colors">
                 <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-xs bg-cyan-400" />
-                  <span className="text-slate-200 font-medium">Dimension Strings</span>
+                  <span className="w-2.5 h-2.5 rounded-xs bg-[#74756E]" />
+                  <span className="text-[#292C29] font-medium">Dimension Strings</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={layerDimensions}
                   onChange={(e) => setLayerDimensions(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-800 accent-sky-500 cursor-pointer"
+                  className="w-3.5 h-3.5 rounded border-[#D8D5CB] bg-[#F8F7F2] accent-[#777B64] cursor-pointer"
                 />
               </label>
 
-              <label className="flex items-center justify-between p-2 rounded hover:bg-slate-900 cursor-pointer transition-colors">
+              <label className="flex items-center justify-between p-2 rounded hover:bg-[#E8E5DC]/60 cursor-pointer transition-colors">
                 <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-xs bg-slate-400" />
-                  <span className="text-slate-200 font-medium">Room Labels &amp; Areas</span>
+                  <span className="w-2.5 h-2.5 rounded-xs bg-[#9E9B90]" />
+                  <span className="text-[#292C29] font-medium">Room Labels &amp; Areas</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={layerRoomLabels}
                   onChange={(e) => setLayerRoomLabels(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-800 accent-sky-500 cursor-pointer"
+                  className="w-3.5 h-3.5 rounded border-[#D8D5CB] bg-[#F8F7F2] accent-[#777B64] cursor-pointer"
                 />
               </label>
             </div>
           </div>
 
           {/* Quick Selection Filter */}
-          <div className="space-y-2 pt-2 border-t border-slate-800/80">
-            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+          <div className="space-y-2 pt-2 border-t border-[#E3E0D7]">
+            <span className="text-[11px] font-semibold text-[#74756E] uppercase tracking-wider block">
               Inspect Object Geometry
             </span>
             <div className="grid grid-cols-2 gap-1.5">
@@ -462,8 +462,8 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
                 onClick={() => setSelectedElement("walls")}
                 className={`px-2 py-1.5 rounded text-left transition-colors cursor-pointer truncate ${
                   selectedElement === "walls"
-                    ? "bg-sky-950 text-sky-300 border border-sky-700"
-                    : "bg-slate-900 text-slate-400 hover:text-slate-200"
+                    ? "bg-[#777B64] text-[#F8F7F2] font-medium border border-[#777B64]"
+                    : "bg-[#E8E5DC] text-[#74756E] hover:text-[#292C29] border border-[#D8D5CB]"
                 }`}
               >
                 Exterior Walls
@@ -473,8 +473,8 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
                 onClick={() => setSelectedElement("windows")}
                 className={`px-2 py-1.5 rounded text-left transition-colors cursor-pointer truncate ${
                   selectedElement === "windows"
-                    ? "bg-sky-950 text-sky-300 border border-sky-700"
-                    : "bg-slate-900 text-slate-400 hover:text-slate-200"
+                    ? "bg-[#777B64] text-[#F8F7F2] font-medium border border-[#777B64]"
+                    : "bg-[#E8E5DC] text-[#74756E] hover:text-[#292C29] border border-[#D8D5CB]"
                 }`}
               >
                 South Glazing
@@ -484,8 +484,8 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
                 onClick={() => setSelectedElement("doors")}
                 className={`px-2 py-1.5 rounded text-left transition-colors cursor-pointer truncate ${
                   selectedElement === "doors"
-                    ? "bg-sky-950 text-sky-300 border border-sky-700"
-                    : "bg-slate-900 text-slate-400 hover:text-slate-200"
+                    ? "bg-[#777B64] text-[#F8F7F2] font-medium border border-[#777B64]"
+                    : "bg-[#E8E5DC] text-[#74756E] hover:text-[#292C29] border border-[#D8D5CB]"
                 }`}
               >
                 Egress Door
@@ -495,8 +495,8 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
                 onClick={() => setSelectedElement("furniture")}
                 className={`px-2 py-1.5 rounded text-left transition-colors cursor-pointer truncate ${
                   selectedElement === "furniture"
-                    ? "bg-sky-950 text-sky-300 border border-sky-700"
-                    : "bg-slate-900 text-slate-400 hover:text-slate-200"
+                    ? "bg-[#777B64] text-[#F8F7F2] font-medium border border-[#777B64]"
+                    : "bg-[#E8E5DC] text-[#74756E] hover:text-[#292C29] border border-[#D8D5CB]"
                 }`}
               >
                 Island &amp; Sofa
@@ -506,11 +506,11 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
         </div>
 
         {/* PANE 2: CENTRAL WORKSPACE (Canvas + Zoom/Pan + Before/After Comparison) */}
-        <div className="col-span-1 lg:col-span-6 flex flex-col bg-slate-950 p-4 space-y-3">
+        <div className="col-span-1 lg:col-span-6 flex flex-col bg-[#F1EEE6] p-4 space-y-3">
           {/* Canvas Toolbar */}
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2 text-xs">
-            <div className="flex items-center space-x-2 text-slate-400">
-              <span className="font-semibold text-slate-200">
+          <div className="flex items-center justify-between border-b border-[#D8D5CB] pb-2 text-xs">
+            <div className="flex items-center space-x-2 text-[#74756E]">
+              <span className="font-semibold text-[#292C29]">
                 {activeTab === "workspace"
                   ? "Interactive CAD Vector Viewport"
                   : activeTab === "compare"
@@ -521,31 +521,31 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
 
             {/* Zoom / Pan Action Pill */}
             {activeTab === "workspace" && (
-              <div className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-0.5 space-x-1">
+              <div className="flex items-center bg-[#F8F7F2] border border-[#D8D5CB] rounded-lg p-0.5 space-x-1">
                 <button
                   type="button"
                   onClick={handleZoomOut}
-                  className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+                  className="p-1 rounded text-[#74756E] hover:text-[#292C29] hover:bg-[#E8E5DC] cursor-pointer"
                   title="Zoom Out"
                 >
                   <ZoomOut className="w-3.5 h-3.5" />
                 </button>
-                <span className="px-1.5 font-mono text-[11px] text-slate-300 min-w-[42px] text-center">
+                <span className="px-1.5 font-mono text-[11px] text-[#292C29] min-w-[42px] text-center">
                   {zoomLevel}%
                 </span>
                 <button
                   type="button"
                   onClick={handleZoomIn}
-                  className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+                  className="p-1 rounded text-[#74756E] hover:text-[#292C29] hover:bg-[#E8E5DC] cursor-pointer"
                   title="Zoom In"
                 >
                   <ZoomIn className="w-3.5 h-3.5" />
                 </button>
-                <div className="w-[1px] h-3 bg-slate-800 mx-0.5" />
+                <div className="w-[1px] h-3 bg-[#D8D5CB] mx-0.5" />
                 <button
                   type="button"
                   onClick={handleResetView}
-                  className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+                  className="p-1 rounded text-[#74756E] hover:text-[#292C29] hover:bg-[#E8E5DC] cursor-pointer"
                   title="Reset View"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
@@ -555,7 +555,7 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
           </div>
 
           {/* Canvas Viewport Body */}
-          <div className="flex-grow flex items-center justify-center relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 min-h-[380px]">
+          <div className="flex-grow flex items-center justify-center relative overflow-hidden rounded-xl border border-[#D8D5CB] bg-[#232624] min-h-[380px]">
             {activeTab === "workspace" && (
               <div
                 className="w-full h-full flex items-center justify-center transition-transform duration-150"
@@ -578,23 +578,23 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
             )}
 
             {activeTab === "compare" && (
-              <div className="w-full p-2">
+              <div className="w-full p-2 bg-[#F1EEE6]">
                 <ComparisonSlider showControls={true} />
               </div>
             )}
 
             {activeTab === "materials" && (
-              <div className="w-full p-4 space-y-4">
+              <div className="w-full h-full p-4 space-y-4 bg-[#F8F7F2] overflow-y-auto">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-semibold text-slate-100">Select Room Materials &amp; Finishes</h4>
-                  <p className="text-xs text-slate-400">
+                  <h4 className="text-sm font-semibold text-[#292C29]">Select Room Materials &amp; Finishes</h4>
+                  <p className="text-xs text-[#74756E]">
                     Switch finishes to update specifications and recalculate quantity takeoff schedules.
                   </p>
                 </div>
 
                 {/* Flooring Selector */}
                 <div className="space-y-2">
-                  <span className="text-xs font-semibold text-slate-300">Flooring Specification:</span>
+                  <span className="text-xs font-semibold text-[#292C29]">Flooring Specification:</span>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {flooringOptions.map((opt) => (
                       <button
@@ -603,16 +603,16 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
                         onClick={() => setSelectedFlooring(opt.id as any)}
                         className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                           selectedFlooring === opt.id
-                            ? "bg-slate-900 border-sky-500 ring-1 ring-sky-500"
-                            : "bg-slate-950/70 border-slate-800 hover:border-slate-700"
+                            ? "bg-[#F1EEE6] border-[#777B64] ring-1 ring-[#777B64]"
+                            : "bg-[#F8F7F2] border-[#D8D5CB] hover:border-[#777B64]/50"
                         }`}
                       >
                         <div className="flex items-center space-x-2 mb-1">
                           <span className={`w-3.5 h-3.5 rounded-full ${opt.color} shrink-0`} />
-                          <span className="text-xs font-semibold text-slate-200 truncate">{opt.name}</span>
+                          <span className="text-xs font-semibold text-[#292C29] truncate">{opt.name}</span>
                         </div>
-                        <span className="text-[11px] text-slate-400 block">{opt.finish}</span>
-                        <span className="text-xs font-mono font-medium text-amber-400 mt-1 block">
+                        <span className="text-[11px] text-[#74756E] block">{opt.finish}</span>
+                        <span className="text-xs font-mono font-medium text-[#B47757] mt-1 block">
                           ${opt.rate.toFixed(2)} / {opt.unit}
                         </span>
                       </button>
@@ -622,7 +622,7 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
 
                 {/* Wall Finishes Selector */}
                 <div className="space-y-2">
-                  <span className="text-xs font-semibold text-slate-300">Wall Surface Specification:</span>
+                  <span className="text-xs font-semibold text-[#292C29]">Wall Surface Specification:</span>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     {wallOptions.map((opt) => (
                       <button
@@ -631,16 +631,16 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
                         onClick={() => setSelectedWallFinish(opt.id as any)}
                         className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
                           selectedWallFinish === opt.id
-                            ? "bg-slate-900 border-sky-500 ring-1 ring-sky-500"
-                            : "bg-slate-950/70 border-slate-800 hover:border-slate-700"
+                            ? "bg-[#F1EEE6] border-[#777B64] ring-1 ring-[#777B64]"
+                            : "bg-[#F8F7F2] border-[#D8D5CB] hover:border-[#777B64]/50"
                         }`}
                       >
                         <div className="flex items-center space-x-2 mb-1">
                           <span className={`w-3.5 h-3.5 rounded-full ${opt.color} shrink-0`} />
-                          <span className="text-xs font-semibold text-slate-200 truncate">{opt.name}</span>
+                          <span className="text-xs font-semibold text-[#292C29] truncate">{opt.name}</span>
                         </div>
-                        <span className="text-[11px] text-slate-400 block">{opt.finish}</span>
-                        <span className="text-xs font-mono font-medium text-amber-400 mt-1 block">
+                        <span className="text-[11px] text-[#74756E] block">{opt.finish}</span>
+                        <span className="text-xs font-mono font-medium text-[#B47757] mt-1 block">
                           ${opt.rate.toFixed(2)} / {opt.unit}
                         </span>
                       </button>
@@ -650,31 +650,31 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
 
                 {/* Countertop Selection */}
                 <div className="space-y-2">
-                  <span className="text-xs font-semibold text-slate-300">Kitchen Island Countertop Slab:</span>
+                  <span className="text-xs font-semibold text-[#292C29]">Kitchen Island Countertop Slab:</span>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => setSelectedCountertop("carrara")}
                       className={`p-2.5 rounded-lg border text-left transition-colors cursor-pointer ${
                         selectedCountertop === "carrara"
-                          ? "bg-slate-900 border-sky-500 ring-1 ring-sky-500"
-                          : "bg-slate-950/70 border-slate-800"
+                          ? "bg-[#F1EEE6] border-[#777B64] ring-1 ring-[#777B64]"
+                          : "bg-[#F8F7F2] border-[#D8D5CB] hover:border-[#777B64]/50"
                       }`}
                     >
-                      <span className="text-xs font-semibold text-slate-200 block">Honed Carrara Marble</span>
-                      <span className="text-[11px] text-slate-400">Natural stone · Mitred edge</span>
+                      <span className="text-xs font-semibold text-[#292C29] block">Honed Carrara Marble</span>
+                      <span className="text-[11px] text-[#74756E]">Natural stone · Mitred edge</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setSelectedCountertop("quartz")}
                       className={`p-2.5 rounded-lg border text-left transition-colors cursor-pointer ${
                         selectedCountertop === "quartz"
-                          ? "bg-slate-900 border-sky-500 ring-1 ring-sky-500"
-                          : "bg-slate-950/70 border-slate-800"
+                          ? "bg-[#F1EEE6] border-[#777B64] ring-1 ring-[#777B64]"
+                          : "bg-[#F8F7F2] border-[#D8D5CB] hover:border-[#777B64]/50"
                       }`}
                     >
-                      <span className="text-xs font-semibold text-slate-200 block">Nero Suede Quartzite</span>
-                      <span className="text-[11px] text-slate-400">Engineered surface · Non-porous</span>
+                      <span className="text-xs font-semibold text-[#292C29] block">Nero Suede Quartzite</span>
+                      <span className="text-[11px] text-[#74756E]">Engineered surface · Non-porous</span>
                     </button>
                   </div>
                 </div>
@@ -683,135 +683,135 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
           </div>
 
           {/* Central Workspace Footer: Interactive Demonstration Notice */}
-          <div className="flex flex-wrap items-center justify-between text-xs text-slate-400 border-t border-slate-800/80 pt-2 gap-2">
-            <div className="flex items-center space-x-1.5 text-slate-400">
-              <Info className="w-3.5 h-3.5 text-slate-500" />
+          <div className="flex flex-wrap items-center justify-between text-xs text-[#74756E] border-t border-[#E3E0D7] pt-2 gap-2">
+            <div className="flex items-center space-x-1.5 text-[#74756E]">
+              <Info className="w-3.5 h-3.5 text-[#74756E]" />
               <span>Interactive demonstration · Click elements or toggle layers to test workspace reactivity</span>
             </div>
-            <div className="flex items-center space-x-2 text-slate-300 font-mono text-[11px]">
+            <div className="flex items-center space-x-2 text-[#292C29] font-mono text-[11px]">
               <span>Dimensions: {roomLengthFt.toFixed(1)}&apos; × {roomWidthFt.toFixed(1)}&apos;</span>
-              <span className="text-emerald-400">({calculatedSqFt} sq ft)</span>
+              <span className="text-[#78866D] font-semibold">({calculatedSqFt} sq ft)</span>
             </div>
           </div>
         </div>
 
         {/* PANE 3: RIGHT SIDEBAR (Selected Object Properties & Material Takeoff Summary) */}
-        <div className="col-span-1 lg:col-span-3 bg-slate-950 p-4 space-y-4 text-xs">
+        <div className="col-span-1 lg:col-span-3 bg-[#F8F7F2] p-4 space-y-4 text-xs text-[#292C29]">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-            <span className="font-semibold text-slate-200">
+          <div className="flex items-center justify-between border-b border-[#D8D5CB] pb-2">
+            <span className="font-semibold text-[#292C29]">
               {selectedElement ? "Object Properties" : "Spatial Takeoff"}
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
+            <span className="text-[10px] px-2 py-0.5 rounded bg-[#E8E5DC] text-[#74756E] border border-[#D8D5CB] font-mono">
               {selectedElement ? selectedElement.toUpperCase() : "SCHEDULE"}
             </span>
           </div>
 
           {/* Selected Object Telemetry Panel */}
           {selectedElement === "walls" && (
-            <div className="space-y-3 bg-slate-900/70 p-3 rounded-xl border border-slate-800">
-              <span className="font-semibold text-slate-200 block">Exterior &amp; Partition Walls</span>
-              <div className="space-y-1.5 text-slate-400 text-[11px]">
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+            <div className="space-y-3 bg-[#F1EEE6] p-3 rounded-xl border border-[#D8D5CB]">
+              <span className="font-semibold text-[#292C29] block">Exterior &amp; Partition Walls</span>
+              <div className="space-y-1.5 text-[#74756E] text-[11px]">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Assembly:</span>
-                  <span className="text-slate-200">2×6 Stud + 5/8&quot; Gypsum</span>
+                  <span className="text-[#292C29] font-medium">2×6 Stud + 5/8&quot; Gypsum</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Ceiling Height:</span>
-                  <span className="text-slate-200">10&apos;-6&quot; AFF</span>
+                  <span className="text-[#292C29] font-medium">10&apos;-6&quot; AFF</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Surface Finish:</span>
-                  <span className="text-slate-200 truncate">{activeWallData.name}</span>
+                  <span className="text-[#292C29] font-medium truncate">{activeWallData.name}</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span>Fire Rating:</span>
-                  <span className="text-emerald-400">1-Hour UL U305</span>
+                  <span className="text-[#78866D] font-medium">1-Hour UL U305</span>
                 </div>
               </div>
             </div>
           )}
 
           {selectedElement === "windows" && (
-            <div className="space-y-3 bg-slate-900/70 p-3 rounded-xl border border-slate-800">
-              <span className="font-semibold text-slate-200 block">South Glazed Aperture</span>
-              <div className="space-y-1.5 text-slate-400 text-[11px]">
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+            <div className="space-y-3 bg-[#F1EEE6] p-3 rounded-xl border border-[#D8D5CB]">
+              <span className="font-semibold text-[#292C29] block">South Glazed Aperture</span>
+              <div className="space-y-1.5 text-[#74756E] text-[11px]">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Width:</span>
-                  <span className="text-slate-200">14&apos;-6&quot; (174 inches)</span>
+                  <span className="text-[#292C29] font-medium">14&apos;-6&quot; (174 inches)</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Orientation:</span>
-                  <span className="text-slate-200">True South 180°</span>
+                  <span className="text-[#292C29] font-medium">True South 180°</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Glazing Spec:</span>
-                  <span className="text-slate-200">Thermal Break Low-E Argon</span>
+                  <span className="text-[#292C29] font-medium">Thermal Break Low-E Argon</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span>Daylight Factor:</span>
-                  <span className="text-emerald-400">3.8% (LEED compliant)</span>
+                  <span className="text-[#78866D] font-medium">3.8% (LEED compliant)</span>
                 </div>
               </div>
             </div>
           )}
 
           {selectedElement === "doors" && (
-            <div className="space-y-3 bg-slate-900/70 p-3 rounded-xl border border-slate-800">
-              <span className="font-semibold text-slate-200 block">Egress Entry Door</span>
-              <div className="space-y-1.5 text-slate-400 text-[11px]">
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+            <div className="space-y-3 bg-[#F1EEE6] p-3 rounded-xl border border-[#D8D5CB]">
+              <span className="font-semibold text-[#292C29] block">Egress Entry Door</span>
+              <div className="space-y-1.5 text-[#74756E] text-[11px]">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Door Width:</span>
-                  <span className="text-slate-200">32&quot; Clear Egress</span>
+                  <span className="text-[#292C29] font-medium">32&quot; Clear Egress</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Handing:</span>
-                  <span className="text-slate-200">Left-Hand Inswing (90°)</span>
+                  <span className="text-[#292C29] font-medium">Left-Hand Inswing (90°)</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Material:</span>
-                  <span className="text-slate-200">Solid White Oak Flush</span>
+                  <span className="text-[#292C29] font-medium">Solid White Oak Flush</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span>Hardware:</span>
-                  <span className="text-slate-200">Concealed Pivot Hinge</span>
+                  <span className="text-[#292C29] font-medium">Concealed Pivot Hinge</span>
                 </div>
               </div>
             </div>
           )}
 
           {selectedElement === "furniture" && (
-            <div className="space-y-3 bg-slate-900/70 p-3 rounded-xl border border-slate-800">
-              <span className="font-semibold text-slate-200 block">Furniture &amp; Fixture Blocks</span>
-              <div className="space-y-1.5 text-slate-400 text-[11px]">
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+            <div className="space-y-3 bg-[#F1EEE6] p-3 rounded-xl border border-[#D8D5CB]">
+              <span className="font-semibold text-[#292C29] block">Furniture &amp; Fixture Blocks</span>
+              <div className="space-y-1.5 text-[#74756E] text-[11px]">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Living:</span>
-                  <span className="text-slate-200">Bouclé Curved Sectional</span>
+                  <span className="text-[#292C29] font-medium">Bouclé Curved Sectional</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Center:</span>
-                  <span className="text-slate-200">Marble Plinth Table</span>
+                  <span className="text-[#292C29] font-medium">Marble Plinth Table</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                <div className="flex justify-between py-1 border-b border-[#E3E0D7]">
                   <span>Island:</span>
-                  <span className="text-slate-200">115&quot; × 60&quot; Quartz Island</span>
+                  <span className="text-[#292C29] font-medium">115&quot; × 60&quot; Quartz Island</span>
                 </div>
                 <div className="flex justify-between py-1">
                   <span>Circulation:</span>
-                  <span className="text-emerald-400">38&quot; Min Clearance</span>
+                  <span className="text-[#78866D] font-medium">38&quot; Min Clearance</span>
                 </div>
               </div>
             </div>
           )}
 
           {/* Editable Dimension Fields (Phase 3: Dimension fields update sample geometry) */}
-          <div className="space-y-2 pt-1 border-t border-slate-800">
-            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+          <div className="space-y-2 pt-1 border-t border-[#E3E0D7]">
+            <span className="text-[11px] font-semibold text-[#74756E] uppercase tracking-wider block">
               Adjust Room Span
             </span>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
-                <label className="text-[10px] text-slate-500 block mb-1">Length (ft):</label>
+                <label className="text-[10px] text-[#74756E] block mb-1">Length (ft):</label>
                 <input
                   type="number"
                   step="0.5"
@@ -819,11 +819,11 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
                   max="45"
                   value={roomLengthFt}
                   onChange={(e) => setRoomLengthFt(Number(e.target.value) || 28.5)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-slate-200 font-mono text-xs focus:border-slate-500 focus:outline-none"
+                  className="w-full bg-[#F8F7F2] border border-[#D8D5CB] rounded px-2 py-1 text-[#292C29] font-mono text-xs focus:border-[#777B64] focus:outline-none focus:ring-1 focus:ring-[#777B64]"
                 />
               </div>
               <div>
-                <label className="text-[10px] text-slate-500 block mb-1">Width (ft):</label>
+                <label className="text-[10px] text-[#74756E] block mb-1">Width (ft):</label>
                 <input
                   type="number"
                   step="0.5"
@@ -831,29 +831,29 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
                   max="30"
                   value={roomWidthFt}
                   onChange={(e) => setRoomWidthFt(Number(e.target.value) || 16.67)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-slate-200 font-mono text-xs focus:border-slate-500 focus:outline-none"
+                  className="w-full bg-[#F8F7F2] border border-[#D8D5CB] rounded px-2 py-1 text-[#292C29] font-mono text-xs focus:border-[#777B64] focus:outline-none focus:ring-1 focus:ring-[#777B64]"
                 />
               </div>
             </div>
           </div>
 
           {/* Structured Takeoff Summary Box */}
-          <div className="pt-2 border-t border-slate-800 space-y-2">
-            <div className="flex justify-between text-slate-400 text-xs">
+          <div className="pt-2 border-t border-[#E3E0D7] space-y-2">
+            <div className="flex justify-between text-[#74756E] text-xs">
               <span>Materials Subtotal:</span>
-              <span className="font-mono text-slate-200">${materialsSubtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="font-mono text-[#292C29]">${materialsSubtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
-            <div className="flex justify-between text-slate-400 text-xs">
+            <div className="flex justify-between text-[#74756E] text-xs">
               <span>Trade Labour Estimate:</span>
-              <span className="font-mono text-slate-300">${laborEstimate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="font-mono text-[#292C29]">${laborEstimate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
-            <div className="flex justify-between text-slate-400 text-xs">
+            <div className="flex justify-between text-[#74756E] text-xs">
               <span>Estimated Tax (8.25%):</span>
-              <span className="font-mono text-slate-400">${taxEst.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="font-mono text-[#74756E]">${taxEst.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
-            <div className="flex justify-between text-slate-100 font-semibold text-xs pt-1 border-t border-slate-800/80">
+            <div className="flex justify-between text-[#292C29] font-semibold text-xs pt-1 border-t border-[#D8D5CB]">
               <span>Estimated Total:</span>
-              <span className="font-mono text-amber-400">${finalTakeoffTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="font-mono text-[#B47757] font-bold text-sm">${finalTakeoffTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
 
             {/* Takeoff Action Buttons */}
@@ -861,7 +861,7 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
               <button
                 type="button"
                 onClick={handleExportCSV}
-                className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs transition-colors cursor-pointer"
+                className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-lg bg-[#292C29] hover:bg-[#1A1C1A] text-[#F8F7F2] text-xs font-medium transition-colors cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Export CSV</span>
@@ -869,15 +869,15 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
               <button
                 type="button"
                 onClick={() => onOpenTrial && onOpenTrial("pro")}
-                className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-lg border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs transition-colors cursor-pointer"
+                className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-lg border border-[#D8D5CB] bg-[#F8F7F2] hover:bg-[#E8E5DC] text-[#292C29] text-xs font-medium transition-colors cursor-pointer"
               >
-                <Share2 className="w-3.5 h-3.5" />
+                <Share2 className="w-3.5 h-3.5 text-[#74756E]" />
                 <span>Early Access</span>
               </button>
             </div>
 
             {downloadNotice && (
-              <p className="text-[11px] text-emerald-400 text-center animate-fade-in pt-1">
+              <p className="text-[11px] text-[#78866D] font-medium text-center animate-fade-in pt-1">
                 {downloadNotice}
               </p>
             )}
@@ -886,19 +886,19 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
       </div>
 
       {/* BOTTOM PANEL: Project Status & Validation Messages */}
-      <div className="px-4 py-2.5 bg-slate-900/90 border-t border-slate-800 flex flex-wrap items-center justify-between text-[11px] text-slate-400 gap-3">
+      <div className="px-4 py-2.5 bg-[#E8E5DC] border-t border-[#D8D5CB] flex flex-wrap items-center justify-between text-[11px] text-[#74756E] gap-3">
         <div className="flex items-center space-x-3">
-          <span className="flex items-center space-x-1.5 text-slate-300">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="flex items-center space-x-1.5 text-[#292C29]">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#78866D]" />
             <span>Geometry verified · 0 unclosed wall loops</span>
           </span>
-          <span className="text-slate-600 hidden sm:inline">|</span>
+          <span className="text-[#D8D5CB] hidden sm:inline">|</span>
           <span className="hidden sm:inline">Calculations based on {calculatedSqFt} sq ft net envelope with 10% cutting waste allowance</span>
         </div>
 
-        <div className="flex items-center space-x-3 text-slate-400">
+        <div className="flex items-center space-x-3 text-[#74756E]">
           <span>Prices illustrative</span>
-          <span className="text-slate-600">·</span>
+          <span className="text-[#D8D5CB]">·</span>
           <span>Sample Project: Residential Suite Level 01</span>
         </div>
       </div>
