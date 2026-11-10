@@ -25,8 +25,8 @@ interface StudioCanvasProps {
 }
 
 export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
-  // Navigation & Workspace Mode
-  const [activeTab, setActiveTab] = useState<"workspace" | "materials" | "compare">("workspace");
+  // Navigation & Workspace Mode (Sketch vs CAD first, CAD Workspace second)
+  const [activeTab, setActiveTab] = useState<"compare" | "workspace" | "materials">("compare");
   const [selectedElement, setSelectedElement] = useState<string | null>("walls");
 
   // Canvas Transform State
@@ -286,17 +286,6 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
         <div className="flex items-center bg-[#F1EEE6] p-1 rounded-lg border border-[#D8D5CB] text-xs">
           <button
             type="button"
-            onClick={() => setActiveTab("workspace")}
-            className={`px-3 py-1 rounded transition-colors cursor-pointer ${
-              activeTab === "workspace"
-                ? "bg-[#777B64] text-[#F8F7F2] font-medium shadow-xs"
-                : "text-[#74756E] hover:text-[#292C29]"
-            }`}
-          >
-            CAD Workspace
-          </button>
-          <button
-            type="button"
             onClick={() => setActiveTab("compare")}
             className={`px-3 py-1 rounded transition-colors cursor-pointer ${
               activeTab === "compare"
@@ -305,6 +294,17 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
             }`}
           >
             Sketch vs CAD
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("workspace")}
+            className={`px-3 py-1 rounded transition-colors cursor-pointer ${
+              activeTab === "workspace"
+                ? "bg-[#777B64] text-[#F8F7F2] font-medium shadow-xs"
+                : "text-[#74756E] hover:text-[#292C29]"
+            }`}
+          >
+            CAD Workspace
           </button>
           <button
             type="button"
@@ -511,10 +511,10 @@ export default function StudioCanvas({ onOpenTrial }: StudioCanvasProps) {
           <div className="flex items-center justify-between border-b border-[#D8D5CB] pb-2 text-xs">
             <div className="flex items-center space-x-2 text-[#74756E]">
               <span className="font-semibold text-[#292C29]">
-                {activeTab === "workspace"
-                  ? "Interactive CAD Vector Viewport"
-                  : activeTab === "compare"
+                {activeTab === "compare"
                   ? "Field Sketch vs CAD Overlay"
+                  : activeTab === "workspace"
+                  ? "Interactive CAD Vector Viewport"
                   : "Materials Specification Matrix"}
               </span>
             </div>
