@@ -24,7 +24,8 @@ import {
   RefreshCw,
   UploadCloud,
   FileText,
-  ArrowRight
+  ArrowRight,
+  Sparkles
 } from "lucide-react";
 import StudioCanvas from "@/components/StudioCanvas";
 import ComparisonSlider from "@/components/ComparisonSlider";
@@ -60,15 +61,6 @@ export default function Home() {
   const [authError, setAuthError] = useState("");
   const [authStatusMessage, setAuthStatusMessage] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
-
-  // Pricing Checkout State
-  const [checkoutName, setCheckoutName] = useState("");
-  const [checkoutEmail, setCheckoutEmail] = useState("");
-  const [checkoutFirm, setCheckoutFirm] = useState("");
-  const [checkoutPaymentMethod, setCheckoutPaymentMethod] = useState<"card" | "invoice">("card");
-  const [checkoutError, setCheckoutError] = useState("");
-  const [checkoutStatusMessage, setCheckoutStatusMessage] = useState("");
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   // Studio Onboarding State
   const [onboardingProjectName, setOnboardingProjectName] = useState("Nordic Loft Renovation");
@@ -180,54 +172,28 @@ export default function Home() {
     }, 750);
   };
 
-  // 2. PRICING CHECKOUT HANDLERS
+  // 2. PRICING COMING SOON MODAL HANDLER
   const handleOpenPricing = (plan: "Starter" | "Pro Studio" | "Enterprise") => {
     setSelectedPlan(plan);
-    setCheckoutError("");
-    setCheckoutStatusMessage("");
     setPricingModalOpen(true);
   };
 
-  const handleCheckoutSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCheckoutError("");
-    setCheckoutStatusMessage("");
-
-    if (!checkoutName.trim()) {
-      setCheckoutError("Please enter your contact name.");
-      return;
+  // Prevent background scrolling and handle Escape key for Pricing / Coming Soon Modal
+  useEffect(() => {
+    if (pricingModalOpen) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          setPricingModalOpen(false);
+        }
+      };
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "";
+        window.removeEventListener("keydown", handleKeyDown);
+      };
     }
-    if (!validateEmail(checkoutEmail)) {
-      setCheckoutError("Please enter a valid studio email address.");
-      return;
-    }
-    if (!checkoutFirm.trim()) {
-      setCheckoutError("Please enter your architectural firm or practice name.");
-      return;
-    }
-
-    setCheckoutLoading(true);
-
-    setTimeout(() => {
-      setCheckoutLoading(false);
-      const priceStr =
-        selectedPlan === "Starter"
-          ? isAnnual
-            ? "$23/mo ($276 billed annually)"
-            : "$29/mo"
-          : selectedPlan === "Pro Studio"
-          ? isAnnual
-            ? "$63/mo ($756 billed annually)"
-            : "$79/mo"
-          : isAnnual
-          ? "$159/mo ($1,908 billed annually)"
-          : "$199/mo";
-
-      setCheckoutStatusMessage(
-        `Payment Integration Notice: Stripe Checkout is currently in sandbox verification mode (production STRIPE_SECRET_KEY not set). Your subscription reservation for ${selectedPlan} (${priceStr}) for '${checkoutFirm}' has been logged on the priority queue. An onboarding account executive will contact ${checkoutEmail} with direct invoice billing details.`
-      );
-    }, 850);
-  };
+  }, [pricingModalOpen]);
 
   // 3. STUDIO ONBOARDING HANDLERS
   const handleOpenOnboarding = () => {
@@ -2008,199 +1974,114 @@ export default function Home() {
         </div>
       )}
 
-      {/* 10. PRICING SUBSCRIPTION & CHECKOUT MODAL (RESOLVES MEDIA_1794310670054_17EAF4AF) */}
+      {/* 10. PRICING COMING SOON ANNOUNCEMENT MODAL */}
       {pricingModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 sm:p-7 relative space-y-5">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 backdrop-blur-xs overflow-y-auto"
+          onClick={() => setPricingModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="coming-soon-heading"
+        >
+          <div
+            className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 sm:p-7 relative space-y-5 my-auto font-sans text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
             <button
+              type="button"
               onClick={() => setPricingModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors"
-              aria-label="Close checkout modal"
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+              aria-label="Close modal"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div>
-              <span className="text-xs font-semibold text-slate-500 block">
-                Subscription checkout desk
+            {/* Badge & Tasteful Eyebrow */}
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-lg bg-[#E8E5DC] text-[#777B64] flex items-center justify-center">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <span className="text-[11px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-[#E8E5DC] text-[#777B64]">
+                COMING SOON
               </span>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight mt-0.5">
-                Reserve your {selectedPlan} plan
+            </div>
+
+            {/* Headings & Description */}
+            <div className="space-y-1.5">
+              <h3 id="coming-soon-heading" className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                Something exciting is on its way.
               </h3>
-              <p className="text-xs text-slate-600 mt-1">
-                Configure studio seat allocations and billing parameters.
+              <p className="text-sm font-semibold text-slate-700">
+                SiteSketch plans are launching soon.
+              </p>
+              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed pt-1">
+                We&apos;re putting the finishing touches on our subscription experience. Our paid plans will be available soon. Stay tuned!
               </p>
             </div>
 
-            {/* Plan Breakdown Card */}
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs font-bold text-slate-900">{selectedPlan}</span>
-                  <span className="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded">
-                    {isAnnual ? "Annual Billing (-20%)" : "Monthly Billing"}
-                  </span>
+            {/* Selected Plan Breakdown Card */}
+            <div className="p-4 sm:p-5 rounded-xl border border-slate-200 bg-slate-50/70 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs text-slate-500 block">Selected tier</span>
+                  <span className="text-base font-bold text-slate-900">{selectedPlan}</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-lg font-bold text-slate-900 tabular-nums">
-                    {selectedPlan === "Starter"
-                      ? isAnnual ? "$23" : "$29"
-                      : selectedPlan === "Pro Studio"
-                      ? isAnnual ? "$63" : "$79"
-                      : isAnnual ? "$159" : "$199"}
+                  <span className="inline-block text-[11px] font-medium px-2 py-0.5 rounded bg-slate-200/80 text-slate-700 mb-1">
+                    {isAnnual ? "Annual Billing (-20%)" : "Monthly Billing"}
                   </span>
-                  <span className="text-xs text-slate-500">/mo</span>
+                  <div className="text-sm font-bold text-slate-900 tabular-nums">
+                    {selectedPlan === "Starter"
+                      ? isAnnual ? "$23 / mo" : "$29 / mo"
+                      : selectedPlan === "Pro Studio"
+                      ? isAnnual ? "$63 / mo" : "$79 / mo"
+                      : isAnnual ? "$159 / mo" : "$199 / mo"}
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-slate-200/80 grid grid-cols-2 gap-2 text-[11px] text-slate-600">
-                <div>
-                  <span className="text-slate-400 block">Render Passes:</span>
-                  <span className="font-semibold text-slate-800">
-                    {selectedPlan === "Starter" ? "25 4K / month" : selectedPlan === "Pro Studio" ? "150 4K / month" : "Unlimited passes"}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block">Annual Commitment:</span>
-                  <span className="font-semibold text-slate-800">
-                    {isAnnual 
-                      ? selectedPlan === "Starter" ? "$276 billed annually" : selectedPlan === "Pro Studio" ? "$756 billed annually" : "$1,908 billed annually"
+              <div className="pt-2 border-t border-slate-200/80 flex flex-wrap items-center justify-between text-xs text-slate-500 gap-1.5">
+                <span>
+                  Commitment:{" "}
+                  <strong className="text-slate-700 font-medium">
+                    {isAnnual
+                      ? selectedPlan === "Starter"
+                        ? "$276 billed annually"
+                        : selectedPlan === "Pro Studio"
+                        ? "$756 billed annually"
+                        : "$1,908 billed annually"
                       : "Billed month-to-month"}
-                  </span>
-                </div>
+                  </strong>
+                </span>
+                <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/70 text-[11px] font-medium">
+                  Not yet available for purchase
+                </span>
               </div>
+
+              <p className="text-xs text-slate-500 italic pt-1 border-t border-slate-200/60">
+                Your selected plan is not yet active. No payment has been collected.
+              </p>
             </div>
 
-            {/* Error Message */}
-            {checkoutError && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-start space-x-2">
-                <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                <span>{checkoutError}</span>
-              </div>
-            )}
-
-            {/* Integration Status Notice with Working Action Buttons */}
-            {checkoutStatusMessage ? (
-              <div className="space-y-4">
-                <div className="p-3.5 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg space-y-1.5 font-mono">
-                  <div className="font-bold text-[11px] text-slate-900 flex items-center space-x-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>GATEWAY SUBSCRIPTION NOTICE</span>
-                  </div>
-                  <p className="text-[11px] leading-relaxed text-slate-600 font-sans">
-                    {checkoutStatusMessage}
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPricingModalOpen(false);
-                      scrollToSection("builder");
-                    }}
-                    className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors cursor-pointer flex items-center justify-center space-x-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
-                  >
-                    <span>Open Studio Builder</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPricingModalOpen(false)}
-                    className="w-full border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
-                  >
-                    Done &amp; Close Checkout
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleCheckoutSubmit} className="space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <div>
-                    <label className="text-xs font-semibold text-slate-700 block mb-1">
-                      Contact Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Jane Doe"
-                      value={checkoutName}
-                      onChange={(e) => setCheckoutName(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:border-slate-900 text-slate-800 bg-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold text-slate-700 block mb-1">
-                      Studio Practice Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Studio Forma Architects"
-                      value={checkoutFirm}
-                      onChange={(e) => setCheckoutFirm(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:border-slate-900 text-slate-800 bg-white"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
-                    Billing Work Email
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="billing@studioforma.com"
-                    value={checkoutEmail}
-                    onChange={(e) => setCheckoutEmail(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:border-slate-900 text-slate-800 bg-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
-                    Payment Method
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setCheckoutPaymentMethod("card")}
-                      className={`p-2.5 border rounded-lg text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer ${
-                        checkoutPaymentMethod === "card"
-                          ? "border-slate-900 bg-slate-50 font-semibold text-slate-900"
-                          : "border-slate-200 text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      <CreditCard className="w-4 h-4" />
-                      <span>Corporate Card</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setCheckoutPaymentMethod("invoice")}
-                      className={`p-2.5 border rounded-lg text-xs flex items-center justify-center space-x-1.5 transition-colors cursor-pointer ${
-                        checkoutPaymentMethod === "invoice"
-                          ? "border-slate-900 bg-slate-50 font-semibold text-slate-900"
-                          : "border-slate-200 text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      <FileText className="w-4 h-4" />
-                      <span>Net-30 Invoice</span>
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={checkoutLoading}
-                  className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
-                >
-                  {checkoutLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin motion-reduce:animate-none" />}
-                  <span>
-                    Proceed with {selectedPlan} ({isAnnual ? "Annual" : "Monthly"})
-                  </span>
-                </button>
-              </form>
-            )}
+            {/* Modal Actions */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="w-full bg-slate-100 border border-slate-200 text-slate-400 font-medium text-xs sm:text-sm py-2.5 rounded-lg cursor-not-allowed text-center select-none"
+              >
+                Launching Soon
+              </button>
+              <button
+                type="button"
+                onClick={() => setPricingModalOpen(false)}
+                className="w-full bg-slate-900 hover:bg-black text-white font-medium text-xs sm:text-sm py-2.5 rounded-lg transition-colors cursor-pointer text-center shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+              >
+                Continue Exploring
+              </button>
+            </div>
           </div>
         </div>
       )}
