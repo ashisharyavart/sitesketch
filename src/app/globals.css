@@ -1,26 +1,30 @@
+/* hallmark · theme: sitesketch · genre: modern-minimal */
 @import "tailwindcss";
 
 @theme {
   --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-caveat: var(--font-caveat), "Caveat", cursive, sans-serif;
+  --color-canvas: #FAFAFA;
+  --color-ink: #0F172A;
 }
 
 :root {
-  --background: #FAFAFA;
-  --foreground: #0F172A;
+  --background: var(--color-canvas);
+  --foreground: var(--color-ink);
 }
 
 html {
   color-scheme: light;
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
-  background-color: #FAFAFA;
-  color: #0F172A;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }

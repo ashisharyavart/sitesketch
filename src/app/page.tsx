@@ -27,12 +27,15 @@ import {
   ArrowRight
 } from "lucide-react";
 import StudioCanvas from "@/components/StudioCanvas";
-import { BlueprintSketchSVG, PhotorealLivingRoomSVG } from "@/components/ArchitecturalSVGs";
+import ComparisonSlider from "@/components/ComparisonSlider";
+import { BlueprintSketchSVG, SolarStudyDiagramSVG } from "@/components/ArchitecturalSVGs";
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAnnual, setIsAnnual] = useState(true);
   const [cookieBannerVisible, setCookieBannerVisible] = useState(false);
+  const [heroViewMode, setHeroViewMode] = useState<"dual" | "sketch" | "vector">("dual");
+  const [daylightViewMode, setDaylightViewMode] = useState<"render" | "diagram">("render");
 
   // Modal States
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -328,9 +331,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] architectural-grid text-slate-900 font-sans selection:bg-slate-200 selection:text-slate-900 flex flex-col justify-between">
+    <div className="min-h-screen bg-canvas architectural-grid text-slate-900 font-sans selection:bg-slate-200 selection:text-slate-900 flex flex-col justify-between">
       {/* 1. HEADER / NAVIGATION */}
-      <header className="sticky top-0 z-40 bg-[#FAFAFA]/90 backdrop-blur-md border-b border-slate-200/80">
+      <header className="sticky top-0 z-40 bg-canvas/90 backdrop-blur-md border-b border-slate-200/80">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center space-x-2.5 group">
@@ -492,86 +495,116 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Column: The Taped Blueprint Spec Card */}
-          <div className="lg:col-span-5 relative w-full max-w-md mx-auto lg:max-w-none">
-            {/* Top Masking Tape Piece */}
-            <div
-              className="absolute w-28 h-6 bg-[#EADECC]/90 border border-[#D5C5AF] -top-3 left-1/2 -translate-x-1/2 -rotate-1 rounded-[1px] shadow-[0_1px_2px_rgba(0,0,0,0.06)] z-10 pointer-events-none"
-              aria-hidden="true"
-            />
-
-            {/* Spec Card Container */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-[0_12px_40px_-10px_rgba(0,0,0,0.08),0_1px_3px_rgba(0,0,0,0.04)] p-6 sm:p-7 relative">
-              {/* Header Row */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <span className="text-[11px] font-mono tracking-wider font-semibold text-slate-500 uppercase">
-                  SCANDINAVIAN SUITE · ELEVATION
-                </span>
-                <span className="text-[11px] font-bold tracking-wider text-[#C0392B] uppercase">
-                  RECOMMENDED
-                </span>
-              </div>
-
-              {/* 4 Item Rows with Icons & Checkmarks */}
-              <div className="divide-y divide-slate-100">
-                <div className="py-3.5 flex items-center justify-between text-sm text-slate-800">
-                  <div className="flex items-center space-x-3">
-                    <LayoutGrid className="w-4 h-4 text-slate-500 shrink-0" />
-                    <span className="font-normal text-slate-800">Living &amp; Dining Layout ({specArea} sq ft)</span>
-                  </div>
-                  <Check className="w-4 h-4 text-slate-400 shrink-0" />
+          {/* Right Column: Architectural Drawing Sheet & Transformation Viewport */}
+          <div className="lg:col-span-5 relative w-full max-w-lg mx-auto lg:max-w-none">
+            {/* Architectural Drawing Sheet */}
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xl overflow-hidden">
+              {/* Sheet Header */}
+              <div className="px-4 py-3 bg-slate-50/90 border-b border-slate-200 flex flex-wrap items-center justify-between text-xs gap-2">
+                <div className="flex items-center space-x-2 font-sans">
+                  <span className="font-semibold text-slate-800">Sheet A-101</span>
+                  <span className="text-slate-400">·</span>
+                  <span className="text-slate-600">Level 01 Suite ({specArea} sq ft)</span>
                 </div>
 
-                <div className="py-3.5 flex items-center justify-between text-sm text-slate-800">
-                  <div className="flex items-center space-x-3">
-                    <Layers className="w-4 h-4 text-slate-500 shrink-0" />
-                    <span className="font-normal text-slate-800">{specFinish} &amp; {specWall}</span>
-                  </div>
-                  <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                </div>
-
-                <div className="py-3.5 flex items-center justify-between text-sm text-slate-800">
-                  <div className="flex items-center space-x-3">
-                    <Sun className="w-4 h-4 text-slate-500 shrink-0" />
-                    <span className="font-normal text-slate-800">Natural {specKelvin}K Ambient Daylighting</span>
-                  </div>
-                  <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                </div>
-
-                <div className="py-3.5 flex items-center justify-between text-sm text-slate-800">
-                  <div className="flex items-center space-x-3">
-                    <FileSpreadsheet className="w-4 h-4 text-slate-500 shrink-0" />
-                    <span className="font-normal text-slate-800">Auto-Generated BOM &amp; Fixture List</span>
-                  </div>
-                  <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                </div>
-              </div>
-
-              {/* Footer: Handwritten Terracotta Red Note + Sketched Curved Arrow + Action Button */}
-              <div className="pt-5 mt-2 flex items-center justify-between gap-2">
-                <div className="flex items-center">
-                  <span className="font-caveat text-lg sm:text-xl text-[#C0392B] italic tracking-wide">
-                    picked from your room type &amp; floor specs
-                  </span>
-                  <svg
-                    className="w-9 h-6 text-[#C0392B] stroke-current fill-none -rotate-6 inline-block shrink-0 ml-1.5"
-                    viewBox="0 0 48 32"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
+                {/* View Mode Switcher */}
+                <div className="flex items-center bg-slate-200/70 p-0.5 rounded-lg text-xs font-sans">
+                  <button
+                    type="button"
+                    onClick={() => setHeroViewMode("dual")}
+                    className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                      heroViewMode === "dual"
+                        ? "bg-white text-slate-900 font-semibold shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
                   >
-                    <path d="M 4 24 C 18 24, 28 20, 40 8" />
-                    <path d="M 32 6 L 42 7 L 41 17" />
-                  </svg>
+                    Dual view
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHeroViewMode("sketch")}
+                    className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                      heroViewMode === "sketch"
+                        ? "bg-white text-slate-900 font-semibold shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    Pencil sketch
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHeroViewMode("vector")}
+                    className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                      heroViewMode === "vector"
+                        ? "bg-white text-slate-900 font-semibold shadow-xs"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    Vector CAD
+                  </button>
+                </div>
+              </div>
+
+              {/* Drawing Viewport Canvas */}
+              <div className="relative aspect-[16/11] bg-slate-950 overflow-hidden">
+                {heroViewMode === "dual" && (
+                  <div className="w-full h-full">
+                    <ComparisonSlider showControls={false} />
+                  </div>
+                )}
+
+                {heroViewMode === "sketch" && (
+                  <div className="w-full h-full relative">
+                    <BlueprintSketchSVG />
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-slate-950/85 border border-slate-800 text-xs text-slate-300 font-sans shadow-sm">
+                      Source pencil schematic
+                    </div>
+                  </div>
+                )}
+
+                {heroViewMode === "vector" && (
+                  <div className="w-full h-full relative bg-slate-900">
+                    <BlueprintSketchSVG />
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded bg-slate-950/85 border border-slate-800 text-xs text-slate-300 font-sans shadow-sm">
+                      Resolved vector CAD geometry
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Architectural Specification Summary */}
+              <div className="p-4 sm:p-5 bg-white border-t border-slate-100 space-y-3 font-sans">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="text-slate-500 text-[11px] block">Usable floor envelope:</span>
+                    <span className="font-semibold text-slate-900">{specArea} sq ft</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="text-slate-500 text-[11px] block">Finish specification:</span>
+                    <span className="font-semibold text-slate-900 truncate block">{specFinish}</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="text-slate-500 text-[11px] block">Wall surface:</span>
+                    <span className="font-semibold text-slate-900 truncate block">{specWall}</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                    <span className="text-slate-500 text-[11px] block">Daylight calibration:</span>
+                    <span className="font-semibold text-slate-900">{specKelvin}K ambient</span>
+                  </div>
                 </div>
 
-                <button
-                  onClick={() => setSpecPlannerModalOpen(true)}
-                  className="shrink-0 border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs sm:text-sm font-medium px-4 py-2 rounded-lg shadow-2xs transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
-                >
-                  Try the planner
-                </button>
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-xs text-slate-500">
+                    Parameters extracted from floor layout
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSpecPlannerModalOpen(true)}
+                    className="px-3.5 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+                  >
+                    Configure room specs
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -639,26 +672,24 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="max-w-2xl space-y-2">
-              <div className="flex items-center space-x-2 text-cyan-400 font-mono text-xs">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                <span>Live Interactive Workspace</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-                Inspect spatial extrusion in real time.
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-sans">
+                Interactive drafting canvas
               </h2>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Drag the viewport divider to inspect the generative transition between raw hand-drawn pencil schematics and photoreal interior daylighting.
+              <p className="text-slate-400 text-sm leading-relaxed font-sans">
+                Inspect spatial vectorization and automated material takeoff directly from hand-drawn pencil schematics.
               </p>
             </div>
 
             <div className="flex items-center space-x-3 shrink-0">
               <button
+                type="button"
                 onClick={handleOpenOnboarding}
-                className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                className="bg-white hover:bg-slate-100 text-slate-950 font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-lg transition-colors cursor-pointer shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 Upload your blueprint
               </button>
               <button
+                type="button"
                 onClick={() => handleOpenPricing("Pro Studio")}
                 className="border border-slate-700 hover:bg-slate-900 text-slate-200 text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
               >
@@ -673,7 +704,7 @@ export default function Home() {
       </section>
 
       {/* 5. FEATURES SECTION (HALLMARK APPLIED: NO EYEBROWS, SENTENCE CASE, HIGH CRAFT INTERACTIVE INSPECTOR) */}
-      <section id="features" className="py-16 sm:py-24 border-t border-slate-200/80 bg-[#FAFAFA]">
+      <section id="features" className="py-16 sm:py-24 border-t border-slate-200/80 bg-canvas">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10">
           {/* Hallmark Section Header (No tracked eyebrows, direct sentence-case heading) */}
           <div className="max-w-2xl space-y-2">
@@ -702,15 +733,16 @@ export default function Home() {
               </button>
 
               <button
+                type="button"
                 onClick={() => setActiveFeatureTab("daylight")}
-                className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 ${
                   activeFeatureTab === "daylight"
                     ? "bg-white text-slate-900 shadow-2xs font-semibold border border-slate-200"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
                 }`}
               >
                 <Sun className="w-4 h-4 text-slate-700" />
-                <span>Photoreal Daylighting Simulator</span>
+                <span>Natural Daylighting &amp; Solar Studies</span>
               </button>
 
               <button
@@ -825,63 +857,65 @@ export default function Home() {
                 </div>
 
                 {/* Right Interactive Blueprint Visualizer */}
-                <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs font-mono">
+                <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner font-sans">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
                     <div className="flex items-center space-x-2">
-                      <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
-                      <span className="text-cyan-300">Vector Preview: Living_Suite_CAD.dxf</span>
+                      <div className="w-2 h-2 rounded-xs bg-slate-400" />
+                      <span className="text-slate-200 font-medium">drawing-01-vector-plan.dxf</span>
+                      <span className="text-slate-500">·</span>
+                      <span className="text-slate-400 text-xs">Sheet A-102</span>
                     </div>
-                    <span className="text-slate-400 text-[11px]">Scale: 1/4&quot; = 1&apos;-0&quot;</span>
+                    <span className="text-slate-400 text-xs">Scale: 1/4&quot; = 1&apos;-0&quot;</span>
                   </div>
 
                   <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
                     <BlueprintSketchSVG />
                     {vectorLayer === "walls" && (
-                      <div className="absolute inset-0 bg-cyan-500/10 border-2 border-cyan-400 pointer-events-none flex items-center justify-center">
-                        <span className="bg-slate-900/90 text-cyan-300 font-mono text-xs px-2.5 py-1 rounded border border-cyan-500">
-                          Active Layer: Extruded Wall Shell
+                      <div className="absolute inset-0 bg-slate-950/20 border border-slate-400 pointer-events-none flex items-center justify-center">
+                        <span className="bg-slate-950/90 text-slate-200 text-xs px-2.5 py-1 rounded border border-slate-700 shadow-sm">
+                          Active layer: Extruded wall shell
                         </span>
                       </div>
                     )}
                     {vectorLayer === "doors" && (
-                      <div className="absolute inset-0 bg-amber-500/10 border-2 border-amber-400 pointer-events-none flex items-center justify-center">
-                        <span className="bg-slate-900/90 text-amber-300 font-mono text-xs px-2.5 py-1 rounded border border-amber-500">
-                          Active Layer: 32&quot; Egress Door Clearance Swings
+                      <div className="absolute inset-0 bg-slate-950/20 border border-slate-400 pointer-events-none flex items-center justify-center">
+                        <span className="bg-slate-950/90 text-slate-200 text-xs px-2.5 py-1 rounded border border-slate-700 shadow-sm">
+                          Active layer: 32&quot; Egress door clearances
                         </span>
                       </div>
                     )}
                     {vectorLayer === "dims" && (
-                      <div className="absolute inset-0 bg-emerald-500/10 border-2 border-emerald-400 pointer-events-none flex items-center justify-center">
-                        <span className="bg-slate-900/90 text-emerald-300 font-mono text-xs px-2.5 py-1 rounded border border-emerald-500">
-                          Active Layer: Dimension Annotations (28&apos;-6&quot; × 16&apos;-8&quot;)
+                      <div className="absolute inset-0 bg-slate-950/20 border border-slate-400 pointer-events-none flex items-center justify-center">
+                        <span className="bg-slate-950/90 text-slate-200 text-xs px-2.5 py-1 rounded border border-slate-700 shadow-sm">
+                          Active layer: Dimension strings (28&apos;-6&quot; × 16&apos;-8&quot;)
                         </span>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex justify-between items-center text-[11px] font-mono text-slate-400 pt-1">
-                    <span>IFC Schema: 2x3 &amp; 4.0 Compliant</span>
-                    <span className="text-emerald-400">Watertight Shell: 100%</span>
+                  <div className="flex justify-between items-center text-xs text-slate-400 pt-1">
+                    <span>IFC schema: 2x3 &amp; 4.0 compliant</span>
+                    <span className="text-emerald-400 font-medium">Watertight shell geometry</span>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Tab 2: Photoreal Daylighting Simulator */}
+            {/* Tab 2: Natural Daylighting & Solar Studies */}
             {activeFeatureTab === "daylight" && (
-              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center font-sans">
                 <div className="lg:col-span-5 space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">
-                    Physically accurate multi-Kelvin solar illumination.
+                    Model solar angles and natural daylight penetration across room depths.
                   </h3>
                   <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                    Simulate real-world sun angles, southern architectural exposures, and circadian warmth variations from warm 2700K dawn light to crisp 6500K overcast daylight with 8-bounce physical raytracing.
+                    Calculate natural solar exposure, window shadow casting, and work-plane illuminance across morning raking sun, midday clear sky, and overcast diffuse conditions.
                   </p>
 
                   <div className="space-y-3 pt-2">
                     <div className="flex justify-between items-center text-xs">
-                      <span className="font-semibold text-slate-800">Solar Color Temperature:</span>
-                      <span className="font-mono font-bold text-slate-900">{daylightKelvin} Kelvin</span>
+                      <span className="font-semibold text-slate-800">Solar color temperature:</span>
+                      <span className="font-semibold text-slate-900">{daylightKelvin} Kelvin</span>
                     </div>
 
                     <input
@@ -896,75 +930,133 @@ export default function Home() {
 
                     <div className="flex justify-between gap-2 pt-1">
                       <button
+                        type="button"
                         onClick={() => setDaylightKelvin(2800)}
-                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer whitespace-nowrap ${
                           daylightKelvin < 3400
                             ? "bg-amber-100 text-amber-900 border-amber-300 font-semibold"
                             : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
-                        Sunrise (2800K)
+                        Morning sun (2800K, 28°)
                       </button>
                       <button
+                        type="button"
                         onClick={() => setDaylightKelvin(5000)}
-                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer whitespace-nowrap ${
                           daylightKelvin >= 3400 && daylightKelvin <= 5500
-                            ? "bg-cyan-100 text-cyan-900 border-cyan-300 font-semibold"
+                            ? "bg-slate-900 text-white border-slate-900 font-semibold"
                             : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
-                        Natural Noon (5000K)
+                        Solar noon (5000K, 58°)
                       </button>
                       <button
+                        type="button"
                         onClick={() => setDaylightKelvin(6500)}
-                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer ${
+                        className={`text-xs px-2.5 py-1.5 rounded-lg border transition-colors cursor-pointer whitespace-nowrap ${
                           daylightKelvin > 5500
                             ? "bg-slate-200 text-slate-900 border-slate-300 font-semibold"
                             : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
-                        Overcast (6500K)
+                        Overcast (6500K, diffuse)
                       </button>
                     </div>
                   </div>
 
                   <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-xs">
                     <div>
-                      <span className="text-slate-400 block text-[11px]">Solar Angle:</span>
-                      <span className="font-semibold text-slate-800">42° Altitude</span>
+                      <span className="text-slate-500 block text-[11px]">Solar altitude:</span>
+                      <span className="font-semibold text-slate-800">
+                        {daylightKelvin < 3400 ? "28° low sun" : daylightKelvin > 5500 ? "Diffuse sky" : "58° solar noon"}
+                      </span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[11px]">Direct Illuminance:</span>
-                      <span className="font-semibold text-slate-800">850 Lux</span>
+                      <span className="text-slate-500 block text-[11px]">Direct illuminance:</span>
+                      <span className="font-semibold text-slate-800">
+                        {daylightKelvin < 3400 ? "850 Lux" : daylightKelvin > 5500 ? "320 Lux" : "1,250 Lux"}
+                      </span>
                     </div>
                     <div>
-                      <span className="text-slate-400 block text-[11px]">Ray Bounces:</span>
-                      <span className="font-semibold text-slate-800">8 Physical</span>
+                      <span className="text-slate-500 block text-[11px]">Penetration depth:</span>
+                      <span className="font-semibold text-slate-800">
+                        {daylightKelvin < 3400 ? "16.4 ft deep" : daylightKelvin > 5500 ? "Uniform daylight" : "6.8 ft direct"}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs font-mono">
-                    <span className="text-cyan-300">Raytracing Viewport · Kelvin Exposure</span>
-                    <span className="text-amber-400 font-semibold">{daylightKelvin}K Calibrated</span>
+                <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner font-sans">
+                  {/* Viewport Header */}
+                  <div className="flex flex-wrap items-center justify-between pb-3 border-b border-slate-800 text-xs gap-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 rounded-xs bg-slate-400" />
+                      <span className="text-slate-200 font-medium">Solar study: South elevation</span>
+                      <span className="text-slate-500">·</span>
+                      <span className="text-amber-400">{daylightKelvin}K</span>
+                    </div>
+
+                    <div className="flex items-center bg-slate-900 border border-slate-800 p-0.5 rounded-lg text-xs">
+                      <button
+                        type="button"
+                        onClick={() => setDaylightViewMode("render")}
+                        className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                          daylightViewMode === "render"
+                            ? "bg-slate-800 text-slate-100 font-medium"
+                            : "text-slate-400 hover:text-slate-200"
+                        }`}
+                      >
+                        Interior render
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDaylightViewMode("diagram")}
+                        className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
+                          daylightViewMode === "diagram"
+                            ? "bg-slate-800 text-slate-100 font-medium"
+                            : "text-slate-400 hover:text-slate-200"
+                        }`}
+                      >
+                        Solar diagram (Lux)
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
-                    <PhotorealLivingRoomSVG
-                      lighting={
-                        daylightKelvin < 3400
-                          ? "sunset"
+                  {/* Viewport Body */}
+                  {daylightViewMode === "render" ? (
+                    <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
+                      <img
+                        src="/images/architectural-daylight.jpg"
+                        alt="Architectural daylight study in Scandinavian timber interior"
+                        className="w-full h-full object-cover transition-[filter] duration-300"
+                        style={{
+                          filter:
+                            daylightKelvin < 3400
+                              ? "sepia(0.28) saturate(1.25) brightness(0.92)"
+                              : daylightKelvin > 5500
+                              ? "saturate(0.85) brightness(1.04) hue-rotate(4deg)"
+                              : "contrast(1.04) brightness(1.0)"
+                        }}
+                      />
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded bg-slate-950/85 border border-slate-800 text-xs text-slate-200 font-sans shadow-sm">
+                        {daylightKelvin < 3400
+                          ? "Morning Dawn · 28° Alt"
                           : daylightKelvin > 5500
-                          ? "overcast"
-                          : "daylight"
-                      }
-                    />
-                  </div>
+                          ? "Diffuse Overcast Skylight"
+                          : "Solar Noon · 58° Alt"}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
+                      <SolarStudyDiagramSVG kelvin={daylightKelvin} />
+                    </div>
+                  )}
 
-                  <div className="flex justify-between items-center text-[11px] font-mono text-slate-400 pt-1">
-                    <span>Exposure Index: EV 13.5</span>
-                    <span className="text-cyan-400">PBR Photometric Accurate</span>
+                  {/* Viewport Footer */}
+                  <div className="flex justify-between items-center text-xs text-slate-400 pt-1">
+                    <span>Glazing aperture: 14&apos;-6&quot; south exposure</span>
+                    <span className="text-emerald-400 font-medium">Daylight factor (DF): 3.8%</span>
                   </div>
                 </div>
               </div>
@@ -1083,8 +1175,8 @@ export default function Home() {
                   </div>
 
                   <div className="pt-3 border-t border-slate-200 flex justify-between items-center text-xs">
-                    <span className="text-slate-500">Format Compatibility:</span>
-                    <span className="font-mono text-slate-700">CSV · Excel XLSX · Revit Schedule</span>
+                    <span className="text-slate-500">Format compatibility:</span>
+                    <span className="text-slate-700 font-sans">CSV, Excel XLSX, and Revit Schedule</span>
                   </div>
                 </div>
               </div>
@@ -1092,7 +1184,7 @@ export default function Home() {
 
             {/* Tab 4: Framing-to-Finish Site Staging */}
             {activeFeatureTab === "staging" && (
-              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center font-sans">
                 <div className="lg:col-span-5 space-y-4">
                   <h3 className="text-xl font-bold text-slate-900">
                     Stage unfinished construction sites in seconds.
@@ -1103,10 +1195,11 @@ export default function Home() {
 
                   <div className="space-y-2 pt-2">
                     <span className="text-xs font-semibold text-slate-700 block">
-                      Toggle Construction Phase Progression:
+                      Toggle construction phase progression:
                     </span>
                     <div className="flex flex-col gap-2">
                       <button
+                        type="button"
                         onClick={() => setStagingStep("framing")}
                         className={`text-xs px-3.5 py-2 rounded-lg border text-left flex items-center justify-between transition-colors cursor-pointer ${
                           stagingStep === "framing"
@@ -1114,11 +1207,12 @@ export default function Home() {
                             : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
-                        <span>Phase 1: Raw Stud Framing &amp; Subfloor</span>
-                        <span className="font-mono text-[10px] opacity-75">Site Capture</span>
+                        <span className="whitespace-nowrap">Phase 1: Raw stud framing</span>
+                        <span className="text-[11px] opacity-75 font-sans">Site capture</span>
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => setStagingStep("rough")}
                         className={`text-xs px-3.5 py-2 rounded-lg border text-left flex items-center justify-between transition-colors cursor-pointer ${
                           stagingStep === "rough"
@@ -1126,11 +1220,12 @@ export default function Home() {
                             : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
-                        <span>Phase 2: Drywall &amp; MEP Rough-In</span>
-                        <span className="font-mono text-[10px] opacity-75">Perimeter Aligned</span>
+                        <span className="whitespace-nowrap">Phase 2: Drywall and MEP</span>
+                        <span className="text-[11px] opacity-75 font-sans">Perimeter aligned</span>
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => setStagingStep("finished")}
                         className={`text-xs px-3.5 py-2 rounded-lg border text-left flex items-center justify-between transition-colors cursor-pointer ${
                           stagingStep === "finished"
@@ -1138,42 +1233,48 @@ export default function Home() {
                             : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
                         }`}
                       >
-                        <span>Phase 3: Finished Scandinavian Interior</span>
-                        <span className="font-mono text-[10px] opacity-75">Client Ready</span>
+                        <span className="whitespace-nowrap">Phase 3: Finished architectural interior</span>
+                        <span className="text-[11px] opacity-75 font-sans">Client ready</span>
                       </button>
                     </div>
                   </div>
                 </div>
 
-                <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs font-mono">
-                    <span className="text-cyan-300">Phase Preview: {stagingStep.toUpperCase()}</span>
-                    <span className="text-emerald-400 font-semibold">Perspective Calibrated</span>
+                <div className="lg:col-span-7 bg-slate-950 rounded-xl p-4 border border-slate-800 relative overflow-hidden shadow-inner font-sans">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
+                    <span className="text-slate-200 font-medium">
+                      Phase preview: {stagingStep === "framing" ? "Raw stud framing" : stagingStep === "rough" ? "Drywall & MEP rough-in" : "Finished interior"}
+                    </span>
+                    <span className="text-emerald-400 font-medium">Perspective calibrated</span>
                   </div>
 
                   <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden my-3 border border-slate-800 bg-slate-900">
                     {stagingStep === "framing" && (
-                      <div className="absolute inset-0 bg-[#17130E] flex flex-col items-center justify-center p-6 text-center text-amber-200/90 font-mono space-y-2">
+                      <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-6 text-center text-amber-200/90 font-sans space-y-2">
                         <Building2 className="w-12 h-12 text-amber-500 stroke-[1.5]" />
-                        <span className="text-sm font-semibold">Raw 2x4 Douglas Fir Stud Framing Detected</span>
-                        <span className="text-xs text-amber-400/80">36 Studs · 2 Rough Door Openings · 312 sq ft concrete subfloor</span>
+                        <span className="text-sm font-semibold">Raw 2x4 timber stud framing</span>
+                        <span className="text-xs text-amber-400/80">36 studs, 2 rough door openings, 312 sq ft subfloor</span>
                       </div>
                     )}
                     {stagingStep === "rough" && (
-                      <div className="absolute inset-0 bg-[#1E232A] flex flex-col items-center justify-center p-6 text-center text-slate-200 font-mono space-y-2">
-                        <Layers className="w-12 h-12 text-cyan-400 stroke-[1.5]" />
-                        <span className="text-sm font-semibold">Drywall &amp; Electrical MEP Overlaid</span>
-                        <span className="text-xs text-cyan-300/80">Taped Gypsum Partitions · Pre-wired junction points aligned</span>
+                      <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-6 text-center text-slate-200 font-sans space-y-2">
+                        <Layers className="w-12 h-12 text-slate-400 stroke-[1.5]" />
+                        <span className="text-sm font-semibold">Drywall and electrical MEP overlaid</span>
+                        <span className="text-xs text-slate-400">Taped gypsum partitions with pre-wired junction points</span>
                       </div>
                     )}
                     {stagingStep === "finished" && (
-                      <PhotorealLivingRoomSVG lighting="daylight" />
+                      <img
+                        src="/images/architectural-modernist.jpg"
+                        alt="Finished modern architectural living interior"
+                        className="w-full h-full object-cover"
+                      />
                     )}
                   </div>
 
-                  <div className="flex justify-between items-center text-[11px] font-mono text-slate-400 pt-1">
-                    <span>Eliminates physical furniture rental costs</span>
-                    <span className="text-slate-200 font-medium">99.2% Dimension Alignment</span>
+                  <div className="flex justify-between items-center text-xs text-slate-400 pt-1">
+                    <span>Eliminates physical furniture staging costs</span>
+                    <span className="text-slate-200 font-medium">Watertight CAD alignment</span>
                   </div>
                 </div>
               </div>
@@ -1417,7 +1518,7 @@ export default function Home() {
 
       {/* 8. FUNCTIONAL COOKIE BANNER WITH PERSISTENCE */}
       {cookieBannerVisible && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 py-3 px-4 sm:px-6 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 py-3 px-4 sm:px-6 shadow-lg">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <p className="text-xs sm:text-sm text-slate-700 leading-snug">
               <strong className="text-slate-900 font-semibold">We use one cookie.</strong> It keeps you signed in, and it cannot be read by scripts. We use no analytics and no advertising, so declining changes nothing about how this site behaves.
@@ -1579,7 +1680,7 @@ export default function Home() {
                   disabled={authLoading}
                   className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
-                  {authLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                  {authLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin motion-reduce:animate-none" />}
                   <span>
                     {authMode === "signin"
                       ? "Sign In to Studio"
@@ -1600,7 +1701,7 @@ export default function Home() {
                     }}
                     className="w-full border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-medium py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                   >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
                       <path
                         fill="#4285F4"
                         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -1850,7 +1951,7 @@ export default function Home() {
                   disabled={checkoutLoading}
                   className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
-                  {checkoutLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                  {checkoutLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin motion-reduce:animate-none" />}
                   <span>
                     Proceed with {selectedPlan} ({isAnnual ? "Annual" : "Monthly"})
                   </span>
@@ -2033,7 +2134,7 @@ export default function Home() {
                   disabled={onboardingLoading}
                   className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
-                  {onboardingLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                  {onboardingLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin motion-reduce:animate-none" />}
                   <span>Launch Spatial Vectorization</span>
                 </button>
               </form>
@@ -2281,7 +2382,7 @@ export default function Home() {
                   disabled={contactLoading}
                   className="w-full bg-slate-900 hover:bg-black text-white text-xs font-semibold py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer flex items-center justify-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
-                  {contactLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                  {contactLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin motion-reduce:animate-none" />}
                   <span>Submit Studio Inquiry</span>
                 </button>
               </form>

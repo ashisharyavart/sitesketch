@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { BlueprintSketchSVG, PhotorealLivingRoomSVG } from "./ArchitecturalSVGs";
+import { BlueprintSketchSVG } from "./ArchitecturalSVGs";
 import { Sparkles, Compass, Eye, Sun, Sunset, Cloud } from "lucide-react";
 
 interface ComparisonSliderProps {
@@ -74,51 +74,54 @@ export default function ComparisonSlider({
       {showControls && (
         <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
           <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-cyan-400 font-mono text-[11px]">
-              <Compass className="w-3.5 h-3.5 text-cyan-400" />
-              Napkin Schematic ({Math.round(100 - sliderPosition)}%)
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-300 font-sans text-xs">
+              <Compass className="w-3.5 h-3.5 text-slate-400" />
+              <span>Source schematic ({Math.round(100 - sliderPosition)}%)</span>
             </span>
-            <span className="text-slate-600 font-mono">⟷</span>
-            <span className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-amber-400 font-mono text-[11px]">
+            <span className="text-slate-600 font-sans">→</span>
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-200 font-sans text-xs">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              4K Photoreal ({Math.round(sliderPosition)}%)
+              <span>Architectural render ({Math.round(sliderPosition)}%)</span>
             </span>
           </div>
 
           {/* Lighting Mode Selector */}
-          <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-lg border border-slate-800 text-[11px]">
+          <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-lg border border-slate-800 text-xs">
             <button
+              type="button"
               onClick={() => setActiveLighting("daylight")}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors cursor-pointer ${
                 activeLighting === "daylight"
-                  ? "bg-cyan-500/20 text-cyan-300 font-medium"
+                  ? "bg-slate-800 text-slate-100 font-medium"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Sun className="w-3 h-3 text-cyan-400" />
-              Daylight 4000K
+              <Sun className="w-3.5 h-3.5 text-amber-300" />
+              <span>Daylight 4000K</span>
             </button>
             <button
+              type="button"
               onClick={() => setActiveLighting("sunset")}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors cursor-pointer ${
                 activeLighting === "sunset"
-                  ? "bg-amber-500/20 text-amber-300 font-medium"
+                  ? "bg-slate-800 text-slate-100 font-medium"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Sunset className="w-3 h-3 text-amber-400" />
-              Golden 2700K
+              <Sunset className="w-3.5 h-3.5 text-orange-400" />
+              <span>Golden 2700K</span>
             </button>
             <button
+              type="button"
               onClick={() => setActiveLighting("overcast")}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors cursor-pointer ${
                 activeLighting === "overcast"
-                  ? "bg-slate-700 text-slate-200 font-medium"
+                  ? "bg-slate-800 text-slate-100 font-medium"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              <Cloud className="w-3 h-3 text-slate-300" />
-              Overcast 6500K
+              <Cloud className="w-3.5 h-3.5 text-slate-400" />
+              <span>Overcast 6500K</span>
             </button>
           </div>
         </div>
@@ -133,21 +136,35 @@ export default function ComparisonSlider({
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchMove}
-        className="relative w-full aspect-[16/10] sm:aspect-[16/10] rounded-xl overflow-hidden cursor-ew-resize select-none border border-slate-800 shadow-2xl bg-slate-950"
+        className="relative w-full aspect-[16/10] rounded-xl overflow-hidden cursor-ew-resize select-none border border-slate-800 shadow-xl bg-slate-950"
       >
-        {/* Right Layer (Background): 4K Photoreal Interior */}
-        <div className="absolute inset-0 w-full h-full">
-          <PhotorealLivingRoomSVG lighting={activeLighting} />
+        {/* Right Layer (Background): Real Architectural Daylit Interior Render */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <img
+            src="/images/architectural-daylight.jpg"
+            alt="Daylit architectural interior with timber walls and high glazing"
+            className="w-full h-full object-cover transition-[filter] duration-300"
+            style={{
+              filter:
+                activeLighting === "sunset"
+                  ? "sepia(0.28) saturate(1.25) brightness(0.92)"
+                  : activeLighting === "overcast"
+                  ? "saturate(0.85) brightness(1.05) hue-rotate(4deg)"
+                  : "contrast(1.04) brightness(1.0)"
+            }}
+          />
+          {/* Subtle architectural vignette */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/30 pointer-events-none" />
+
           {/* Label Badge Right */}
           <div className="absolute top-4 right-4 pointer-events-none z-10">
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-amber-500/40 text-amber-400 font-mono text-[10px] tracking-wide font-semibold shadow-lg">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              OUTPUT: 4K PHOTOREAL SCANDINAVIAN
+            <span className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-700/80 text-slate-200 text-xs font-sans shadow-sm">
+              <span>Architectural render</span>
             </span>
           </div>
         </div>
 
-        {/* Left Layer (Foreground with Clip): Napkin Blueprint Sketch */}
+        {/* Left Layer (Foreground with Clip): Source Blueprint Schematic */}
         <div
           className="absolute inset-0 w-full h-full overflow-hidden"
           style={{ width: `${sliderPosition}%` }}
@@ -166,35 +183,34 @@ export default function ComparisonSlider({
 
           {/* Label Badge Left */}
           <div className="absolute top-4 left-4 pointer-events-none z-10">
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-500/40 text-cyan-400 font-mono text-[10px] tracking-wide font-semibold shadow-lg">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-              INPUT: NAPKIN BLUEPRINT SCHEMATIC
+            <span className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-700/80 text-slate-200 text-xs font-sans shadow-sm">
+              <span>Source schematic</span>
             </span>
           </div>
         </div>
 
-        {/* Vertical Divider Line with Cyan Glow */}
+        {/* Vertical Divider Line */}
         <div
           className="absolute top-0 bottom-0 z-20 pointer-events-none"
           style={{ left: `${sliderPosition}%` }}
         >
-          {/* Glowing laser line */}
-          <div className="absolute top-0 bottom-0 w-[2px] -ml-[1px] bg-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.8)]" />
+          {/* Hairline precision steel line */}
+          <div className="absolute top-0 bottom-0 w-[1.5px] -ml-[0.75px] bg-white shadow-sm" />
 
           {/* Interactive Drag Handle */}
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-slate-900 border-2 border-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.6)] cursor-ew-resize hover:scale-110 active:scale-95 transition-transform">
-            <div className="flex items-center space-x-1 text-cyan-300">
-              <span className="text-[11px] font-bold">‹</span>
-              <span className="text-[11px] font-bold">›</span>
+          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-slate-900 border border-slate-300 flex items-center justify-center shadow-md cursor-ew-resize">
+            <div className="flex items-center space-x-1 text-slate-200 text-[10px] font-mono select-none">
+              <span>‹</span>
+              <span>›</span>
             </div>
           </div>
         </div>
 
-        {/* Hover / Drag Instruction Hint */}
+        {/* Drag Instruction Hint */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-          <span className="px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-slate-700 text-slate-300 text-[10px] font-mono flex items-center gap-1.5 opacity-75">
-            <Eye className="w-3 h-3 text-cyan-400" />
-            Drag slider left or right to inspect generative transition
+          <span className="px-3 py-1 rounded-md bg-slate-950/85 backdrop-blur-sm border border-slate-800 text-slate-300 text-[11px] font-sans flex items-center gap-1.5 shadow-sm">
+            <Eye className="w-3.5 h-3.5 text-slate-400" />
+            <span>Drag divider to inspect transformation</span>
           </span>
         </div>
       </div>

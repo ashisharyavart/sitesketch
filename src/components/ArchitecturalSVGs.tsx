@@ -163,14 +163,13 @@ export function BlueprintSketchSVG({ className = "w-full h-full" }: { className?
         <text x="327" y="202" fontSize="8" fill="#FCD34D" textAnchor="middle">LOW PLINTH #M-104</text>
       </g>
 
-      {/* Neural Vectorization Detection Markers */}
+      {/* Architectural Title Block */}
       <g>
-        <circle cx="70" cy="80" r="4" fill="none" stroke="#06B6D4" strokeWidth="1.5" />
-        <circle cx="530" cy="80" r="4" fill="none" stroke="#06B6D4" strokeWidth="1.5" />
-        <circle cx="530" cy="350" r="4" fill="none" stroke="#06B6D4" strokeWidth="1.5" />
-        <circle cx="70" cy="350" r="4" fill="none" stroke="#06B6D4" strokeWidth="1.5" />
-        <rect x="490" y="365" width="85" height="20" rx="4" fill="#06B6D4" fillOpacity="0.15" stroke="#06B6D4" strokeWidth="1" />
-        <text x="532" y="379" fontSize="9" fill="#06B6D4" fontFamily="monospace" textAnchor="middle" fontWeight="bold">AI DETECTED: 99.4%</text>
+        <rect x="410" y="346" width="160" height="54" fill="#0B1320" stroke="#334155" strokeWidth="1" rx="2" />
+        <line x1="410" y1="364" x2="570" y2="364" stroke="#1E293B" strokeWidth="1" />
+        <text x="420" y="358" fontSize="8" fill="#94A3B8" fontFamily="sans-serif">SHEET A-101 · LEVEL 01 PLAN</text>
+        <text x="420" y="378" fontSize="9" fill="#F8FAFC" fontFamily="sans-serif" fontWeight="bold">LIVING SUITE LAYOUT</text>
+        <text x="420" y="392" fontSize="7.5" fill="#64748B" fontFamily="monospace">SCALE: 1/4&quot; = 1&apos;-0&quot; · 480 SQ FT</text>
       </g>
     </svg>
   );
@@ -593,6 +592,165 @@ export function IntegrationLogos() {
         </div>
       ))}
     </div>
+  );
+}
+
+// Professional Architectural Solar Study & Daylight Illuminance (Lux) Diagram
+export function SolarStudyDiagramSVG({
+  className = "w-full h-full",
+  kelvin = 5000
+}: {
+  className?: string;
+  kelvin?: number;
+}) {
+  // Derive solar geometry from Kelvin / time of day
+  const isMorning = kelvin < 3400;
+  const isOvercast = kelvin > 5500;
+  const altitude = isMorning ? 28 : isOvercast ? 45 : 58;
+  const penetrationDepthFt = isMorning ? "16'-4\"" : isOvercast ? "Diffuse" : "6'-8\"";
+  const directLux = isMorning ? "850 Lux" : isOvercast ? "320 Lux" : "1,250 Lux";
+
+  // Ray coordinates for 600x380 viewport
+  // Window opening on left wall: x=60, yTop=90, yBottom=270
+  // Sun ray enters at window top (60, 90) and window sill (60, 270)
+  const floorY = 270;
+  const ceilingY = 90;
+  const windowLeftX = 60;
+
+  // Ray projection endpoints on floor
+  const rayFloorX = isMorning ? 420 : isOvercast ? 260 : 190;
+  const rayColor = isMorning ? "#F59E0B" : isOvercast ? "#94A3B8" : "#38BDF8";
+
+  return (
+    <svg viewBox="0 0 600 380" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <defs>
+        {/* Subtle engineering grid */}
+        <pattern id="solarGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="0.75" />
+        </pattern>
+        {/* Daylight penetration floor gradient */}
+        <linearGradient id="daylightBeamGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor={rayColor} stopOpacity={isOvercast ? "0.15" : "0.3"} />
+          <stop offset="70%" stopColor={rayColor} stopOpacity={isOvercast ? "0.08" : "0.12"} />
+          <stop offset="100%" stopColor={rayColor} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+
+      {/* Dark CAD Viewport Background */}
+      <rect width="600" height="380" fill="#0B111E" />
+      <rect width="600" height="380" fill="url(#solarGrid)" />
+
+      {/* Room Envelope Section Outline (Window on Left, Ceiling Top, Floor Bottom, Rear Wall Right) */}
+      {/* Ceiling */}
+      <line x1="60" y1={ceilingY} x2="540" y2={ceilingY} stroke="#475569" strokeWidth="2.5" />
+      {/* Floor */}
+      <line x1="60" y1={floorY} x2="540" y2={floorY} stroke="#475569" strokeWidth="2.5" />
+      {/* Right Wall */}
+      <line x1="540" y1={ceilingY} x2="540" y2={floorY} stroke="#475569" strokeWidth="2.5" />
+      {/* Window Wall Header & Sill (Left) */}
+      <rect x="52" y="50" width="16" height="40" fill="#1E293B" stroke="#475569" strokeWidth="1.5" />
+      <rect x="52" y={floorY} width="16" height="70" fill="#1E293B" stroke="#475569" strokeWidth="1.5" />
+
+      {/* Glazing Aperture (Low-E Steel Frame) */}
+      <line x1={windowLeftX} y1={ceilingY} x2={windowLeftX} y2={floorY} stroke="#38BDF8" strokeWidth="2" strokeDasharray="4 2" />
+      <text x="44" y="180" fill="#94A3B8" fontSize="8" fontFamily="monospace" transform="rotate(-90 44 180)" textAnchor="middle">
+        SOUTH GLAZING 14&apos;-6&quot; APERTURE
+      </text>
+
+      {/* Projected Direct Sunlight Volume */}
+      <polygon
+        points={`${windowLeftX},${ceilingY} ${windowLeftX},${floorY} ${rayFloorX},${floorY} 60,${ceilingY}`}
+        fill="url(#daylightBeamGrad)"
+      />
+
+      {/* Solar Rays (Incident vectors) */}
+      <g stroke={rayColor} strokeWidth="1.5" strokeDasharray="6 3" opacity="0.85">
+        <line x1="10" y1={isMorning ? "20" : "10"} x2={rayFloorX} y2={floorY} />
+        <line x1="25" y1="50" x2={windowLeftX} y2="120" />
+      </g>
+
+      {/* Sun Icon / Vector Source */}
+      <g transform={`translate(${isMorning ? "25, 30" : isOvercast ? "30, 20" : "50, 15"})`}>
+        <circle cx="0" cy="0" r="10" fill={rayColor} fillOpacity="0.2" stroke={rayColor} strokeWidth="1.5" />
+        <circle cx="0" cy="0" r="4" fill={rayColor} />
+      </g>
+
+      {/* Solar Altitude Angle Arc Indicator */}
+      {!isOvercast && (
+        <g stroke={rayColor} strokeWidth="1">
+          <path d={`M 75 ${floorY} A 20 20 0 0 1 88 ${floorY - 12}`} fill="none" />
+          <text x="96" y={floorY - 10} fill={rayColor} fontSize="9" fontFamily="sans-serif" fontWeight="bold">
+            {altitude}°
+          </text>
+        </g>
+      )}
+
+      {/* Floor Penetration Dimension */}
+      <g stroke="#94A3B8" strokeWidth="1">
+        <line x1={windowLeftX} y1={floorY + 22} x2={rayFloorX} y2={floorY + 22} />
+        <line x1={windowLeftX} y1={floorY + 16} x2={windowLeftX} y2={floorY + 28} strokeWidth="1.5" />
+        <line x1={rayFloorX} y1={floorY + 16} x2={rayFloorX} y2={floorY + 28} strokeWidth="1.5" />
+        <text x={(windowLeftX + rayFloorX) / 2} y={floorY + 36} fill="#E2E8F0" fontSize="9" fontFamily="monospace" textAnchor="middle">
+          Direct solar penetration: {penetrationDepthFt}
+        </text>
+      </g>
+
+      {/* Architectural Furniture Silhouettes (Section context: Sofa & Coffee Table) */}
+      <g fill="#1E293B" stroke="#475569" strokeWidth="1.2">
+        {/* Modern low sofa profile */}
+        <path d="M 180 270 L 180 220 C 180 215 190 215 195 220 L 205 240 L 300 240 L 305 220 C 310 215 320 215 320 220 L 320 270 Z" />
+        {/* Table plinth */}
+        <rect x="340" y="248" width="70" height="22" rx="2" />
+      </g>
+
+      {/* Illuminance (Lux) Contour Bands & Readouts */}
+      <g fontSize="8.5" fontFamily="sans-serif">
+        {/* Zone 1: Glazing perimeter */}
+        <rect x="80" y="250" width="80" height="16" rx="3" fill="#0B1320" stroke="#38BDF8" strokeWidth="0.8" />
+        <text x="120" y="261" fill="#38BDF8" textAnchor="middle" fontWeight="bold">
+          {directLux} (Perimeter)
+        </text>
+
+        {/* Zone 2: Work / Task plane */}
+        <rect x="230" y="222" width="75" height="16" rx="3" fill="#0B1320" stroke="#94A3B8" strokeWidth="0.8" />
+        <text x="267" y="233" fill="#E2E8F0" textAnchor="middle">
+          520 Lux (Task)
+        </text>
+
+        {/* Zone 3: Rear ambient */}
+        <rect x="440" y="222" width="80" height="16" rx="3" fill="#0B1320" stroke="#475569" strokeWidth="0.8" />
+        <text x="480" y="233" fill="#94A3B8" textAnchor="middle">
+          210 Lux (Ambient)
+        </text>
+      </g>
+
+      {/* Ceiling Height Callout */}
+      <g stroke="#64748B" strokeWidth="0.8">
+        <line x1="560" y1={ceilingY} x2="560" y2={floorY} strokeDasharray="3 3" />
+        <line x1="555" y1={ceilingY} x2="565" y2={ceilingY} strokeWidth="1.2" />
+        <line x1="555" y1={floorY} x2="565" y2={floorY} strokeWidth="1.2" />
+        <text x="572" y="184" fill="#94A3B8" fontSize="8" fontFamily="monospace" transform="rotate(90 572 184)" textAnchor="middle">
+          10&apos;-6&quot; AFF
+        </text>
+      </g>
+
+      {/* Diagram Title Block */}
+      <g>
+        <rect x="18" y="16" width="220" height="42" fill="#0B1320" stroke="#334155" strokeWidth="1" rx="4" />
+        <text x="28" y="32" fill="#94A3B8" fontSize="8" fontFamily="sans-serif">SECTION SOLAR STUDY · ORIENTATION: SOUTH</text>
+        <text x="28" y="47" fill="#F8FAFC" fontSize="9.5" fontFamily="sans-serif" fontWeight="bold">
+          {isMorning ? "Morning Dawn Sun (2800K · 28° Alt)" : isOvercast ? "Overcast Diffuse Skylight (6500K)" : "Solar Noon (5000K · 58° Alt)"}
+        </text>
+      </g>
+
+      {/* Compliance / Status readout */}
+      <g>
+        <rect x="430" y="16" width="150" height="26" fill="#0B1320" stroke="#334155" strokeWidth="1" rx="4" />
+        <text x="440" y="32" fill="#34D399" fontSize="8.5" fontFamily="sans-serif" fontWeight="bold">
+          ✓ LEED v4 Daylight Autonomy
+        </text>
+      </g>
+    </svg>
   );
 }
 
