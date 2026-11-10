@@ -1,106 +1,61 @@
-/* Hallmark · shape: Narrative Workflow · genre: modern-minimal · theme: Terrazzo (by request) · redesign: full
- * hero: Corridor · nav: slab · footer: colophon block · imagery: photographs · signature: live architectural takeoff plate · terrazzo: off-white
- * axes: light/geometric-sans/warm · posture: restrained · contrast: pass · fold: pass · v2.0.0 */
-/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · weakest: S, tightened hero from generic SaaS copy to concrete millimeter and spatial takeoff plate */
 @import "tailwindcss";
-@import "./tokens.css";
-@import "./base.css" layer(base);
 
-/* Specific architectural spec styles */
-.rule-bar {
-  border-width: var(--rule-bar);
-  border-color: var(--color-ink);
+@theme {
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-caveat: var(--font-caveat), "Caveat", cursive, sans-serif;
 }
 
-.rule-hair {
-  border-width: var(--rule-hair);
-  border-color: var(--color-rule);
+:root {
+  --background: #FAFAFA;
+  --foreground: #0F172A;
 }
 
-.card-hard {
-  background: var(--color-plate);
-  border: var(--rule-bar) solid var(--color-ink);
-  box-shadow: var(--shadow-card);
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
 }
 
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  min-height: 44px;
-  padding: 0 var(--space-lg);
-  border: var(--rule-bar) solid var(--color-ink);
-  background: var(--color-ink);
-  color: var(--color-paper);
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: var(--text-sm);
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+body {
+  background-color: #FAFAFA;
+  color: #0F172A;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
-.btn-primary:hover {
-  background: var(--color-ink-2);
+/* Light Architectural Graph Paper Grid */
+.architectural-grid {
+  background-color: #FAFAFA;
+  background-image: 
+    linear-gradient(to right, #E5E7EB 1px, transparent 1px),
+    linear-gradient(to bottom, #E5E7EB 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-.btn-primary:active {
-  transform: translateY(1px);
+.font-caveat {
+  font-family: var(--font-caveat), "Caveat", cursive, sans-serif;
 }
 
-.btn-primary:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
+/* Custom architectural scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
 }
 
-.btn-primary:disabled,
-.btn-primary[aria-disabled="true"] {
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  min-height: 44px;
-  padding: 0 var(--space-lg);
-  border: var(--rule-hair) solid var(--color-ink);
-  background: transparent;
-  color: var(--color-ink);
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: var(--text-sm);
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out);
-}
-
-.btn-secondary:hover {
-  background: var(--color-paper-2);
-}
-
-.btn-secondary:active {
-  transform: translateY(1px);
-}
-
-.btn-secondary:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
-
-.btn-secondary:disabled,
-.btn-secondary[aria-disabled="true"] {
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .btn-primary, .btn-secondary {
-    transition: background-color var(--dur-short) linear;
-  }
+/* Selection Highlight */
+::selection {
+  background-color: #E2E8F0;
+  color: #0F172A;
 }
