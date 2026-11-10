@@ -1,27 +1,29 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Caveat } from "next/font/google";
+import { Syne, Onest, JetBrains_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import Script from "next/script";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const syne = Syne({
+  variable: "--font-display-custom",
   subsets: ["latin"],
+  weight: ["700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const onest = Onest({
+  variable: "--font-body-custom",
   subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
-const caveat = Caveat({
-  variable: "--font-caveat",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-outlier-custom",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["500"],
 });
 
 export const viewport: Viewport = {
-  themeColor: "#FAFAFA",
+  themeColor: "#F5F3ED",
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,
@@ -107,10 +109,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} h-full antialiased`}
+      className={`${syne.variable} ${onest.variable} ${jetbrainsMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[#FAFAFA] text-slate-900 font-sans selection:bg-slate-200 selection:text-slate-900">
+      <body className="min-h-full flex flex-col">
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-MV6KTJNX06"
           strategy="afterInteractive"
